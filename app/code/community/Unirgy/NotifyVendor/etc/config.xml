@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Unirgy_NotifyVendor extension
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * @category   Unirgy
+ * @package    Unirgy_NotifyVendor
+ * @copyright  Copyright (c) 2008 Unirgy LLC
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/**
+ * @category   Unirgy
+ * @package    Unirgy_NotifyVendor
+ * @author     Boris (Moshe) Gurevich <moshe@unirgy.com>
+ */
+-->
+<config>
+    <modules>
+        <Unirgy_NotifyVendor>
+            <version>0.1.1</version>
+            <usimpleup remote="http://download.unirgy.com/meta.php"
+                changelog="http://unirgy.com/support/portal/announcements"/>
+        </Unirgy_NotifyVendor>
+    </modules>
+
+    <global>
+        <models>
+            <unotifyvendor>
+                <class>Unirgy_NotifyVendor_Model</class>
+            </unotifyvendor>
+        </models>
+
+        <helpers>
+            <unotifyvendor>
+                <class>Unirgy_NotifyVendor_Helper</class>
+            </unotifyvendor>
+        </helpers>
+
+        <resources>
+            <unotifyvendor_setup>
+                <setup>
+                    <module>Unirgy_NotifyVendor</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </unotifyvendor_setup>
+        </resources>
+
+        <template>
+            <email>
+               <unotifyvendor_email_template translate="label" module="unotifyvendor">
+                   <label>Vendor Notification</label>
+                   <file>unotifyvendor.html</file>
+                   <type>html</type>
+               </unotifyvendor_email_template>
+            </email>
+        </template>
+
+        <events>
+            <sales_order_invoice_pay>
+                <observers>
+                    <unotifyvendor>
+                        <type>singleton</type>
+                        <class>unotifyvendor/observer</class>
+                        <method>sales_order_invoice_pay</method>
+                    </unotifyvendor>
+                </observers>
+            </sales_order_invoice_pay>
+        </events>
+
+        <sales>
+            <quote>
+                <item>
+                    <product_attributes>
+                        <unotify_vendor/>
+                    </product_attributes>
+                </item>
+            </quote>
+        </sales>
+    </global>
+
+    <adminhtml>
+        <acl>
+            <resources>
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <unotifyvendor>
+                                            <title>Notify Vendors</title>
+                                            <sort_order>50</sort_order>
+                                        </unotifyvendor>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+    </adminhtml>
+
+    <default>
+        <unotifyvendor>
+            <email>
+                <active>1</active>
+                <template>unotifyvendor_email_template</template>
+                <identity>general</identity>
+            </email>
+        </unotifyvendor>
+    </default>
+</config>

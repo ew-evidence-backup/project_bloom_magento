@@ -1,0 +1,773 @@
+<?php
+$_hlp = Mage::helper('udropship');
+$_v = Mage::getSingleton('udropship/session')->getVendor();
+$wysivygUrl = $this->getUrl('*/*/wysiwyg');
+
+$showMsg = ('' == $this->getMessagesBlock()->getGroupedHtml() ) ? false : true;
+
+// Split phone for display
+preg_match('/(\d{3})(\d{3})(\d{4})/',$_v->getTelephone(), $phone);
+// Split fax for display
+preg_match('/(\d{3})(\d{3})(\d{4})/',$_v->getFax(), $fax);
+// Split name for display
+preg_match('/(\w+)\s(\w+)/',$_v->getVendorAttn(), $attn);
+
+// Get list of states
+$regionCollection = Mage::getModel('directory/region')
+    ->getCollection()
+    ->addCountryFilter('US');
+$regions = $regionCollection->getData();
+// Closed days and dates
+$days = Mage::helper('udropship')->getDays($_v->getId());
+$dates = Mage::helper('udropship')->getDates($_v->getId());
+// Break down time for times
+$cutOffH = date('g',strtotime($_v->getCutOffTime()));
+$cutOffM = date('i',strtotime($_v->getCutOffTime()));
+$cutOffP =  date('A',strtotime($_v->getCutOffTime()));
+
+$openAtH = date('g',strtotime($_v->getOpenAt()));
+$openAtM = date('i',strtotime($_v->getOpenAt()));
+$openAtP =  date('A',strtotime($_v->getOpenAt()));
+
+$closeAtH = date('g',strtotime($_v->getCloseAt()));
+$closeAtM = date('i',strtotime($_v->getCloseAt()));
+$closeAtP =  date('A',strtotime($_v->getCloseAt()));
+
+$wopenAtH = date('g',strtotime($_v->getWopenAt()));
+$wopenAtM = date('i',strtotime($_v->getWopenAt()));
+$wopenAtP =  date('A',strtotime($_v->getWopenAt()));
+
+$wcloseAtH = date('g',strtotime($_v->getWcloseAt()));
+$wcloseAtM = date('i',strtotime($_v->getWcloseAt()));
+$wcloseAtP =  date('A',strtotime($_v->getWcloseAt()));
+?>
+
+<!-- Layout (start) -->
+<div id="layout" class="profile">
+        <!-- Add design header (start) -->
+        <header class="catalog__header">
+            <h1 class="catalog__title">Profile</h1>
+        </header>
+        <!--  Add design header (end) -->    
+
+        <!-- Profile tizer (start) -->
+        <?php if($showMsg):?>
+        <section id="profile__tizer" class="tizer">
+                <?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+        </section>
+        <?php endif; ?>
+        <!-- Profile tizer (end) -->	
+
+        <!-- Profile navigation (start) -->
+        <nav id="profileNav">
+                <ul class="profileNav__links">
+                        <li><a href="#locationForm">Location/Contact</a></li>
+                        <li><a href="#deliveryForm">Delivery Info</a></li>
+                        <li><a href="#hoursForm">Store Hours</a></li>
+                        <li><a href="#aboutShopForm">About the flower shop</a></li>
+                        <li><a href="#aboutOwnerForm">About the design team</a></li>
+                        <li><a href="#socialNetworkForm">Social network/reviews</a></li>
+                </ul>
+        </nav>
+        <!-- Profile navigation (end) -->
+
+        <!-- Profile content (start) -->
+        <section id="profileContent">
+
+                <!-- ============================= LOCATION =============================>
+        
+        
+                <!-- Location form (start) -->
+                <form id="locationForm" class="profileForm" action="<?php echo $this->getUrl('udropship/vendor/preferencesPost')?>#deliveryForm" method="post">
+                        <div class="profileForm__row">
+                            <div class="profileForm__col m-col461px">
+                                    <label for="f-fullAddress">Street address</label>
+                                    <input id="f-fullAddress" class="inputText" type="text" name="street" value="<?= $_v->getStreet(-1);?>" />
+                            </div>                            
+                        </div>
+                        
+                        <div class="profileForm__row">
+                                <div class="profileForm__col">
+                                        <label for="f-fullAddress-c">City</label>
+                                        <input id="f-fullAddress-c" class="inputText" type="text" name="city" value="<?= $_v->getCity(); ?>" />
+                                </div>
+                                <div class="profileForm__col m-col76px">
+                                        <label for="f-state">State</label>
+                                        <select id="f-state" class="inputText" name="region_id">
+                                            <?php foreach($regions as $reg):?>
+                                            <option value="<?= $reg['region_id']?>" <?= ($reg['region_id'] == $_v->getRegionId()) ? 'selected' : '';?>><?= $reg['code']?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                </div>
+                                <div class="profileForm__col">
+                                        <label for="f-fullAddress-z">Zip</label>
+                                        <input id="f-fullAddress-z" class="inputText" type="text" name="zip" value="<?= $_v->getZip(); ?>" />
+                                </div>                        
+                        </div>
+
+                        <div class="profileForm__row">
+                                <div class="profileForm__col m-contact__col">
+                                        <label for="f-phoneNumber1">phone number</label>
+                                        <input id="f-phoneNumber1" class="inputText" type="text" size="3" maxlength="3" name="phone_1" value="<?= $phone[1]?>" />
+                                        <input id="f-phoneNumber2" class="inputText" type="text" size="3" maxlength="3" name="phone_2" value="<?= $phone[2]?>" />
+                                        <input id="f-phoneNumber3" class="inputText" type="text" size="4" maxlength="4" name="phone_3" value="<?= $phone[3]?>" />
+                                </div>
+                                <div class="profileForm__col m-contact__col">
+                                        <label for="f-fax1">fax <span>(enter if you want orders faxed)</span></label>
+                                        <input id="f-fax1" class="ignoreValidation inputText" type="text" size="3" maxlength="3" name="fax_1" value="<?= $fax[1];?>" />
+                                        <input id="f-fax2" class="ignoreValidation inputText" type="text" size="3" maxlength="3" name="fax_2" value="<?= $fax[2];?>" />
+                                        <input id="f-fax3" class="ignoreValidation inputText" type="text" size="4" maxlength="4" name="fax_3" value="<?= $fax[3];?>" />
+                                </div>
+                        </div>
+
+                        <div class="profileForm__row">
+                                <div class="profileForm__col m-col260px">
+                                        <label for="f-email">email</label>
+                                        <input id="f-email" class="inputText" type="email" name="email" value="<?= $_v->getEmail();?>" />
+                                </div>
+                                <div class="profileForm__col m-col260px">
+                                        <label for="f-website">current website</label>
+                                        <input id="f-website" class="ignoreValidation inputText" type="text" name="vendor_website" value="<?= $_v->getVendorWebsite();?>"/>
+                                </div>
+                        </div>	
+
+                        <footer class="profileForm__footer">
+                                <button id="locationForm__nextBtn" class="profileForm__nextBtn">Save</button>
+                                <!--<input id="profileForm__submit" type="submit" value="Save for later" />-->
+                        </footer>
+                </form>
+                <!-- Location form (end) -->
+
+                
+                <!-- ============================= DELIVERY INFO =============================>
+                
+                
+                <!-- Delivery form (start) -->
+                <form id="deliveryForm" class="profileForm" style="display: none;" action="<?php echo $this->getUrl('udropship/vendor/preferencesPost')?>#hoursForm" method="post">
+                        <div class="profileForm__item m-col222px">
+
+                                <div class="profileForm__row">
+                                        <div class="profileForm__col m-col181px">
+                                                <label for="f-standartDelivery">Delivery Fee</label>
+                                                <input id="f-standartDelivery" data-errormessage-custom-error="Enter numeric value ( 9.50 )" class="validate[custom[number]] inputText" type="text"  name="delivery_charge" value="<?= number_format((float)$_v->getDeliveryCharge(), 2);?>"/>
+                                        </div>
+                                </div>
+
+                                <div class="profileForm__row">
+                                        <div class="profileForm__col m-col198px">
+                                                <label for="deliveryDay">Same Day Delivery Available</label>
+                                                <select id="deliveryDay" class="delivery__select inputText" name="has_same_day_delivery">
+                                                    <option value="false">No</option>
+                                                    <option value="true" <?= ('true'==$_v->getHasSameDayDelivery()) ? 'selected' : '';?> >Yes</option>
+                                                </select>
+                                        </div>
+                                </div>                                
+                                
+                                <div id="cut_off_tim_sel" class="profileForm__row m-rowMargin16px" <?= ('true'==$_v->getHasSameDayDelivery()) ? '' : 'style="display: none;"';?>>
+                                        <div class="profileForm__col">
+                                                <label for="f-standartDelivery">Cut Off Time</label>
+                                                <input style="width: 25px" maxlength=2 id="f-standartDelivery" class="inputText" type="text"  name="cut_off_time[hours]" value="<?= $cutOffH?>"/>
+                                                &nbsp;&nbsp; 
+                                                <input style="width: 25px;" maxlength=2 class="inputText" type="text" name="cut_off_time[minutes]" value="<?= $cutOffM?>"/>
+                                                &nbsp;&nbsp;
+                                                <div style="width: 45px; position: absolute; margin: -39px 0 0 108px;">
+                                                <select name="cut_off_time[p]">
+                                                    <option <?= ('AM' == $cutOffP) ? 'selected="selected"' : '';?>>AM</option>
+                                                    <option <?= ('PM' == $cutOffP) ? 'selected="selected"' : '';?>>PM</option>
+                                                </select>
+                                                </div>
+                                        </div>
+                                </div>
+                                
+                                <div id="v_timezone_sel" class="profileForm__row m-row35px" <?= ('true'==$_v->getHasSameDayDelivery()) ? '' : 'style="display: none;"';?>>
+                                        <div class="profileForm__col m-col198px">
+                                                <select id="f-timezone" class="inputText" name="v_timezone" id="v_timezone">
+                                                        <option <?= ('HST' == $_v->getVTimezone()) ? 'selected="selected"' : '';?>>HST</option>
+                                                        <option <?= ('PST' == $_v->getVTimezone()) ? 'selected="selected"' : '';?>>PST</option>
+                                                        <option <?= ('MST' == $_v->getVTimezone()) ? 'selected="selected"' : '';?>>MST</option>
+                                                        <option <?= ('CST' == $_v->getVTimezone()) ? 'selected="selected"' : '';?>>CST</option>
+                                                        <option <?= ('EST' == $_v->getVTimezone()) ? 'selected="selected"' : '';?>>EST</option>
+                                                </select>
+                                        </div>
+                                </div>
+                                
+
+                        </div><!-- .profileForm__item -->
+
+                        <div class="profileForm__item">
+                                <div class="profileForm__col m-col340px">
+                                        <label for="f-zipCode">zip-codes you can deliver to <span>(separated by commas)</span></label>
+                                        <textarea id="zipCode" class="inputText" name="limit_zipcode"><?= $_v->getLimitZipcode();?></textarea>
+                                </div>
+                        </div><!-- .profileForm__item -->
+
+                        <footer class="profileForm__footer">
+                                <button id="locationForm__nextBtn" class="profileForm__nextBtn">Save</button>
+                                <!--<input id="profileForm__submit" type="submit" value="Save for later" />-->
+                        </footer>
+                </form>
+                <!-- Delivery form (end) -->
+
+                
+                
+                <!-- ============================= STORE HOURS =============================>
+                
+                
+                
+                <!-- Store hours form (start) -->
+                <form id="hoursForm" class="profileForm" style="display: none;" action="<?php echo $this->getUrl('udropship/vendor/preferencesPost')?>#aboutShopForm" method="post">
+                        <div class="profileForm__row">
+                                <div class="profileForm__col m-contact__col m-col127px">
+                                        <label for="f-storeOpens">Weekday hours:</label>
+                                        <input maxlength=2 style="width: 25px;" type="text" class="inputText" value="<?= $openAtH;?>" name="open_at[hours]"/>
+                                        &nbsp;&nbsp;
+                                        <input maxlength=2 style="width: 25px;" type="text" class="inputText" value="<?=$openAtM; ?>" name="open_at[minutes]"/>
+                                        
+                                        <div style="width: 45px; position: absolute; margin: -39px 0 0 108px;">
+                                            <select name="open_at[p]">
+                                                <option <?= ('AM' == $openAtP) ? 'selected="selected"' : '';?>>AM</option>
+                                                <option <?= ('PM' == $openAtP) ? 'selected="selected"' : '';?>>PM</option>
+                                            </select>
+                                        </div>
+                                </div>
+                                
+                                <div class="profileForm__col m-contact__col m-col127px" style="margin:0 0 0 60px;">
+                                        <label for="f-storeCloses">&nbsp;</label>
+                                        <input maxlength=2 style="width: 25px;" type="text" class="inputText" value="<?= $closeAtH;?>" name="close_at[hours]"/>
+                                        &nbsp;&nbsp;
+                                        <input maxlength=2 style="width: 25px;" type="text" class="inputText" value="<?= $closeAtM;?>" name="close_at[minutes]"/>
+                                        
+                                        <div style="width: 45px; position: absolute; margin: -39px 0 0 108px;">
+                                            <select name="close_at[p]">
+                                                <option <?= ('AM' == $closeAtP) ? 'selected="selected"' : '';?>>AM</option>
+                                                <option <?= ('PM' == $closeAtP) ? 'selected="selected"' : '';?>>PM</option>
+                                            </select>
+                                        </div>
+                                </div>
+                        </div>
+                        <div class="profileForm__row">
+                                <div class="profileForm__col m-contact__col m-col127px">
+                                        <label for="f-storewopens">Weekend hours: </label>
+                                        <input maxlength=2 style="width: 25px;" type="text" class="inputText" value="<?= $wopenAtH;?>" name="wopen_at[hours]"/>
+                                        &nbsp;&nbsp;
+                                        <input maxlength=2 style="width: 25px;" type="text" class="inputText" value="<?=$wopenAtM; ?>" name="wopen_at[minutes]"/>
+                                
+                                        <div style="width: 45px; position: absolute; margin: -39px 0 0 108px;">
+                                            <select name="wopen_at[p]">
+                                                <option <?= ('AM' == $wopenAtP) ? 'selected="selected"' : '';?>>AM</option>
+                                                <option <?= ('PM' == $wopenAtP) ? 'selected="selected"' : '';?>>PM</option>
+                                            </select>
+                                        </div>
+                                </div>
+                                <div class="profileForm__col m-contact__col m-col127px" style="margin:0 0 0 60px;">
+                                        <label for="f-storewcloses">&nbsp;</label>
+                                        <input maxlength=2 style="width: 25px;" type="text" class="inputText" value="<?= $wcloseAtH;?>" name="wclose_at[hours]"/>
+                                        &nbsp;&nbsp;
+                                        <input maxlength=2 style="width: 25px;" type="text" class="inputText" value="<?= $wcloseAtM;?>" name="wclose_at[minutes]"/>
+                                        
+                                        <div style="width: 45px; position: absolute; margin: -39px 0 0 108px;">
+                                            <select name="wclose_at[p]">
+                                                <option <?= ('AM' == $wcloseAtP) ? 'selected="selected"' : '';?>>AM</option>
+                                                <option <?= ('PM' == $wcloseAtP) ? 'selected="selected"' : '';?>>PM</option>
+                                            </select>
+                                        </div>
+                                </div>
+                        </div>                            
+                        <div class="dayClosedContent">
+                                <h5 class="dayClosedContent__title">Days closed</h5>
+                                <div class="dayClosedContent__checkbox">	
+                                        <span class="<?= in_array('2013-01-01',$dates) ? 'checked' : '' ?>"></span>					
+                                        <input  <?= (in_array('2013-01-01', $dates)) ? 'checked="checked"' : '' ?> id="f-newYears" class="hidden" type="checkbox" name="non_delivery_dates[]" value="2013-01-01" />
+                                        <label for="f-newYears">New Year's</label>						
+                                </div>
+                                <div class="dayClosedContent__checkbox">
+                                        <span class="<?= in_array('2013-01-21',$dates) ? 'checked' : '' ?>"></span>
+                                        <input <?= (in_array('2013-01-21', $dates)) ? 'checked="checked"' : '' ?> id="f-mlkBirth" class="hidden" type="checkbox" name="non_delivery_dates[]" value="2013-01-16" />
+                                        <label for="f-mlkBirth">MLK Day</label>
+                                </div>
+                                <div class="dayClosedContent__checkbox">
+                                        <span class="<?= in_array('2013-02-18',$dates) ? 'checked' : '' ?>"></span>
+                                        <input <?= (in_array('2013-02-18', $dates)) ? 'checked="checked"' : '' ?> id="f-washingtonBirth" class="hidden" type="checkbox" name="non_delivery_dates[]" value="2013-02-20"/>
+                                        <label for="f-washingtonBirth">Presidents' Day</label>
+                                </div>
+                                <div class="dayClosedContent__checkbox">
+                                        <span class="<?= in_array('2013-05-27',$dates) ? 'checked' : '' ?>"></span>
+                                        <input <?= (in_array('2013-05-27', $dates)) ? 'checked="checked"' : '' ?> id="f-memorialDay" class="hidden" type="checkbox" name="non_delivery_dates[]" value="2013-05-25"/>
+                                        <label for="f-memorialDay">Memorial Day</label>
+                                </div>
+                                <div class="dayClosedContent__checkbox">
+                                        <span class="<?= in_array('2013-06-04',$dates) ? 'checked' : '' ?>"></span>
+                                        <input <?= (in_array('2013-06-04', $dates)) ? 'checked="checked"' : '' ?> id="f-independenceDay" class="hidden" type="checkbox" name="non_delivery_dates[]" value="2013-06-04"/>
+                                        <label for="f-independenceDay">4th of July</label>
+                                </div>
+                                <div class="dayClosedContent__checkbox">
+                                        <span class="<?= in_array('2013-09-02',$dates) ? 'checked' : '' ?>"></span>
+                                        <input <?= (in_array('2013-09-02', $dates)) ? 'checked="checked"' : '' ?> id="f-laborDay" class="hidden" type="checkbox" name="non_delivery_dates[]" value="2013-09-03"/>
+                                        <label for="f-laborDay">Labor Day</label>
+                                </div>
+                                <div class="dayClosedContent__checkbox">
+                                        <span class="<?= in_array('2013-10-14',$dates) ? 'checked' : '' ?>"></span>
+                                        <input <?= (in_array('2013-10-14', $dates)) ? 'checked="checked"' : '' ?> id="f-columbusDay" class="hidden" type="checkbox" name="non_delivery_dates[]" value="2013-10-08"/>
+                                        <label for="f-columbusDay">Columbus Day</label>
+                                </div>
+                                <div class="dayClosedContent__checkbox">
+                                        <span class="<?= in_array('2013-11-11',$dates) ? 'checked' : '' ?>"></span>
+                                        <input <?= (in_array('2013-11-11', $dates)) ? 'checked="checked"' : '' ?> id="f-veteranDay" class="hidden" type="checkbox" name="non_delivery_dates[]" value="2013-11-11"/>
+                                        <label for="f-veteranDay">Veterans Day</label>
+                                </div>
+                                <div class="dayClosedContent__checkbox">
+                                        <span class="<?= in_array('2013-11-28',$dates) ? 'checked' : '' ?>"></span>
+                                        <input <?= (in_array('2013-11-28', $dates)) ? 'checked="checked"' : '' ?> id="f-thankgiving" class="hidden" type="checkbox" name="non_delivery_dates[]" value="2013-11-22"/>
+                                        <label for="f-thankgiving">Thanksgiving</label>
+                                </div>
+                                <div class="dayClosedContent__checkbox">
+                                        <span class="<?= in_array('2013-12-25',$dates) ? 'checked' : '' ?>"></span>
+                                        <input <?= (in_array('2013-12-25', $dates)) ? 'checked="checked"' : '' ?> id="f-cristmas" class="hidden" type="checkbox" name="non_delivery_dates[]" value="2013-12-25"/>
+                                        <label for="f-cristmas">Christmas</label>
+                                </div>
+                        </div><!-- #dayClosedContent -->
+                        <div class="dayClosedContent" style="margin-bottom: -27px;">
+                                <h5 class="dayClosedContent__title">Weekend days closed</h5>
+                                <div class="dayClosedContent__checkbox">	
+                                        <span class="<?= in_array('Saturday',$days) ? 'checked' : '' ?>"></span>					
+                                        <input <?= (in_array('Saturday',$days)) ? 'checked="checked"' : '' ?> id="f-sunday" class="hidden" type="checkbox" name="non_working_days[]" value="Saturday"/>
+                                        <label for="f-sunday">Saturday</label>						
+                                </div>                                
+                                <div class="dayClosedContent__checkbox">	
+                                        <span class="<?= (in_array('Sunday',$days)) ? 'checked' : '' ?>"></span>					
+                                        <input <?= (in_array('Sunday',$days)) ? 'checked="checked"' : '' ?> id="f-saturday" class="hidden" type="checkbox" name="non_working_days[]" value="Sunday"/>
+                                        <label for="f-saturday">Sunday</label>						
+                                </div>
+                        </div>
+                        <footer class="profileForm__footer">
+                                <button id="locationForm__nextBtn" class="profileForm__nextBtn" onclick="">Save</button>
+                                <!--<input id="profileForm__submit" type="submit" value="Save for later" /> -->
+                        </footer>
+                </form>
+                <!-- Store hours form (end) -->
+                
+                
+                <!-- ============================= ABOUT SHOP =============================>
+                
+                
+                <!-- About shop form (start) -->
+                <form id="aboutShopForm" class="profileForm" style="display: none;" action="<?php echo $this->getUrl('udropship/vendor/preferencesPost')?>#aboutOwnerForm" method="post">
+
+                        <div class="profileForm__row">
+                                <div class="profileForm__col m-col260px">
+                                        <label for="f-nameShop">name of flower shop</label>
+                                        <input id="f-nameShop" class="inputText" type="text" name="vendor_name" value="<?= $_v->getVendorName();?>" />
+                                </div>
+                                <div class="profileForm__col m-col276px">
+                                        <label for="f-typeFlorist">type of florist</label>
+                                        <select id="f-typeFlorist" class="inputText" name="florist_type">
+                                                <option value="retail_flower_shop" <?=('retail_flower_shop' == $_v->getFloristType()) ? 'selected' : '';?> >Retail Flower Shop</option>
+                                                <option value="event_florist" <?=('event_florist' == $_v->getFloristType()) ? 'selected' : '';?> >Event Florist</option>
+                                                <option value="studio_designer" <?=('studio_designer' == $_v->getFloristType()) ? 'selected' : '';?> >Studio Designer</option>
+                                        </select>
+                                </div>
+                        </div>                
+                
+                        <div class="profileForm__row">
+                                <div class="profileForm__col" style="width: 560px;">
+                                        <label for="description">description</label>
+                                        <textarea id="description" class="inputText" name="about_us" placeholder="Your 'about us' and what you want customers to know about your flower shop..."><?=$_v->getAboutUs();?></textarea>
+                                </div>
+                        </div><!-- .profileForm__item -->
+
+                        <div class="profileForm__row" style="margin: 109px 0 10px 1px;">
+                                <div class="profileForm__col">
+                                        <label for="f-retailPrise">retail price of a dozen roses</label>
+                                        <input id="f-retailPrise" data-errormessage-custom-error="Enter numeric value ( 9.50 )" class="validate[custom[number]] inputText" type="text" name="dozen_rose_price" value="<?=$_v->getDozenRosePrice();?>"/>
+                                </div>
+                        </div>
+
+                        <footer class="profileForm__footer">
+                                <button id="locationForm__nextBtn" class="profileForm__nextBtn">Save</button>
+                                <!--<input id="profileForm__submit" type="submit" value="Save for later" />-->
+                        </footer>
+                </form>
+                <!-- About shop form (end) -->                
+                
+                <!-- ============================= ABOUT OWNER =============================>
+                
+                
+                <!-- About owner form (start) -->
+                <form id="aboutOwnerForm" class="profileForm" style="display: none;" action="<?php echo $this->getUrl('udropship/vendor/preferencesPost')?>#socialNetworkForm" method="post">
+
+                        <div class="profileForm__item m-col426px">
+                                <div class="profileForm__row">				
+                                        <div class="profileForm__col m-col173px">
+                                                <label for="f-firstName">Head Designer first name</label>
+                                                <input id="f-firstName" class="inputText" type="text" name="attn_1" value="<?= $attn[1];?>"/>
+                                        </div>
+                                        <div class="profileForm__col m-col173px">
+                                                <label for="f-lastName">Head Designer last name</label>
+                                                <input id="f-lastName" class="inputText" type="text" name="attn_2" value="<?= $attn[2];?>"/>
+                                        </div>						
+                                </div>
+
+                                <div class="profileForm__row">
+                                        <div class="profileForm__col m-col386px">
+                                                <label for="f-aboutOwner">About the Head Designer/Design Team</label>
+                                                <textarea id="f-aboutOwner" class="inputText" name="about_owner" placeholder="Experience, awards, favorite designs, something fun and interesting about you guys..."><?= $_v->getAboutOwner();?></textarea>
+                                        </div>
+                                </div>
+                        </div><!-- .profileForm__item -->
+
+                        <div id="aboutOwnerForm__owner" class="profileForm__item">
+                                <div class="profileForm__col m-col154px">
+                                        <h5 class="aboutOwnerForm__owner__title">Designer's Photo</h5>
+                                        <?php
+                                            $src = ('' != $_v->getOwnerPhoto()) ? '/media/'.$_v->getOwnerPhoto() : $this->getSkinUrl().'redesign/i/ownerPhotoDefault.jpg';
+                                        ?>
+                                        <img id="upload-progress" src="<?= $this->getSkinUrl()?>redesign/i/upload-progress.gif" style="display: block; position: absolute; margin: 60px 0 0 60px; z-index: 100; display: none;"/>
+                                        <img class="aboutOwnerForm__owner__photo" src="<?= $src; ?>" alt="" width="154" height="154"/>
+                                        <input type="hidden" name="owner_photo" id="owner_photo" value="<?= $_v->getOwnerPhoto();?>"/>
+                                        <div class="btn" id="browserPhotoBtn" style="padding-left: 35px; overflow: hidden;">Browse for Photo</div>
+                                        <button class="btn" id="importPhotoBtn" style="" onclick="alert('Coming soon!'); return false;">Import</button>
+                                </div>
+                        </div><!-- .profileForm__item -->
+
+                        <footer class="profileForm__footer">
+                                <button id="locationForm__nextBtn" class="profileForm__nextBtn">Save</button>
+                                <!--<input id="profileForm__submit" type="submit" value="Save for later" />-->
+                        </footer>
+                </form>
+                <!-- About owner form (end) -->
+
+                
+                <!-- ============================= SOCIAL INFO =============================>
+                
+                
+                <!-- Social network form (start) -->
+                <form id="socialNetworkForm" class="profileForm" style="display: none;" action="<?php echo $this->getUrl('udropship/vendor/preferencesPost')?>" method="post">
+                        <div class="yelpReview">
+                                <div class="yelpReview__header">
+                                        <div class="yelpReview__logo">
+                                                <a href="http://www.yelp.com/biz/<?= $_v->getUrlKey();?>"><img src="<?= $this->getSkinUrl();?>redesign/i/yelpLogo.png" alt="" /></a>
+                                        </div>
+                                </div>
+                                <div class="yelpReview__content">
+                                        <div class="profileForm__col m-col349px">
+                                            <?php
+                                                $yelpUrl = ('' != $_v->getUrlKey()) ? 'http://www.yelp.com/biz/'.$_v->getUrlKey() : '';
+                                            ?>
+                                                <input class="inputText ignoreValidation" type="text" name="url_key" value="<?= $yelpUrl; ?>" placeholder="Paste your Yelp URL" />
+                                        </div>
+                                        <div class="profileForm__col m-col211px m-contact__col">
+                                                <!--<button id="linkYelpBtn" class="default"></button>
+                                                <button id="updateYelpBtn">update</button>
+                                                <button id="deleteYelpBtn">X</button>-->
+                                        </div>
+                                        <p>not your account? just change the url above and click "Save"</p>
+                                </div>
+                        </div>
+                    
+                        <!--
+                        <div class="googleReview">
+                                <div class="googleReview__header">
+                                        <div class="googleReview__logo">
+                                                <a href="#"><img src="<?= $this->getSkinUrl();?>redesign/i/logoGoogle.png" alt="" /></a>
+                                        </div>
+                                </div>
+                                <div class="googleReview__content">
+                                        <div class="profileForm__col m-col349px">
+                                                <input class="inputText" type="text" value="<?= $_v->getGoogleReference();?>" id="google_reference" name="google_reference"/>
+                                        </div>
+                                        <div class="profileForm__col m-col211px m-contact__col">
+                                                <button id="linkGoogleBtn" class="default"></button>
+                                                <!--<button id="updateGoogleBtn">update</button>
+                                                <button id="deleteGoogleBtn">X</button>
+                                        </div>
+                                </div>
+                        </div>-->
+                        
+                        
+                        <footer class="profileForm__footer">
+                                <button id="locationForm__nextBtn" class="profileForm__nextBtn">Save</button>
+                                <!--<input id="profileForm__submit" type="submit" value="Save for later" />-->
+                        </footer>
+                </form>
+                <!-- Social network form (end) -->
+
+        </section>
+        <!-- Profile content (end) -->
+
+</div>
+<!-- Layout (end) -->
+
+<div id="modal_box" style="width: 500px; height:500px; background: green; display: none;">
+    <?php $st = $_v->getStreet();?>
+    <div>
+      <input id="address-vendor" type="textbox" value="<?php echo $st[0].' '.$_v->getCity().' '.$_v->getZipCode();?>">
+      <input id="vendor-name" type="hidden" value="<?php echo $_v->getVendorName();?>"/>
+      <input type="button" value="Geocode" onclick="codeAddress()">
+    </div>
+    <div id="map_canvas" style="height:90%;top:30px"></div>
+</div>
+
+<script>
+jQuery(document).ready(function($) {
+    // Select Box for all selects
+    $("select").selectBox();
+
+    //Tabs
+    var tabContainers = $('#profileContent > form');
+    $('.profileNav__links li a').live('click', function () {
+        tabContainers.hide();
+        tabContainers.filter(this.hash).show();
+        $('.profileNav__links li').removeClass('active');
+        $(this).parent().addClass('active');
+        return false;
+    }).filter(':first').click();
+    if(window.location.hash) {
+        // Menu select change selected opeartions
+        $('.profileNav__links li').removeClass('active');
+        $('.profileNav__links li a').filter('[href="'+window.location.hash+'"]').parent().addClass('active');
+        
+        // Form show hide operations
+        tabContainers.hide();
+        tabContainers.filter(window.location.hash).show();
+    }
+    
+    //Checkbox
+    $('.dayClosedContent__checkbox').live('click', function() {
+        if($(this).find('span').hasClass('checked')) {
+            $(this).find('span').removeClass('checked');
+            $(this).find('input').removeAttr('checked');
+        } else {
+            $(this).find('span').addClass('checked');
+            $(this).find('input').attr('checked', 'checked');
+        }
+    });
+    
+    // File uploader (store logo)
+    var uploader = new qq.FileUploaderBasic({
+        button: document.getElementById('browsePhoto'),
+        action : '/js/jquery/ajaxfileupload.php?vendor_id=<?=$_v->getId()?>',
+        allowedExtensions: ['jpg', 'jpeg', 'png', 'gif'],
+        onComplete: function(id, fileName, response) {
+            if(response.success) {
+                var productImg = '/vendor/<?= $_v->getId()?>/'+response.msg;
+
+                $('#new_image').val(productImg);
+                $('.logoForm__defaultPhoto').attr('src','/media/'+productImg);
+            }
+        },
+        onProgress: function(id, fileName, loaded, total){
+            
+        },        
+        onSubmit: function(id, fileName){
+
+        },
+        debug: false
+    });    
+    var ownerUploader = new qq.FileUploaderBasic({
+        button: document.getElementById('browserPhotoBtn'),
+        action : '/js/jquery/ajaxfileupload.php?store_owner=1&vendor_id=<?=$_v->getId()?>',
+        allowedExtensions: ['jpg', 'jpeg', 'png', 'gif'],
+        onComplete: function(id, fileName, response) {
+            $('#upload-progress').hide();
+            
+            if(response.success) {
+                var productImg = '/vendor/<?= $_v->getId()?>/profile/'+response.msg;
+
+                $('#owner_photo').val(productImg);
+                $('.aboutOwnerForm__owner__photo').attr('src','/media/'+productImg);
+            }
+        },
+        onProgress: function(id, fileName, loaded, total){
+            
+        },        
+        onSubmit: function(id, fileName){
+            $('#upload-progress').show();
+        },
+        debug: false
+    });   
+    
+    // Create button to find google reference
+    var findFlorist = $('#linkGoogleBtn');
+    findFlorist.click(function() {
+        $('#modal_box').modal({
+            overlayClose:true,
+            opacity:80,
+            overlayCss: { backgroundColor:"#000" }
+        });
+
+        //map.checkResize();
+        initialize();
+        var res = codeAddress();
+        
+        return false;
+    });
+
+    // Facebook connect button
+    $('#facebookConnectBtn').click(function() {
+        window.open('http://apps.facebook.com/'+appId, '_blank');
+    });
+    
+    // Show hide cut off time based on same day delivery selector
+    $('#deliveryDay').change(function() {
+        var val = $(this).val();
+        if('false' == val) {
+            $('#cut_off_tim_sel, #v_timezone_sel').hide();
+        } else {
+            $('#cut_off_tim_sel, #v_timezone_sel').show();
+        }
+    });
+    
+    // Validation for profile completeness
+    $('.profileNav__links').find('a').each(function(aI, aE) {
+        $($(aE).attr('href')).find('input, select, textarea').each(function(index, el) {
+            if('' == $(el).val() ) {
+                // Check all elements excepts ones that ignore validation
+                if( !$(el).hasClass('ignoreValidation') && 'file' != $(el).attr('type') ) {
+                    // Add warning icon if some fields are missing
+                    if($(aE).find('.profileNav__links__warningIco').length < 1) {
+                        $(aE).prepend('<i class="profileNav__links__warningIco"/>');
+                    }
+                }
+            }
+        });
+    });
+
+    // Validation is kicking in
+    $("#deliveryForm").validationEngine({autoHidePrompt:true});
+    $("#aboutShopForm").validationEngine({autoHidePrompt:true});
+});    
+</script>
+
+<div id='fb-root'></div>
+<script>
+    var appId = '343690602390212';
+    
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId      : appId, // App ID
+            //channelUrl : '//WWW.YOUR_DOMAIN.COM/channel.html', // Channel File
+            //status     : true, // check login status
+            cookie     : true, // enable cookies to allow the server to access the session
+            xfbml      : true  // parse XFBML
+        });
+    };
+    
+    // Load the SDK Asynchronously
+    (function(d){
+        var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement('script'); js.id = id; js.async = true;
+        js.src = "//connect.facebook.net/en_US/all.js";
+        ref.parentNode.insertBefore(js, ref);
+    }(document));
+
+    function addToPage() {
+        // calling the API ...
+        var obj = {
+            method: 'pagetab',
+            redirect_uri: 'http://dev.bloomnation.com/'
+        };
+        FB.ui(obj);
+    }
+    
+</script>
+
+
+<!--
+<script src="https://maps.googleapis.com/maps/api/js?libraries=places&sensor=true"></script>
+<script>
+  var geocoder;
+  var map;
+  var markersArray = [];
+  
+  function initialize() {
+    geocoder = new google.maps.Geocoder();
+    latlng = new google.maps.LatLng(-34.397, 150.644);
+    var mapOptions = {
+      zoom: 15,
+      center: latlng,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+    map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+  }
+
+    function codeAddress() {
+        clearOverlays();
+        var address = document.getElementById('address-vendor').value;
+        geocoder.geocode( { 'address': address}, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                map.setCenter(results[0].geometry.location);
+                locatePlace(results[0].geometry.location);
+                return results[0];
+            } else {
+                alert('Geocode was not successful for the following reason: ' + status);
+                return false;
+            }
+        });
+    }
+
+    function clearOverlays() {
+        for (var i = 0; i < markersArray.length; i++ ) {
+            markersArray[i].setMap(null);
+        }
+    }    
+    
+    function locatePlace(LatLng) {
+        var request = {
+          location: LatLng,
+          radius: '10',
+          query: jQuery('#vendor-name').val()
+        };
+        // Search the place
+        service = new google.maps.places.PlacesService(map);
+        service.textSearch(request, function(results, status) {
+            if (status == google.maps.places.PlacesServiceStatus.OK) {
+                var marker = new google.maps.Marker({
+                    map: map,
+                    position: results[0].geometry.location,
+                    title: results[0].name
+                });
+                var contentString = '<div>'+
+                    '<h1>'+results[0].name+'</h1>'+
+                    '<p>'+results[0].formatted_address+'</p>'+
+                '</div>';
+                // Create elements for marker
+                var markerDiv = jQuery('<div/>');
+                var markerDivHeader = jQuery('<h1/>',{
+                    html: results[0].name
+                });
+                var markerDivContent = jQuery('<p/>', {
+                    html: results[0].formatted_address + '<br/><br/>'
+                });
+                // Create marker div
+                markerDiv.append(markerDivHeader).append(markerDivContent);
+                
+                var infowindow = new google.maps.InfoWindow({
+                    content: markerDiv.html()
+                });
+                google.maps.event.addListener(marker, 'click', function() {
+                    infowindow.open(map, marker);
+                });                
+                markersArray.push(marker);
+                // Assign ID to be saved
+                jQuery('#google_reference').val(results[0].reference);
+                jQuery.modal.close();
+                //getPlaceDetails(results[0].reference);
+            }
+        });      
+    }
+    
+    function getPlaceDetails(reference) {
+        var request = {
+            reference: reference
+        };
+        
+        service = new google.maps.places.PlacesService(map);
+        service.getDetails(request, function (place, status) {
+            if (status == google.maps.places.PlacesServiceStatus.OK) {
+                alert(place.website);
+            }
+        });
+    }
+</script>
+-->

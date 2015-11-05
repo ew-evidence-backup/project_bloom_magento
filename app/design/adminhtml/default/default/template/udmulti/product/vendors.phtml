@@ -1,0 +1,149 @@
+<?php
+$_allVendors = Mage::getSingleton('udropship/source')->getVendors();
+$_assocVendors = $this->getAssociatedVendors();
+
+$_store = Mage::app()->getStore($this->getProduct()->getStoreId());
+?>
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend"><?php echo Mage::helper('udmulti')->__('Drop Shipping Vendors') ?></h4>
+        <div class="right"><button type="button" class="scalable add" id="udmulti-vendors-add"><span><?php echo $this->__('Add Vendor') ?></span></button></div>
+    </div>
+    <fieldset>
+        <legend><?php echo $this->__('Drop Shipping Vendor Associations') ?></legend>
+        <div class="grid">
+            <div class="hor-scroll">
+                <table cellspacing="0" class="data" id="table_udmultivendors">
+                    <thead>
+                        <tr class="headings">
+                            <th><?php echo $this->__('Vendor Name') ?></th>
+                            <th><?php echo $this->__('Cost') ?> [<?php echo $_store->getBaseCurrencyCode() ?>]</th>
+                            <th><?php echo $this->__('Stock Qty') ?></th>
+
+                            <th><?php echo $this->__('Vendor SKU') ?></th>
+                            <th><?php echo $this->__('Cross Sell (1 or 0)') ?></th>
+                            <th><?php echo $this->__('Priority') ?></th>
+                            
+                            <th><?php echo $this->__('Action') ?></th>
+                        </tr>
+                        <tr id="udmulti_row_template" style="display:none">
+                            <td>
+                            <?php if (Mage::getStoreConfigFlag('udropship/vendor/autocomplete_htmlselect')): ?>
+                            <input type="text" class="input-text" name="_autocomplete_udmulti_vendors[$ROW][vendor_id]" id="_autocomplete_udmulti_vendors[$ROW][vendor_id]" value="$VENDOR_NAME"/>
+                            <input type="hidden" name="udmulti_vendors[$ROW][vendor_id]" id="udmulti_vendors[$ROW][vendor_id]" value="$VENDOR_ID">
+                            <div class="autocomplete" style="font-weight:bold; display: none;" id="_autocomplete_container_udmulti_vendors[$ROW][vendor_id]"></div>
+                            <script type="text/javascript">
+                            window['initAutocomplete$ROW'] = function () {
+                                var acObserve = function(){
+                                    if ($("_autocomplete_udmulti_vendors[$ROW][vendor_id]").value=="") $("udmulti_vendors[$ROW][vendor_id]").value = "" 
+                                }
+                                $("_autocomplete_udmulti_vendors[$ROW][vendor_id]").observe("change", acObserve)
+                                $("_autocomplete_udmulti_vendors[$ROW][vendor_id]").observe("click", acObserve)
+                                new Ajax.Autocompleter(
+                                    "_autocomplete_udmulti_vendors[$ROW][vendor_id]",
+                                    "_autocomplete_container_udmulti_vendors[$ROW][vendor_id]",
+                                    "<?php echo Mage::getModel('core/url')->getUrl('udropship/index/vendorAutocomplete') ?>",
+                                    {
+                                        paramName: "vendor_name",
+                                        method: "get",
+                                        minChars: 2,
+                                        updateElement: function(el) {
+                                            $("udmulti_vendors[$ROW][vendor_id]").value = el.title;
+                                            $("_autocomplete_udmulti_vendors[$ROW][vendor_id]").value = el.innerHTML.stripTags();
+                                        },
+                                        onShow : function(element, update) {
+                                            if(!update.style.position || update.style.position=="absolute") {
+                                                update.style.position = "absolute";
+                                                Position.clone(element, update, {
+                                                    setHeight: false,
+                                                    offsetTop: element.offsetHeight
+                                                });
+                                            }
+                                            Effect.Appear(update,{duration:0});
+                                        }
+                    
+                                    }
+                                )
+                            }
+                            </script> 
+                            <?php else: ?>
+                            <select name="udmulti_vendors[$ROW][vendor_id]" style="width:100%">
+                            <?php foreach ($_allVendors as $_id=>$_name): ?>
+                                <option value="<?php echo $_id ?>"><?php echo $this->htmlEscape($_name) ?></option>
+                            <?php endforeach ?>
+                            </select>
+                            <?php endif ?>
+                            </td>
+                            <td><input type="text" class="input-text" name="udmulti_vendors[$ROW][vendor_cost]" value="$VENDOR_COST" style="width:70px" /></td>
+                            <td><input type="text" class="input-text" name="udmulti_vendors[$ROW][stock_qty]" value="$STOCK_QTY" style="width:70px" /></td>
+
+                            <td><input type="text" class="input-text" name="udmulti_vendors[$ROW][vendor_sku]" value="$VENDOR_SKU" /></td>
+                            <td><input type="text" class="input-text" name="udmulti_vendors[$ROW][is_crossell]" value="$IS_CROSSELL" style="width:70px" /></td>
+                            <td><input type="text" class="input-text" name="udmulti_vendors[$ROW][priority]" value="$PRIORITY" style="width:70px" /></td>
+
+                            <td><button type="button" class="scalable delete"><span><?php echo $this->__('Remove') ?></span></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="messages"><ul class="messages"><li class="notice-msg"><ul>
+            <li><?php echo $this->__('Tips:') ?></li>
+            <li><?php echo $this->__('If the same vendor is selected multiple times, only the first occurence will be saved') ?></li>
+            <!-- <li><?php echo $this->__('If Vendor SKU is empty, the Product SKU will be used for this vendor.') ?></li> -->
+            <li><?php echo $this->__('If Vendor Cost is empty, the Product Cost will be used for this vendor.') ?></li>
+            <li><?php echo $this->__('If custom stock check is used, stock quantity will be ignored.<br/>If stock quantity is 0, the product is out of stock for this vendor.<br/>If stock quantity is empty and vendor is local, regular Magento stock logic will be applied.<br/>If stock quantity is empty and vendor is not local, the product is always in stock for this vendor.') ?></li>
+        </ul></li></ul></div>
+    </fieldset>
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+(function ()
+{
+    var lastRowNum = 1;
+    var tbody = $$('#table_udmultivendors tbody')[0]
+
+    function addRow(data)
+    {
+        var rowHtml = $('udmulti_row_template').innerHTML
+        data = data || {
+            vendor_sku: '<?php echo $this->htmlEscape($this->getProduct()->getSku()) ?>',
+            vendor_cost: '<?php echo $this->getProduct()->getCost() ?>',
+            stock_qty: '',
+            priority: 9999
+        }
+        data.row = lastRowNum++;
+        <?php if (!Mage::getStoreConfigFlag('udropship/vendor/autocomplete_htmlselect')): ?>
+            data.vendor_id = data.vendor_id || '<?php echo Mage::helper('udropship')->getLocalVendorId() ?>'
+            data.vendor_name = data.vendor_name || '<?php echo $this->getVendorName(Mage::helper('udropship')->getLocalVendorId()) ?>'
+            var selectedVendor = '<option value="'+data.vendor_id+'"', value
+            rowHtml = rowHtml.replace(new RegExp('<option value="?'+data.vendor_id+'"?>', 'i'), '<option value="'+data.vendor_id+'" selected="selected">')
+        <?php else: ?>
+            data.vendor_id = data.vendor_id || ''
+            data.vendor_name = data.vendor_name || ''
+        <?php endif ?>
+        for (i in data) {
+            value = data[i] || ''
+            if ((i=='vendor_cost' || i=='stock_qty' || i=='priority') && data[i]) value *= 1;
+            if (i!=='row' && Prototype.Browser.IE) value = '"'+value+'"'
+            rowHtml = rowHtml.replace(new RegExp('\\$'+i.toUpperCase(), 'g'), value)
+        }
+        tbody.insert('<tr>'+rowHtml+'</tr>')
+        if (Object.isFunction(window['initAutocomplete'+data.row])) window['initAutocomplete'+data.row]()
+        var trs = tbody.childElements()
+        var tr = trs[trs.length-1]
+        var del = $(tr).select('button')[0]
+        $(del).observe('click', function(e) { e.stop(); $(del.parentNode.parentNode).remove() })
+    }
+
+    $('udmulti-vendors-add').observe('click', function(e) { e.stop(); addRow() })
+
+<?php foreach ($_assocVendors as $_vendor): ?>
+    addRow(<?php echo Zend_Json::encode($_vendor->getData()) ?>)
+<?php endforeach ?>
+})()
+//]]>
+</script>

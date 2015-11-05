@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <XtraMage_Homeimages>
+            <active>true</active>
+            <codePool>local</codePool>
+        </XtraMage_Homeimages>
+    </modules>
+</config> 

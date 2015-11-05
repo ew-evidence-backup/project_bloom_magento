@@ -1,0 +1,172 @@
+<?php
+$catalogUrl = $this->getUrl('udropship/vendor/manageproducts');
+$showMsg = ('reg-complete' == Mage::registry('reg-complete')) ? true : false;
+$showMsg = false;
+$lastProducts = Mage::getSingleton('udropship/session')->getVendor()->getAssociatedProducts();
+$settingsUrl = $this->getUrl('udropship/vendor/preferences');
+$vendor = Mage::getSingleton('udropship/session')->getVendor();
+?>
+
+<div id="layout" class="dashboard" xmlns="http://www.w3.org/1999/html">
+    <?php echo $this->getChildHtml('aside'); ?>
+
+    <div id="mainContent">
+        <!-- Welcome (start) -->
+        <?php if ($showMsg): ?>
+        <section id="welcomeContainer" class="tizer">
+            <h2 class="welcomeContainer__title">Welcome <span>to</span> BloomNation!</h2>
+            <button id="openStoreBtn" onclick="location.href='<?= $settingsUrl; ?>'">Open shop</button>
+        </section>
+        <?php endif;?>
+        <!-- Welcome (end) -->
+
+        <!-- Add design (start) -->
+        <section id="addDesignContainer">
+            <div class="addDesignContainer__content">
+                <a class="addDesignContainer__link" href="<?php echo $this->getUrl('udropship/vendor/addproduct')?>">
+                    <img src="<?= $this->getSkinUrl();?>redesign/i/add-design-btn.jpg" alt="+"/>
+                </a>
+            </div>
+            <footer class="addDesignContainer__footer">
+                <a class="addDesignContainer__footer__link" href="<?= $this->getUrl('udropship/vendor/addproduct')?>"
+                   title="">Add design<span>+</span></a>
+            </footer>
+        </section>
+        <!-- Add design (end) -->
+
+        <!-- Catalog preview (start) -->
+        <section id="catalogPreview">
+            <?php if (count($lastProducts) ): ?>
+            <div class="catalogPreview__mainImage">
+                <div class="profile_button"><a href="<?= $this->getUrl('udropship/vendor/manageproducts')?>"></a></div>
+                <?php
+                // Select firts array element
+                $_p = array_slice($lastProducts, 0, 1);
+                $_p = Mage::getModel('catalog/product')->load($_p[0]['product_id']);
+                ?>
+                <a style="width:192 ;height:210px;display: block;overflow: hidden" href="<?= $this->getUrl('udropship/vendor/manageproducts')?>" title="">
+                    <img src="<?php echo (string)Mage::helper('catalog/image')->init($_p, 'small_image')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->adaptiveResize(192, 210)?>"
+                         alt=""/>
+                </a>
+            </div>
+
+            <div class="catalogPreview__thumbnails">
+                <?php
+                $lastProducts = array_slice($lastProducts, 1);
+                ?>
+                <?php foreach ($lastProducts as $_p): $_p = Mage::getModel('catalog/product')->load($_p['product_id']);
+                if ($_p->getId()): $p++; ?>
+                    <div style="width:88 ;height:98px;overflow: hidden" class="catalogPreview__thumbnails__item">
+                        <a href="<?= $this->getUrl('udropship/vendor/manageproducts')?>" title="">
+                            <img  src="<?php echo (string)Mage::helper('catalog/image')->init($_p, 'small_image')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->adaptiveResize(88, 98)?>"
+                                 alt=""/>
+                        </a>
+                    </div>
+                    <?php if (4 == $p): break; endif; endif; endforeach;?>
+
+            </div>
+            <?php else: ?>
+            <div class="welcome-screen-out">
+            <div class="welcome-screen">
+                <p class="head-title"> Welcome to BloomNation!</p>
+
+                <p class="box-content">From here you can setup your <a href="<?php echo $this->getUrl('udropship/vendor/preferences')?>" >shop's profile</a> or <br><a href="<?php echo $this->getUrl('udropship/vendor/addproduct')?>">upload your first design</a>.</p>
+
+                <p class="box-content">If you have questions, watch our <a href="#" style="color: blue;" id="guided_tour"><b>Guided Tour</b></a> or Contact us at 877-702-5666. Don't be shy, we are family now!
+                    <a href="<?php echo $this->getUrl('udropship/vendor/preferences')?>" class="addDesignNextBtn" style="display: inline-block; width: 160px; text-align: center; float: right; text-decoration: none; background-position: 0px -292px; font-size: 20px; color: white; height: 29px; margin-top: 2px;">Open Shop</a>
+                </p>
+            </div>
+            </div>
+            <?php endif;?>
+
+        </section>
+        <!-- Catalog preview (end) -->
+
+        <div id="intr__wrapper">
+            <?php if('' == $vendor->getSubdomain()):?>
+                <div id="intr__img">
+                        <img src="<?= $this->getSkinUrl();?>redesign/i/introdusingDesk.png" alt="">
+                </div>
+                <div id="intr__content">
+                        <h1 id="intr__title"><p>Introducing</p>Premium Custom Websites for your Flower Shop. </h1>
+                        <button id="moreBtn">Get started</button>
+                        <p id="label">By Invitation Only</p>
+                </div>
+            <?php else:?>
+            <div id="subdom_link">
+                <a href="<?= $this->getUrl('udropship/theme/select');?>" style="color:#00B2B9">Manage your premium website</a>
+            </div>
+            <?php endif;?>
+        </div>        
+        
+        <!-- Last news (start) -->
+        <section id="latestNews">
+            <header class="latestNews__header">
+                <h2 class="latestNews__title">Latest news</h2>
+            </header>
+
+            <?php echo $this->getChildHtml('news.snippet');?>
+
+            <footer class="latestNews__footer">
+                <a class="a-latestNews__moreNewsLink" href="http://www.bloomnation.com/flowercloud/cut-the-wire"
+                   target="_blank">View more news</a>
+            </footer>
+        </section>
+        <!-- Last news (end) -->
+    </div>
+</div>
+
+<div id="guided_tour_modal" style="display: none;">
+    <iframe width="1280" height="720" src="http://www.youtube.com/embed/dFKMrIsK2iE" frameborder="0" allowfullscreen></iframe>
+</div>
+
+<div id="invitationBanner" style="display: none;">
+        <h1 class="invitation__title">Premium Sites are by Invitation Only</h1>
+        <form id="invitationForm" method="post" action="">
+                <input id="f-invitationCode" type="text" class="inputText" placeholder="Enter Invitation code" />
+                <input id="invitationBtn" type="submit" value="go" />
+        </form>
+        <!--
+        <p class="invitation__tooltip">Don&#039;t have an invitation code? <br /> Request one <a href="#" title="">Here</a></p>
+        <p class="invitation__request">Your request has been sent</p>
+        -->
+</div>
+
+<script>
+jQuery(document).ready(function($) {
+    // Pop modal dialog
+    $('#guided_tour').click(function() {
+        $('#guided_tour_modal').modal({
+            overlayClose:true,
+            opacity:80,
+            overlayCss: { backgroundColor:"#000" }
+        });
+    });
+    
+    // Pop custom site invitation dialog
+    $('#moreBtn').click(function() {
+        $('#invitationBanner').modal({
+            overlayClose:true,
+            opacity:80,
+            overlayCss: { backgroundColor:"#000" }
+        });
+    });
+    
+    // Check the invitation code
+    $('#invitationBtn').click(function() {
+        var data = {invitation_code: $('#f-invitationCode').val()};
+        var url = '<?= $this->getUrl('udropship/theme/invitation');?>';
+        // Send request to check invitation code
+        $.post(url, data, function(response) {
+            if(response.success) {
+                location.href = '<?= $this->getUrl('udropship/theme/select');?>';
+            } else {
+                alert('sorry, this invitation code doesn\'t match any of our records');
+            }
+        },'json');
+        
+        // Don;t perform default action(form submit)
+        return false;
+    });
+});
+</script>

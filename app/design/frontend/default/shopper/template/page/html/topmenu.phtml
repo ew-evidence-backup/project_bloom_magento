@@ -1,0 +1,33 @@
+<?php
+/**
+ * Top menu for store
+ *
+ * @see Mage_Page_Block_Html_Topmenu
+ */
+?>
+<?php $_menu = $this->getHtml('level-top') ?>
+<?php if($_menu): ?>
+<div class="nav-container">
+    <div class="nav-top-title"><div class="icon"><span></span><span></span><span></span></div><a href="#"><?php echo $this->__('Navigation'); ?></a></div>
+    <ul id="nav">
+        <?php if (Mage::getStoreConfig('shoppersettings/navigation/home')): ?>
+        <li class="level0 level-top">
+            <a href="<?php echo $this->getBaseUrl(); ?>"><span><?php echo $this->__('Home'); ?></span></a>
+        </li>
+        <?php endif; ?>
+        <?php
+        echo $_menu;
+        $custom_tab = Mage::getModel('cms/block')->load('shopper_navigation_block');
+        if($custom_tab->getIsActive()) {
+            echo '
+            <li class="level0 level-top parent custom-block">
+                <a href="#" class="level-top">
+                    <span>'.$custom_tab->getTitle().'</span>
+                </a>
+                <ul><li style="width:'.Mage::getStoreConfig('shoppersettings/navigation/custom_block_width').'px" >'.$this->getLayout()->createBlock('cms/block')->setBlockId('shopper_navigation_block')->toHtml().'</li></ul>
+            </li>';
+        }
+        ?>
+    </ul>
+</div>
+<?php endif ?>

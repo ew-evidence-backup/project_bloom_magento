@@ -1,0 +1,8 @@
+<config>
+    <modules>
+        <Evin_Configviewer>
+            <active>true</active>
+            <codePool>local</codePool>
+        </Evin_Configviewer>
+    </modules>
+</config>  

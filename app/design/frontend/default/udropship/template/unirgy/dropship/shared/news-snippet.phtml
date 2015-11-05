@@ -1,0 +1,23 @@
+<?php
+$items = $this->getNews();
+$i = 0;
+?>
+
+<?php foreach ($items as $item): $i++; if($i==4) { break; }
+    $htmlDOM = new Simple_Html_Dom();
+    $htmlDOM->load($item->get_content());
+    $image = $htmlDOM->find('img', 0);
+    if(!$image->src){
+        $image->src =  $this->getSkinUrl().'redesign/images/news.jpg';
+    }
+    ?>
+<article class="latestNews__item">
+    <img class="latestNews__item__image" src="<?php echo $image->src;?>" width="75" height="75" alt="" />
+    <div class="latestNews__item__desc">
+        <h2 class="latestNews__item__title"><a href="<?= $item->get_permalink(); ?>" title="" target="_blank"><?= $item->get_title()?></a></h2>
+        <p class="latestNews__item__text">
+            <?= substr(strip_tags($item->get_content()),0,140); ?>...
+        </p>
+    </div>
+</article>
+<?php endforeach;?>

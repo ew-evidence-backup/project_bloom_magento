@@ -1,0 +1,50 @@
+<?php
+/**
+ * @see Mage_Page_Block_Template_Links
+ */
+?>
+<?php
+$additional_links = false;
+if (Mage::getSingleton('customer/session')->isLoggedIn() == false && Mage::getStoreConfig('shoppersettings/header/top_signup')) {
+	$additional_links = true;
+}
+if (Mage::getStoreConfig('shoppersettings/header/top_custom_link')) {
+	$additional_links = true;
+}
+?>
+<?php $_links = $this->getLinks(); ?>
+<?php if(count($_links)>0 || $additional_links ): ?>
+<ul class="links"<?php if($this->getName()): ?> id="<?php echo $this->getName() ?>"<?php endif;?>>
+	<?php if (Mage::getStoreConfig('shoppersettings/header/top_custom_link')): ?>
+        <li><a href="<?php echo Mage::getURL( Mage::getStoreConfig('shoppersettings/header/top_custom_link_path') ) ?>" title="<?php echo Mage::getStoreConfig('shoppersettings/header/top_custom_link_title') ?>"><?php echo Mage::getStoreConfig('shoppersettings/header/top_custom_link_anchor') ?></a></li>
+		<li class="separator">&nbsp;</li>
+    <?php endif; ?>
+    <?php foreach($_links as $_link): ?>
+        <?php if ($_link instanceof Mage_Core_Block_Abstract):?>
+            <?php echo $_link->toHtml() ?>
+			<?php if(!$_link->getIsLast()): ?>
+            <li class="separator">&nbsp;</li>
+			<?php endif; ?>
+        <?php else: ?>
+            <li <?php echo $_link->getLiParams() ?>><?php echo $_link->getBeforeText() ?><a href="<?php echo $_link->getUrl() ?>" title="<?php echo $_link->getTitle() ?>" <?php echo $_link->getAParams() ?>><?php echo $_link->getLabel() ?></a><?php echo $_link->getAfterText() ?></li>
+			<?php if(!$_link->getIsLast()): ?>
+            <li class="separator">&nbsp;</li>
+			<?php endif; ?>
+        <?php endif;?>
+    <?php endforeach; ?>
+    <?php if (Mage::getSingleton('customer/session')->isLoggedIn() == false && Mage::getStoreConfig('shoppersettings/header/top_signup')): ?>
+    <li class="separator">&nbsp;</li>
+        <li><a href="<?php echo Mage::getURL('customer/account/create/') ?>"><?php echo $this->__('Sign Up') ?></a></li>
+    <?php endif; ?>
+</ul>
+<?php endif; ?>
+<div id="florist-address-menuline">
+	<?php
+	$vendor = Mage::getModel('udropship/vendor')->load(Mage::registry('current_svendor'));
+?>
+	<b><?=$vendor->getVendorName();?> - </b>
+	<?=$vendor->getStreet(-1);?>,
+	<?=$vendor->getCity();?>,
+	<?= Mage::getModel('directory/region')->load($vendor->getRegionId())->getCode(); ?>,
+	<?=$vendor->getZip();?>		
+</div>

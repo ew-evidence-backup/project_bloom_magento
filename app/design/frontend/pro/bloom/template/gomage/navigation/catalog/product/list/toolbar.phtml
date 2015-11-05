@@ -1,0 +1,90 @@
+<?php
+ /**
+ * GoMage Advanced Navigation Extension
+ *
+ * @category     Extension
+ * @copyright    Copyright (c) 2010-2011 GoMage (http://www.gomage.com)
+ * @author       GoMage
+ * @license      http://www.gomage.com/license-agreement/  Single domain license
+ * @terms of use http://www.gomage.com/terms-of-use
+ * @version      Release: 2.2
+ * @since        Class available since Release 2.2
+ */
+?>
+
+<?php if($this->getCollection()->getSize()): ?>
+<div class="toolbar">
+    <div class="pager">
+        <p class="amount">
+            <?php if($this->getLastPageNum()>1): ?>
+                <?php echo $this->__('viewing items %s-%s of %s', $this->getFirstNum(), $this->getLastNum(), $this->getTotalNum()) ?>
+            <?php else: ?>
+                <?php echo $this->__('viewing items %s', $this->getTotalNum()) ?>
+            <?php endif; ?>
+        </p>
+		<div class="sort-by">
+            <label><?php echo $this->__('Sort By') ?></label>
+            <select onchange="setNavigationUrl(this.value)">
+                <option <?php echo $this->getSelectedSort("sort_global_position_asc")?> value="<?php echo urlencode($this->getOrderUrl('global_position', 'asc')) ?>"><?php echo $this->__('Best Value') ?></option>
+
+                <option <?php echo $this->getSelectedSort("sort_price_asc")?> value="<?php echo urlencode($this->getOrderUrl('price', 'asc')) ?>"><?php echo $this->__('Price Low-High') ?></option>
+
+                <option <?php echo $this->getSelectedSort("sort_price_desc")?> value="<?php echo urlencode($this->getOrderUrl('price', 'desc')) ?>"><?php echo $this->__('Price High-Low') ?></option>
+
+                <option <?php echo $this->getSelectedSort("sort_name_asc")?> value="<?php echo urlencode($this->getOrderUrl('name', 'asc')) ?>"><?php echo $this->__('Name A-Z') ?></option>
+
+                <option <?php echo $this->getSelectedSort("sort_name_desc")?> value="<?php echo urlencode($this->getOrderUrl('name', 'desc')) ?>"><?php echo $this->__('Name Z-A') ?></option>
+            </select>
+            <script src="<?php echo $this->getBaseUrl()?>js/jquery/jquery.dropdownized.js" type="text/javascript"></script>
+            <script type="text/javascript">
+			jQuery(document).ready (function () {
+			    jQuery('.sort-by select').dropdownized();
+			})
+			</script>
+            <?php /*<?php if($this->getCurrentDirection() == 'desc'): ?>
+                <a onclick="setNavigationUrl('<?php echo urlencode($this->getOrderUrl(null, 'asc')) ?>');return false;" href="<?php echo $this->getOrderUrl(null, 'asc') ?>" title="<?php echo $this->__('Set Ascending Direction') ?>"><img src="<?php echo $this->getSkinUrl('images/i_desc_arrow.gif') ?>" alt="<?php echo $this->__('Set Ascending Direction') ?>" class="v-middle" /></a>
+            <?php else: ?>
+                <a onclick="setNavigationUrl('<?php echo urlencode($this->getOrderUrl(null, 'desc')) ?>');return false;" href="<?php echo $this->getOrderUrl(null, 'desc') ?>" title="<?php echo $this->__('Set Descending Direction') ?>"><img src="<?php echo $this->getSkinUrl('images/i_asc_arrow.gif') ?>" alt="<?php echo $this->__('Set Descending Direction') ?>" class="v-middle" /></a>
+            <?php endif; ?> */ ?>
+        </div>
+        
+        <?php /*?><div class="limiter">
+            <label><?php echo $this->__('Show') ?></label>
+            <select onchange="setNavigationUrl(this.value)">
+            <?php foreach ($this->getAvailableLimit() as  $_key=>$_limit): ?>
+                <option value="<?php echo urlencode($this->getLimitUrl($_key)) ?>"<?php if($this->isLimitCurrent($_key)): ?> selected="selected"<?php endif ?>>
+                    <?php echo $_limit ?>
+                </option>
+            <?php endforeach; ?>
+            </select> <?php echo $this->__('per page') ?>
+        </div><?php */?>
+
+        
+
+    </div>
+
+    <?php if( $this->isExpanded() ): ?>
+    <div class="sorter">
+    	<?php echo $this->getLayout()->createBlock('custom/zippopup')->setTemplate('impl_custom/zipchange.phtml')->toHtml() ?>
+    	<?php echo $this->getPagerHtml() ?>
+        <?php if( $this->isEnabledViewSwitcher() ): ?>
+        <p class="view-mode">
+            <?php $_modes = $this->getModes(); ?>
+            <?php if($_modes && count($_modes)>1): ?>
+            <label><?php echo $this->__('View as') ?>:</label>
+            <?php foreach ($this->getModes() as $_code=>$_label): ?>
+                <?php if($this->isModeActive($_code)): ?>
+                    <strong title="<?php echo $_label ?>" class="<?php echo strtolower($_code); ?>"><?php echo $_label ?></strong>&nbsp;
+                <?php else: ?>
+                    <a onclick="setNavigationUrl('<?php echo urlencode($this->getModeUrl($_code)) ?>');return false;" href="<?php echo $this->getModeUrl($_code) ?>" title="<?php echo $_label ?>" class="<?php echo strtolower($_code); ?>"><?php echo $_label ?></a>&nbsp;
+                <?php endif; ?>
+            <?php endforeach; ?>
+            <?php endif; ?>
+        </p>
+        <?php endif; ?>
+    
+        
+    </div>
+    <?php endif; ?>
+</div>
+<?php endif ?>

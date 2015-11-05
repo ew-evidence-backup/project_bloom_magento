@@ -1,0 +1,61 @@
+<?php
+$customerList = array();
+
+$_hlp = Mage::helper('udropship');
+$_shipments = Mage::helper('core')->decorateArray($_hlp->getVendorShipmentCollection(), '');
+foreach($_shipments as $s) {
+    $order = $s->getOrder();
+    $customerList[$order->getCustomerEmail()]['orders'][] = $order->getData();
+    $customerList[$order->getCustomerEmail()]['name'] = $order->getCustomerFirstname().' '.$order->getCustomerLastname();
+}
+
+// Calculate all orders total, avg order
+foreach($customerList as $i=>$cl) {
+    $customerList[$i]['orders_total'] = 0;
+    
+    foreach($cl['orders'] as $co) {
+        $customerList[$i]['orders_total'] += $co['grand_total'];
+    }
+}
+
+
+?>
+
+<form id="sel_customers_list" name="sel_customers_list">
+    Template:<br/>
+    <select>
+        <option></option>
+        <option>Discount</option>
+        <option>Come back</option>
+    </select><br/><br/>
+    Subject:<br/>
+    <input type="text" name="subject" value=""/>
+    <br/><br/>
+    Message:<br/>
+    <textarea name="message"></textarea><br/><br/>
+    <a href="#" id="send_msg" onclick="return false;">Send</a>
+    <br/><br/>
+    <h2>Customer list</h2>
+    <ul>
+        <?php foreach($customerList as $indx=>$cl): ?>
+            <li>
+                <input type="checkbox" name="sel_customers[]" value="<?= Mage::helper('udropship/crypt')->encrypt($indx);?>"/>
+                <b><?=$cl['name']?></b>
+                Total Orders: <b>$<?=$cl['orders_total']?></b>
+                Avg Order: <b>$<?= ceil($cl['orders_total'] / sizeof($cl['orders']));?></b>
+                Number of Orders: <b><?= sizeof($cl['orders'])?></b>
+                Date of Last Order: <b><?= $cl['orders'][sizeof($cl['orders'])-1]['updated_at'];?></b>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+</form>
+
+<script>
+jQuery(document).ready(function($) {
+    $("#send_msg").click(function() {
+        $.post("", $('#sel_customers_list').serialize(), function(response) {
+            
+        },'json');
+    });
+});
+</script>

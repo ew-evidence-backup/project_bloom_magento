@@ -1,0 +1,12 @@
+<?php
+$name = $this->getAttrCode();
+// Get attribute values array
+$attrValues = Mage::getSingleton('eav/config')->getAttribute('catalog_product', $name)->getSource()->getAllOptions(false);
+
+?>
+
+<ul attr="<?php echo $name?>" class="catalog__nav__links filter">
+    <?php foreach($attrValues as $attr): ?>
+        <li><a val="<?php echo $attr['value']?>" href="#" title="" class="filter_item"><?php echo $attr['label']?><span></span></a></li>
+    <?php endforeach; ?>
+</ul>

@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+      <iframemod_index_vendor translate="label" module="page">
+        <label>Iframe Mod Layout</label>
+        <block type="page/html" name="root" output="toHtml" template="iframemod/base.phtml">
+            <block type="core/template" name="head" as="head" template="iframemod/head.phtml"/>
+            <block type="facebook/products" name="content" as="content" template="iframemod/canvas.phtml"/>
+        </block>
+    </iframemod_index_vendor>
+      
+      <iframemod_product_view translate="label" module="page">
+        <label>Iframe Mod Layout</label>
+        <block type="page/html" name="root" output="toHtml" template="iframemod/base.phtml">
+            <block type="core/template" name="head" as="head" template="iframemod/head.phtml"/>
+            <block type="facebook/product" name="content" as="content" template="iframemod/product.phtml"/>
+        </block>
+    </iframemod_product_view>
+      
+      <iframemod_checkout_cart>
+            <label>Shopping Cart</label>
+            <!-- Mage_Checkout -->
+            <reference name="root">
+                <action method="setTemplate"><template>page/empty.phtml</template></action>
+            </reference>
+                    <reference name="head">
+                <action method="addJs"><script>ciplex/functions.js</script></action>
+            </reference>
+            <reference name="content">
+                <block type="checkout/cart" name="checkout.cart">
+                    <action method="setCartTemplate"><value>checkout/cart.phtml</value></action>
+                    <action method="setEmptyTemplate"><value>checkout/cart/noItems.phtml</value></action>
+                    <action method="chooseTemplate"/>
+                    <action method="addItemRender"><type>simple</type><block>checkout/cart_item_renderer</block><template>checkout/cart/item/default.phtml</template></action>
+                    <action method="addItemRender"><type>grouped</type><block>checkout/cart_item_renderer_grouped</block><template>checkout/cart/item/default.phtml</template></action>
+                    <action method="addItemRender"><type>configurable</type><block>checkout/cart_item_renderer_configurable</block><template>checkout/cart/item/default.phtml</template></action>
+            
+                    <block type="core/text_list" name="checkout.cart.top_methods" as="top_methods" translate="label">
+                        <label>Payment Methods Before Checkout Button</label>
+                        <block type="checkout/onepage_link" name="checkout.cart.methods.onepage" template="checkout/onepage/link.phtml"/>
+                    </block>
+            
+                    <block type="page/html_wrapper" name="checkout.cart.form.before" as="form_before" translate="label">
+                        <label>Shopping Cart Form Before</label>
+                    </block>
+            
+                    <block type="core/text_list" name="checkout.cart.methods" as="methods" translate="label">
+                        <label>Payment Methods After Checkout Button</label>
+                        <block type="checkout/onepage_link" name="checkout.cart.methods.onepage" template="checkout/onepage/link.phtml"/>
+                        <block type="checkout/multishipping_link" name="checkout.cart.methods.multishipping" template="checkout/multishipping/link.phtml"/>
+                    </block>
+      
+                    <block type="checkout/cart_coupon" name="checkout.cart.coupon" as="coupon" template="checkout/cart/coupon.phtml"/>
+                    
+                    <block type="checkout/cart_totals" name="checkout.cart.totals" as="totals" template="checkout/cart/totals.phtml"/>
+                    
+                    <!--block type="checkout/cart_shipping" name="checkout.cart.shipping" as="shipping" template="checkout/cart/shipping.phtml"/
+                    <block type="checkout/cart_crosssell" name="checkout.cart.crosssell" as="crosssell" template="checkout/cart/crosssell.phtml"/>-->                     
+                </block>
+            </reference>   
+      </iframemod_checkout_cart>
+      
+      
+    <iframemod_checkout_onepage>
+        <reference name="head">
+            <action method="addJs" ifconfig="quickcheckout/general/active"><script>quickcheckout/quickcheckout.js</script></action>
+            <action method="addItem" ifconfig="quickcheckout/general/active"><type>skin_css</type><name>css/quickcheckout.css</name></action>
+        </reference>
+        <reference name="root">
+            <action method="setTemplate"><template>page/empty.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="checkout/onepage" name="checkout.onepage" template="quickcheckout/onestep.phtml">
+                <action method="setDummyAddress"/>
+                <block type="checkout/onepage_login" name="checkout.onepage.login" as="osc-login" template="quickcheckout/onestep/login.phtml">
+                    <block type="page/html_wrapper" name="checkout.onepage.login.before" as="login_before">
+                        <action method="setMayBeInvisible"><value>1</value></action>
+                    </block>
+                </block>
+                 <block type="checkout/cart_coupon" name="checkout.cart.coupon" as="coupon" template="quickcheckout/onestep/coupon.phtml"/>
+                <block type="checkout/onepage_billing" name="checkout.onepage.billing" as="billing" template="quickcheckout/onestep/billing.phtml"/>
+                <block type="checkout/onepage_shipping" name="checkout.onepage.shipping" as="shipping" template="quickcheckout/onestep/shipping.phtml"/>
+                <block type="checkout/onepage_shipping_method" name="checkout.onepage.shipping_method" as="shipping_method" template="quickcheckout/onestep/shipping_method.phtml">
+                    <block type="checkout/onepage_shipping_method_available" name="checkout.onepage.shipping_method.available" as="available" template="quickcheckout/onestep/shipping_method/available.phtml"/>
+                </block>
+                <block type="checkout/onepage_payment" name="checkout.onepage.payment" as="payment" template="quickcheckout/onestep/payment.phtml">
+                    <block type="checkout/onepage_payment_methods" name="checkout.payment.methods" as="methods" template="quickcheckout/onestep/payment/methods.phtml">
+                        <action method="setMethodFormTemplate"><method>purchaseorder</method><template>payment/form/purchaseorder.phtml</template></action>
+                    </block>
+                </block>
+                <block type="checkout/onepage_review" name="checkout.onepage.review" as="review" template="quickcheckout/onestep/review.phtml">
+                    <block type="checkout/agreements" name="checkout.onepage.agreements" as="agreements" template="quickcheckout/onestep/agreements.phtml"/>
+                    <block type="core/template" name="checkout.onepage.quickheard" as="quickheard" template="quickcheckout/onestep/quickheard.phtml"/>
+                    <block type="core/template" name="checkout.onepage.billingdetail" as="billingdetail" template="quickcheckout/onestep/billingdetail.phtml"/>
+                    <block type="checkout/onepage_shipping_method_additional" name="checkout.onepage.shipping_method.additional" as="additional" template="quickcheckout/onestep/review/additional.phtml"/>
+                </block>
+            </block>
+        </reference>
+    </iframemod_checkout_onepage>      
+</layout>

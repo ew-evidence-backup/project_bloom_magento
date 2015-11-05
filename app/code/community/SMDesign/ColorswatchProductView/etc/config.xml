@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<config>
+
+	<modules>
+		<SMDesign_ColorswatchProductView>
+			<version>4.0.1</version>
+		</SMDesign_ColorswatchProductView>
+	</modules>
+	
+	<global>
+	
+		<models>
+			<colorswatchproductview>
+				<class>SMDesign_Colorswatchproductview_Model</class>
+			</colorswatchproductview>
+		</models>
+			
+			
+	  <blocks>
+	      <colorswatchproductview><class>SMDesign_ColorswatchProductView_Block</class></colorswatchproductview>
+	  </blocks>
+		<blocks>
+			<catalog>
+				<rewrite>
+					<product_view_media>SMDesign_ColorswatchProductView_Block_Product_View_Media</product_view_media>
+				</rewrite>
+			</catalog>
+		</blocks>
+	  
+
+	  <helpers><colorswatchproductview><class>SMDesign_ColorswatchProductView_Helper</class></colorswatchproductview></helpers>
+			<helpers>
+				<catalog>
+					<rewrite>
+						<image>SMDesign_ColorswatchProductView_Helper_Image</image>
+						<product>SMDesign_ColorswatchProductView_Helper_Product</product>
+					</rewrite>
+				</catalog>
+			</helpers>
+	  
+	  
+  </global>
+  
+  <frontend>
+     <routers>
+          <colorswatchproductview>
+              <use>standard</use>
+              <args>
+                  <module>SMDesign_ColorswatchProductView</module>
+                  <frontName>colorswatchproductview</frontName>
+              </args>
+          </colorswatchproductview>
+      </routers>
+      
+      <layout>
+           <updates>
+                <colorswatchproductview>
+                      <file>colorswatchproductview.xml</file>
+                </colorswatchproductview>
+           </updates>
+      </layout>
+  </frontend>
+  
+<!--	START DEFAULTS	-->
+	<default>
+		<smdesign_colorswatch>
+			<general>
+				<show_options_configurable_block>0</show_options_configurable_block>
+				<update_more_view>1</update_more_view>
+			</general>
+			
+			<popup_info>
+				<enabled>0</enabled>
+			</popup_info>
+		</smdesign_colorswatch>
+	</default>
+  
+<!--	END DEFAULTS	-->
+</config>

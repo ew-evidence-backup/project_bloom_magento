@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Impl_Yelp>
+            <version>0.1.0</version>
+        </Impl_Yelp>
+    </modules>
+    <global>
+         <helpers>
+            <yelp>
+                <class>Impl_Yelp_Helper</class>
+            </yelp>
+        </helpers>
+    </global>
+</config>

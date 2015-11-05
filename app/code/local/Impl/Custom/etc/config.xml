@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Impl_Custom>
+            <version>0.1.0</version>
+        </Impl_Custom>
+    </modules>
+    <global>
+        <helpers>
+            <custom>
+                <class>Impl_Custom_Helper</class>
+            </custom>
+        </helpers>
+        <blocks>
+            <custom>
+                <class>Impl_Custom_Block</class>
+            </custom>
+        </blocks>
+		
+        <models>
+            <custom>
+                <class>Impl_Custom_Model</class>
+                <resourceModel>impl_custom_mysql4</resourceModel>
+            </custom>
+
+            <impl_custom_mysql4>
+                <class>Impl_Custom_Model_Mysql4</class>
+                <entities>
+                    <productzip>
+                        <table>impl_product_zip</table>
+                    </productzip>
+                </entities>
+            </impl_custom_mysql4>
+        </models>
+		
+        <events>
+            <controller_action_layout_load_before>
+                <observers>
+                    <custom_observer>
+                        <type>singleton</type>
+                        <class>Impl_Custom_Model_Observer</class>
+                        <method>check_zip_codes</method>
+                    </custom_observer>
+                </observers>
+            </controller_action_layout_load_before>     
+        </events>
+		
+		
+        <resources>
+            <custom_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </custom_write>
+            <custom_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </custom_read>
+        </resources>
+
+		
+    </global>
+	
+	
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <Impl_Custom before="Mage_Adminhtml">Impl_Custom</Impl_Custom>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+    <frontend>
+        <routers>
+            <custom>
+                <use>standard</use>
+                <args>
+                    <module>Impl_Custom</module>
+                    <frontName>impl_custom</frontName>
+                </args>
+            </custom>
+        </routers>
+        <layout>
+            <updates>
+                <custom>
+                    <file>impl_custom.xml</file>
+                </custom>
+            </updates>
+        </layout>
+        <events>  
+            <checkout_type_onepage_save_order>  
+                <observers>  
+                    <Impl_Custom_Onepage>  
+                        <type>singleton</type>  
+                        <class>Impl_Custom_Model_Observer</class>    
+                        <method>setOrderComment</method>            
+                    </Impl_Custom_Onepage>              
+                </observers>  
+            </checkout_type_onepage_save_order>  
+        </events>
+    </frontend>
+</config>

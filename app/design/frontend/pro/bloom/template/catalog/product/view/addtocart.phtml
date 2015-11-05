@@ -1,0 +1,144 @@
+<script type="text/javascript" src="/js/jquery/js/jquery-ui-1.8.17.custom.min.js"></script>
+<link rel="stylesheet" href="/js/jquery/css/ui-lightness/jquery-ui-1.8.17.custom.css">
+<dl class="attributes">
+<dt><label>Delivery Date:</label></dt>
+<dd class="last"><input type="text" name="delivery_date" id="datepicker" class="input-text required-entry "></dd>
+</dl>
+<dl class="attributes"> <!--
+    <dt><label>Gift Message:</label></dt>
+    <dd class="last"><textarea name="gift-message" id="gift-message" class="input-text"></textarea></dd>
+-->
+</dl>
+<script>
+	jQuery(function() {
+		jQuery( "#datepicker" ).datepicker({
+			minDate: 0,
+			buttonImage: "<?php /*echo $this->getSkinUrl('images/calendar.gif');*/?>",
+			//buttonImageOnly: true,
+			beforeShowDay: nonWorkingDates
+		});
+	});
+	
+	var d = new Date();
+	
+	<?php
+	$new_vendor = Mage::registry('vendorId');
+	$dropship_vendor_new = Mage::getModel('udropship/vendor')->load($new_vendor);
+	
+	$userH = '';
+	$userD = '';
+	
+	$days = Mage::helper('udropship')->getDays($dropship_vendor_new->getId());
+	$daysOutput = '';
+	if(count($days) > 0)
+	{
+		foreach($days as $day)
+		{
+			$daysOutput .= '[' . $day . '],';
+		}
+		$daysOutput = rtrim($daysOutput, ",");
+	}
+	
+	$dates = Mage::helper('udropship')->getDates($dropship_vendor_new->getId());
+	$datesOutput = '';
+	if(count($dates) > 0)
+	{
+		foreach($dates as $date)
+		{
+			$datesOutput .= '[' . date('m', strtotime($date)) . ',' . date('d', strtotime($date)) . '],';
+		}
+		$datesOutput = rtrim($datesOutput, ",");
+	}
+	
+	preg_match('/(\d\d):(\d\d):(\d\d)/',$dropship_vendor_new->getCutOffTime(),$cutof);
+	$cutTxt = ''; ?>
+	
+	cutOfDay = '';
+	sameDD = '<?= $dropship_vendor_new->getHasSameDayDelivery();?>';
+	
+	<?php if(sizeof($cutof > 1)) :
+			$timeZoneArr = array('HST', 'PST', 'MST', 'CST', 'EST');
+			$dateTime = new DateTime();
+			$timezone = (!in_array($dropship_vendor_new->getVTimezone(), $timeZoneArr)) ? 'PST' : $dropship_vendor_new->getVTimezone();
+			$dateTime->setTimezone(new DateTimeZone($timezone));
+			$dateTime->setTime($cutof[1],$cutof[2],0);
+		?>
+		var cutOfH = new Date(<?= ($dateTime->getTimestamp() * 1000)?>);
+
+		if(cutOfH <= d) {
+			cutOfDay = [d.getMonth()+1,d.getDate()];
+		}
+		if('false' == sameDD) {
+			cutOfDay = [d.getMonth()+1,d.getDate()];
+		}
+	<?php endif; ?>
+	
+	function nonWorkingDates(date){
+        var day = date.getDay(), Sunday = 0, Monday = 1, Tuesday = 2, Wednesday = 3, Thursday = 4, Friday = 5, Saturday = 6;
+        var closedDates = [cutOfDay];
+        var closedDays = [<?php echo $daysOutput != '' ? '' . $daysOutput : '' ?>];
+
+        for (var i = 0; i < closedDays.length; i++) {
+            if (day == closedDays[i][0]) {
+                return [false];
+            }
+
+        }
+        for (i = 0; i < closedDates.length; i++) {
+            if (date.getMonth() == closedDates[i][0] - 1 &&
+            date.getDate() == closedDates[i][1]) {
+                return [false];
+            }
+        }
+        return [true];
+	}
+</script>
+
+<?php //echo date('Y-m-d H:i:s e') ?>
+<?php $_product = $this->getProduct();  ?>
+<?php $buttonTitle = $this->__('Add to Cart'); ?>
+
+<?php if($_product->isSaleable() &&
+		$_product->isInVendorStock(Mage::getModel('udropship/vendor')->load(Mage::registry('vendorId'))) &&
+		$dropship_vendor_new->getStatus() != 'I'): ?>
+			<div class="add-to-cart">
+			    
+			    <?php if(!$_product->isGrouped()): ?>
+			    <!--<label for="qty"><?php echo $this->__('Qty:') ?></label>
+			    <input type="text" name="qty" id="qty" maxlength="12" value="<?php echo $this->getProductDefaultQty() * 1 ?>" title="<?php echo $this->__('Qty') ?>" class="input-text qty" />-->
+				    <input type="hidden" name="v" value="<?php echo $_product->getUdropship_vendor(); ?>" />
+			    <?php endif; ?>
+			    
+			    <button type="button" title="<?php echo $buttonTitle ?>" class="button btn-cart" onclick="if (validateEntry()) productAddToCartForm.submit(this);"><span><span><?php echo $buttonTitle ?></span></span></button>
+			    
+			    <?php //echo $this->getChildHtml('', true, true) ?>
+			</div>
+<?php elseif($dropship_vendor_new->getStatus() == 'I'): ?>
+	<div class="out-of-stock">Not Available for Add To Cart</div>
+<?php else: ?>
+	<div class="out-of-stock">Out of Stock</div>
+<?php endif; ?>
+
+<script>
+	function validateEntry() {
+
+		var zip = jQuery(".zipInputPView");
+		var date = jQuery('#datepicker');
+		var validDiv = jQuery('<div class="validation-advice">This is required field</div>');
+
+		if('' == zip.val()) {
+			if(zip.parent().find('.validation-advice').length < 1) {
+				zip.parent().append('<div class="validation-advice">This is required field</div>');
+			}
+		}
+		if('' == date.val()) {
+			if(date.parent().find('.validation-advice').length < 1) {
+				validDiv.insertAfter(date);
+			}
+		}
+		if('' == zip.val() || '' == date.val()) {
+			return false;
+		}
+		return true;
+	}
+</script>

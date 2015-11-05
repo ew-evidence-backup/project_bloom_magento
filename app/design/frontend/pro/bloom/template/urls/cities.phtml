@@ -1,0 +1,30 @@
+<ul class="cities">
+ <?php foreach($this->getCityList() as $city): ?>
+    <li><a href="<?php echo $city['link']?>"><?php echo $city['primary_city'].', '.$city['state'];?></a></li>
+ <?php endforeach; ?>
+</ul>
+
+<?php
+// Pagination
+$maxPages = Mage::getModel('urls/cities')->getMaxPageNumber(200);
+$curPage = Mage::app()->getRequest()->getParam('page', 0);
+$step = 5;
+?>
+<div style="clear:both"></div>
+<br/><br/>
+<ul class="pagination">
+        <li>Page: </li>
+    <?php if(($curPage - $step) < 0):?>
+        <?php   for($i=0; $i<($step*2);$i++):?>
+            <li class="<?php echo ($i == $curPage) ? 'active':'' ?>"><a href="/cities/?page=<?php echo $i;?>"><?php echo $i;?></a></li>
+        <?php   endfor;?>
+    <?php elseif(($curPage + $step) > $maxPages):?>
+         <?php   for($i=$maxPages - $step*2; $i<$maxPages; $i++):?>
+            <li class="<?php echo ($i == $curPage) ? 'active':'' ?>"><a href="/cities/?page=<?php echo $i;?>"><?php echo $i;?></a></li>
+        <?php   endfor;?>   
+    <?php elseif( (($curPage - $step) > 0) && (($curPage + $step) < $maxPages)):?>
+    <?php   for($i=$curPage-$step; $i<$curPage+$step;$i++):?>
+            <li class="<?php echo ($i == $curPage) ? 'active':'' ?>"><a href="/cities/?page=<?php echo $i;?>"><?php echo $i;?></a></li>
+    <?php   endfor;?>
+    <?php endif;?>
+</ul>

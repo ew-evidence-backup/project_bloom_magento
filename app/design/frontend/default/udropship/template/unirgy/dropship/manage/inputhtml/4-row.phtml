@@ -1,0 +1,30 @@
+<?php
+// Get init values
+$val = explode(',',$this->getCurValue());
+$name = $this->getAttrName();
+// Get attribute values array
+$attribute = Mage::getSingleton('eav/config')->getAttribute('catalog_product', $name);
+$attrValues = $attribute->getSource()->getAllOptions(false);
+?>
+<div id="addDesign__answer<?php echo $name?>"></div>
+
+<?php $i = 1;echo '<span class="opt-row">';
+
+foreach($attrValues as $oVal):?>
+<div class="addDesign__answer addDesign__answer<?php echo $name?> m-col206px <?= (in_array($oVal['value'],
+    $val)) ? 'selected' : '';?>">
+        <?php
+                $src = Mage::helper('gomage_navigation')->getOptionImage($attribute->getId(), $oVal['value']);
+        ?>
+
+        <input class="" style="display:none;" type="checkbox" name="<?=$name?>[]" value="<?=$oVal['value']?>" <?= (in_array($oVal['value'],$val)) ? 'checked="checked"' : '';?>/>
+        <div class="addDesign__answer__content">
+                <img class="addDesign__answer__image" src="<?= $this->getUrl()?>/media/option_image/<?= $src;?>" alt="" />
+        </div>
+        <footer class="addDesign__answer__footer">
+                <h3 class="addDesign__answer__title"><?php echo $oVal['label'];?></h3>
+        </footer>
+</div>
+<?php
+    if($i % 4 == 0) {echo '</span><span class="opt-row">';}$i++;
+endforeach;echo '</span>';?>

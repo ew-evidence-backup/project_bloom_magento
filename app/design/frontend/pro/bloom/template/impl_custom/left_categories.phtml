@@ -1,0 +1,14 @@
+<?php $category = Mage::getModel('catalog/category')->load(8) ?>
+<?php $childCategories = $category->getChildrenCategories() ?>
+<?php if(count($childCategories)){ ?>
+	<dt class="odd style-list"><span class="filter-name">Occasion</span></dt>
+  <dd id="advancednavigation-filter-content-style" class="odd">
+    <ol class="gan-list-checkbox ">
+      <?php foreach($childCategories as $val): ?>
+        <li>
+          <a href="<?php echo $val->getUrl() ?>"><?php echo $val->getName() ?></a>
+        </li>
+      <?php endforeach; ?>
+    </ol>
+  </dd>
+<?php } ?>

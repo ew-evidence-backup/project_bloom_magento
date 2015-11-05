@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+      <facebook_index_index translate="label" module="page">
+        <label>Facebook Canvas Layout</label>
+        <block type="page/html" name="root" output="toHtml" template="facebook/base.phtml">
+            <block type="core/template" name="head" as="head" template="facebook/head.phtml"/>
+            <block type="facebook/products" name="content" as="content" template="facebook/canvas.phtml"/>
+        </block>
+    </facebook_index_index>
+
+      <facebook_product_view>
+            <label>Facebook Product Detail Page Detail</label>
+            <block type="page/html" name="root" output="toHtml" template="facebook/base.phtml">
+                  <block type="core/template" name="head" as="head" template="facebook/head.phtml"/>
+                  <block type="facebook/product" name="content" as="content" template="facebook/product-detail.phtml">
+                        <block type="facebook/vendorproducts" name="vendor-products" as="vendor-products" template="facebook/child/vendor-products.phtml"/>
+                  </block>
+            </block>
+      </facebook_product_view>
+    
+      <facebook_index_edit translate="label" module="page">
+            <label>Facebook Canvas Layout</label>
+            <block type="page/html" name="root" output="toHtml" template="facebook/setup/base.phtml">
+                  <block type="page/html" name="head" as="head" template="facebook/setup/head.phtml"/>
+                  <block type="page/html" name="content" as="content" template="facebook/setup/not-logged-in.phtml"/>
+            </block>
+    </facebook_index_edit>
+      <facebook_index_register translate="label" module="page">
+            <label>Facebook Canvas Layout</label>
+            <block type="page/html" name="root" output="toHtml" template="facebook/setup/base.phtml">
+                  <block type="page/html" name="head" as="head" template="facebook/setup/head.phtml"/>
+                  <block type="page/html" name="content" as="content" template="facebook/setup/signup.phtml"/>
+            </block>
+    </facebook_index_register>         
+</layout>

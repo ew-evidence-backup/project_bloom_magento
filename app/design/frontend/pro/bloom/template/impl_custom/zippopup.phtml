@@ -1,0 +1,124 @@
+
+  <div id="zippopup" style="display: none;">
+    <div id="zippopup-content">
+    	<?php if($this->showCloseButton()){ ?>
+      	<button onclick="voidEnteringZip(); return false;" class="close">Close</button>
+      <?php } ?>
+      <form id="zipcode-popup-form-new" method="post" action="/impl_custom/index/search/">
+        <input maxlength="5" type="text" name="query" value="Enter Recipient's Zip Code" default="Enter Recipient's Zip Code" id="zipcodepopup"  />
+        <?php if($this->getRequest()->getControllerName() == 'cart'){ ?>
+        	<button>Go</button>
+        <?php }else { ?>
+    		<button>Go</button>
+    	<?php } ?>
+	<input type="hidden" name="occasion" value="<?php $catId = Mage::registry('current_category'); echo (!empty($catId)) ? $catId->getId() : '8';?>"/>
+      </form>
+      <div id="zippopup-message"></div>
+    </div>
+  </div>
+
+  <div id="zippopup-shipping-change-zip-onestep" style="display: none;">
+
+  </div>
+
+  <div id="zippopup-shipping-change-zip-onestep1" style="display: none;">
+
+  </div>
+
+  <div id="zippopup-shipping-change-zip-multishiping" style="display: none; background: white;">
+
+  </div>
+
+  <script type="text/javascript">
+		var CheckoutZipChange = false;
+
+	  <?php if($this->showDialog()){ ?>
+  	  jQuery(document).ready(function(){
+    	  tb_show('', '#TB_inline?height=200&width=350&inlineId=zippopup&modal=true', '');
+	    });
+  	<?php } ?>
+
+  	function addZipCode(red)
+		{
+			var isValidZip = /(^\d{5}$)|(^\d{5}-\d{4}$)/.test(jQuery('#zipcodepopup').val());
+
+			if(isValidZip)
+			{
+				jQuery.ajax({
+					type: 'post',
+					url:  '/impl_custom/index/ajax_add_zip',
+					data: jQuery('#zipcode-popup-form').serialize(),
+					beforeSend: function(){
+						jQuery('#zippopup-message').html('Loading...');
+					},
+					success: function(data){
+						var data = jQuery.parseJSON(data);
+
+						jQuery('#zippopup-message').html(data.message);
+						if(data.status == 'success')
+						{
+							if(!red){
+								location.href = '<?php echo $_SESSION['zip_refer'] ?>';
+							}else{
+								location.href = '<?php echo $this->getUrl('flowers.html'); ?>';
+							}
+						}
+					}
+				});
+			}
+			else
+			{
+				jQuery('#zippopup-message').html('<span style="color: #990000" class="zippopup-red">Zip code is invalid.<\/span>');
+			}
+		}
+
+		jQuery('input[name=zipcode]').live('focus', function(){jQuery('#zippopup-message').html('');});
+
+    jQuery('input').live('focus', function(){
+      if(jQuery(this).attr('default') != '' && jQuery(this).val() == jQuery(this).attr('default'))
+      {
+        jQuery(this).val('')
+      }
+    });
+
+    jQuery('input').live('blur', function(){
+      if(jQuery(this).attr('default') != '' && jQuery(this).val() == '')
+      {
+        jQuery(this).val(jQuery(this).attr('default'))
+      }
+    });
+
+		jQuery(document).ready(function(){
+			//showShippingChangeZipDialog('zippopup-shipping-change-zip-multishiping');
+		});
+
+		function showShippingChangeZipDialog(type)
+		{
+			 tb_show('', '#TB_inline?height=200&width=350&inlineId=' + type + '&modal=true', '');
+		}
+
+		function voidEnteringZip()
+		{
+			<?php if(!isset($_COOKIE["bloom_nations_zipcode"])){ ?>
+				jQuery.ajax({
+					type: 'post',
+					url:  '/impl_custom/index/ajax_add_zip',
+					data: {zipcode: '00000'},
+					beforeSend: function(){
+						jQuery('#zippopup-message').html('Loading...');
+					},
+					success: function(data){
+						var data = jQuery.parseJSON(data);
+
+						jQuery('#zippopup-message').html('<span style="color: green">Refreshing... Please wait...</span>');
+						if(data.status == 'success')
+						{
+							location.reload();
+						}
+					}
+				});
+			<?php }else{ ?>
+				tb_remove();
+			<?php } ?>
+		}
+  </script>

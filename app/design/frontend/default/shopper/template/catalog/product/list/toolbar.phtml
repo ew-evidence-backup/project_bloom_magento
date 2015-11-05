@@ -1,0 +1,69 @@
+<?php
+/**
+ * Product list toolbar
+ *
+ * @see Mage_Catalog_Block_Product_List_Toolbar
+ */
+?>
+<?php if($this->getCollection()->getSize()): ?>
+<div class="toolbar">
+    <div class="sorter">
+
+        <?php
+        $items_li = $items_select = array();
+        $item_cur = '';
+	$orders = $this->getAvailableOrders();
+	unset($orders['position']);
+        foreach ( $orders as $_key => $_order ) {
+            $li_sel = $option_sel = '';
+            if($this->isOrderCurrent($_key)) {
+                $item_cur = $_order;
+                $li_sel = ' class="selected"';
+                $option_sel = ' selected="selected"';
+            }
+            $items_li[] = '<li'. $li_sel .'><a href="'. $this->getOrderUrl($_key, 'asc') .'">'. $this->__($_order) .'</a></li>';
+            $items_select[] = '<option '.$option_sel.' value="'. $this->getOrderUrl($_key, 'asc') .'">'. $this->__($_order) .'</option>';
+        }
+        ?>
+
+	    <div class="sort-by toolbar-switch">
+            <div class="toolbar-title">
+                <label><?php echo $this->__('Sort By') ?></label>
+                <span class="current"><?php echo $this->__($item_cur) ?></span>
+                <select onchange="setLocation(this.value)">
+                    <?php echo implode('', $items_select); ?>
+                </select>
+            </div>
+            <div class="toolbar-dropdown">
+                <ul><?php echo implode('', $items_li); ?></ul>
+            </div>
+        </div>
+        <div class="sort-order">
+            <?php if($this->getCurrentDirection() == 'desc'): ?>
+            <a href="<?php echo $this->getOrderUrl(null, 'asc') ?>" title="<?php echo $this->__('Set Ascending Direction') ?>"><img src="<?php echo $this->getSkinUrl('images/i_desc_arrow.gif') ?>" width="27" height="27" alt="<?php echo $this->__('Set Ascending Direction') ?>" class="v-middle" /></a>
+            <?php else: ?>
+            <a href="<?php echo $this->getOrderUrl(null, 'desc') ?>" title="<?php echo $this->__('Set Descending Direction') ?>"><img src="<?php echo $this->getSkinUrl('images/i_asc_arrow.gif') ?>" width="27" height="27" alt="<?php echo $this->__('Set Descending Direction') ?>" class="v-middle" /></a>
+            <?php endif; ?>
+        </div>
+
+        <?php echo $this->getChildHtml('layered_nav') ?>
+
+    </div>
+
+    <?php if( $this->isExpanded() ): ?>
+    <div class="pager">
+
+	    <p class="amount">
+            <?php if($this->getLastPageNum()>1): ?>
+                <?php echo $this->__('Items %s to %s of %s total', $this->getFirstNum(), $this->getLastNum(), $this->getTotalNum()) ?>
+            <?php else: ?>
+                <strong><?php echo $this->__('%s Item(s)', $this->getTotalNum()) ?></strong>
+            <?php endif; ?>
+        </p>
+
+	    <?php echo $this->getPagerHtml() ?>
+
+    </div>
+    <?php endif; ?>
+</div>
+<?php endif ?>

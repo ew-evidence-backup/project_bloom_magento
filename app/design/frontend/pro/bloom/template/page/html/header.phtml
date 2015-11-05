@@ -1,0 +1,22 @@
+<?php
+
+?>
+<div class="header-container">
+    <div class="header">
+        <?php if ($this->getIsHomePage()):?>
+        <h1 class="logo"><strong><?php echo $this->getLogoAlt() ?></strong><a href="<?php echo $this->getUrl('') ?>" title="<?php echo $this->getLogoAlt() ?>" class="logo"><img src="<?php echo $this->getLogoSrc() ?>" alt="<?php echo $this->getLogoAlt() ?>" /></a></h1>
+        <?php else:?>
+        <a href="<?php echo $this->getUrl('') ?>" title="<?php echo $this->getLogoAlt() ?>" class="logo"><strong><?php echo $this->getLogoAlt() ?></strong><img src="<?php echo $this->getLogoSrc() ?>" alt="<?php echo $this->getLogoAlt() ?>" /></a>
+        <?php endif?>
+        <div class="quick-access">
+			<a target="_blank" href="/florist" class="florist">Florist Login</a>
+        	<a href="/customer/account/" class="account">Customer Login</a>
+            <span class="customer-service">Customer Service 1-877-70-BLOOM</span>
+            <?php /*echo $this->getChildHtml('topLinks') ?>
+            <?php echo $this->getChildHtml('store_language') */?>
+        </div>
+        <?php echo $this->getChildHtml('topContainer'); ?>
+        <?php echo $this->getChildHtml('topMenu') ?>
+    </div>
+</div>
+

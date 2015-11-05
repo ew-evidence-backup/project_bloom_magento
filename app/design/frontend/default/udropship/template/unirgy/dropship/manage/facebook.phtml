@@ -1,0 +1,213 @@
+<?php
+$_hlp = Mage::helper('udropship');
+$_v = Mage::getSingleton('udropship/session')->getVendor();
+
+?>
+
+<?php if(!$_hlp->getCategoryByVendor($_v->getId())):?>
+    <h4>Sorry this section is not available because approval for your store is still pending</h4>
+    <h5>Average wait time: 8 hours</h5>
+<? return; endif;?>
+
+<h2>Adding your Facebook Store is as easy as One and Two</h2>
+<br/><br/>
+<h3>One: Add Bloomnation Page Tab to Your Facebook Page:</h3>
+<h4><a href="#" style="color: blue; text-decoration: underline;" onclick="addToPage(); return false;">Click to open Add App dialog</a></h4>
+<br/><br/>
+<h3>Two: Add your Facebook Page URL to Your</h3>
+<div>
+    Your Facebook Page Is: http://facebook.com/<input type="text" name="facebook_page" id="facebook_page" value="<?php echo $_v->getFacebookPage();?>"/>
+    <a href="#" id="facebookPageBtn" style="color: blue; text-decoration: underline;" onclick="return false;">Save</a>
+    <span id="facebookMsg"></span>
+</div>
+<br/><br/>
+<h3>Three: <a href="#" id="facebook_photos" onclick="return false;">Add photos from Facebook as Your Products</a></h3>
+
+<div id="albums" style="width: 500px; background: white;">
+    Click on Album Name to view photos
+    <ul id="albums_list"> </ul>
+</div>
+<br/>
+<div id="photos" style="width: 500px; background: white;">
+    Enter product names and prices
+    <form method="post" id="new_products"> </form>
+    <br/><br/>
+    <input id="saveProducts" type="submit" value="Save!"/>
+    <div id="status" style="font-size: 17px;"> </div>
+</div>
+
+
+<script>
+jQuery(document).ready(function($) {
+    // Assign facebook profile to 
+    $('#facebookPageBtn').click(function() {
+        $.post('<?= $this->getUrl('udropship/vendor/facebook');?>',{facebook_page: $('#facebook_page').val()}, function(response) {
+            if(response.success) {
+                $('#facebookMsg').css('color','green');
+            } else {
+                $('#facebookMsg').css('color','red');
+            }
+            $('#facebookMsg').html(response.msg);
+            
+            // The reload part
+            $('#facebookMsg').html($('#facebookMsg').html()+' Reloading in 3 seconds');
+            setInterval(function() { location.reload(); }, 3000);
+        }, 'json');
+    });
+    
+    // Show facebook albums
+    $('#facebook_photos').click(function() {
+        var user = '<?php echo $_v->getFacebookPage(); ?>';
+        
+        displayFbAlbums(user);
+    });
+    
+    // Show photos of an album
+    $('.album_link').live('click',function() {
+        showFbPhotos($(this).attr('id'));
+    });
+    
+    // Post products to back end
+    $('#saveProducts').click(function() {
+        $("#status").html('Please wait, the process might take few minutes...');
+        
+        var post = {data: []};
+        // Make the data to post
+        $('.newProduct').each(function(index,product) {
+            post.data.push({
+                imgSrc: $('.productImg', $(this)).attr('src'),
+                productName: $('.productName', $(this)).val(),
+                productPrice: $('.productPrice', $(this)).val()
+            });
+        });
+        // Check if data was posted
+        if(post.data.length <= 0) {
+            $("#status").html('No image data supplied');
+            return;
+        }
+        $.post('<?= $this->getUrl('udropship/vendor/batchproduct');?>', post, function(response){
+            if(response.success) {
+                $("#status").html('Success: ');
+            } else {
+                $("#status").html('Fail: ');
+            }
+            
+            $("#status").html($("#status").html()+response.msg);
+        },'json');
+    });
+    
+    // Select facebook account to be linked
+    $('#selectFbAccount').click(function() {
+        FBStatus(
+                 function() {
+                    FB.api('/me/accounts', function(response) {
+                        $('#account-select').html('');
+                        $.each(response.data, function(index,acc) {
+                            var optEl = $('<option/>');
+                            optEl.html();
+                        });
+                        $('#account-select').show();
+                    });
+                },
+                function() {}
+        );
+    });
+});
+</script>
+
+<div id='fb-root'></div>
+<script> 
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId      : '343690602390212', // App ID
+            //channelUrl : '//WWW.YOUR_DOMAIN.COM/channel.html', // Channel File
+            //status     : true, // check login status
+            cookie     : true, // enable cookies to allow the server to access the session
+            xfbml      : true  // parse XFBML
+        });
+    };
+    
+    // Load the SDK Asynchronously
+    (function(d){
+        var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement('script'); js.id = id; js.async = true;
+        js.src = "//connect.facebook.net/en_US/all.js";
+        ref.parentNode.insertBefore(js, ref);
+    }(document));
+
+    function addToPage() {
+        // calling the API ...
+        var obj = {
+            method: 'pagetab'
+        };
+        FB.ui(obj);
+    }
+  
+  /* Get FB albums
+   *
+   * @param string user
+   *
+   * @return void
+   */
+    function displayFbAlbums(user) {
+        FB.api('/'+user+'/albums', function(response) {
+            jQuery.each(response.data, function(index, data) {
+                var container = jQuery('<li/>');
+                container.html('<a href="#" onclick="return false;" class="album_link" id="'+data.id+'">'+data.name+'</a>');
+                
+                jQuery('#albums_list').append(container);
+            });
+        });
+    }
+    
+    /* Log in facebook user
+     *
+     * @param function functionSuccess -- execute upon succesful status check
+     * @param function functionFail -- execute on fail status check
+     *
+     * return void
+     */
+    function FBStatus(functionSuccess, functionFail) {
+        FB.getLoginStatus(function(response) {
+            if (response.status === 'connected') {
+                functionSuccess();
+            } else {
+                FB.login(function(response) {
+                    if (response.authResponse) {
+                        functionSuccess();
+                    // Place for actions upon succesful login
+                    } else {
+                        functionFail();
+                    // Place for actions if something went wrong
+                    }
+                }, {scope: 'user_photos'});
+            }
+        });
+    }
+    
+    /* Function show FB Photos
+     *
+     * @param int albumId
+     *
+     * @return void
+     */
+    function showFbPhotos(albumId) {
+        FB.api('/'+albumId+'/photos', function(response) {
+            var imgListForm= jQuery('#new_products');
+            imgListForm.html('');
+            
+            jQuery.each(response.data, function(index,photo) {
+                // Create elements
+                var imgDiv = jQuery('<div/>').addClass('newProduct').attr('id',photo.id);
+                var nameTextInput = jQuery('<input/>').attr('type','text').addClass('productName');
+                var priceTextInput = jQuery('<input/>').attr('type','text').addClass('productPrice');
+                var productImg = jQuery('<img/>').attr({src: photo.source, width: 75}).addClass('productImg');
+                
+                // Append elements to containing div
+                imgDiv.append(productImg).append(nameTextInput).append(priceTextInput);
+                imgListForm.append(imgDiv);
+            });
+        });
+    }
+</script>

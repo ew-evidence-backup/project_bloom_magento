@@ -1,0 +1,9 @@
+<div id="layout" class="orderLayout">
+        <!-- Add design header (start) -->
+        <header class="catalog__header">
+            <h1 class="catalog__title">Orders</h1>
+        </header>
+        <!--  Add design header (end) -->        
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+<?php echo $this->getChildHtml('shipments') ?>
+</div>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+  <modules>
+    <XtraMage_Homeimages>
+      <version>0.1.0</version>
+    </XtraMage_Homeimages>
+  </modules>
+	
+	   <global>
+        <models>
+            <homeimages>
+                <class>XtraMage_Homeimages_Model</class>
+            </homeimages>
+        </models>
+
+        <resources />
+        <extraconfig />
+        <blocks>
+            <homeimages>
+                <class>XtraMage_Homeimages_Block</class>
+            </homeimages>
+        </blocks>
+    </global>
+	
+</config> 

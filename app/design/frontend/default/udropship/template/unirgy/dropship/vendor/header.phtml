@@ -1,0 +1,86 @@
+<?php
+$_session = Mage::getSingleton('udropship/session');
+$_dashboardUrl = Mage::helper('udropship')->isUdpoActive() ? $this->getUrl('udpo/vendor') : $this->getUrl('udropship/vendor');
+$_active = $this->getActivePage();
+$_isUstockPoActive = Mage::helper('udropship')->isModuleActive('ustockpo')
+     && $_session->isLoggedIn() && $_session->getVendor()->getDistributorId();
+?>
+
+<!-- *** Javascript located inside login.phtml *** -->
+
+<!-- Header (start) -->
+<header id="header" class="<?= ($_session->isLoggedIn()) ? '' : 'm-signUpHeader' ?>">
+    <div class="header__content">
+        <?php if ($_session->isLoggedIn()): ?>
+        <div class="header__content__topBar">
+            <!-- Secondary navigation (start) -->
+            <nav class="secondaryNav">
+                    <ul class="secondaryNav__links">
+                            <li><a href="http://www.bloomnation.com/flowercloud/florist-community/" title="">Community</a></li>
+                            <li><a href="http://www.bloomnation.com/flowercloud/florist-handbook/" title="">Florist Handbook</a></li>
+                            <li><a href="http://www.bloomnation.com/flowercloud/cut-the-wire/" title="" target="_blank">Blogs</a></li>
+                            <li><a href="#" onclick="alert('Coming soon')" title="">Help</a></li>
+                            <li><a href="http://www.bloomnation.com" title="http://www.bloomnation.com" target="_blank">BloomNation</a></li>
+                    </ul>				
+            </nav>
+            <!-- Secondary navigation (end) -->
+
+            <!-- Userbar (start) -->
+            <section class="userBar">
+                    <ul class="userBar__links">
+                            <li class="userBar__name"><?php echo $this->htmlEscape($this->__('Welcome, %s', $_session->getVendor()->getVendorName())) ?></li>
+                            <li class="userBar__logoutLink"><a href="<?php echo $this->getUrl('udropship/vendor/logout')?>" title="Logout">Logout</a></li>               
+                    </ul>				
+            </section>
+            <!-- Userbar (end) -->
+        </div>
+        <?php endif; ?>
+        
+        <!-- Logo (start) -->
+        <div id="logo">
+                <a href="<?= $this->getUrl('udropship/vendor/index')?>" title="Home">
+                        <img src="<?= $this->getSkinUrl()?>redesign/i/<?= ($_session->isLoggedIn()) ? 'logo.png' : 'logo_signUp.png';?>" alt="BloomNation" style="vertical-align: middle; margin: 0 6px 10px 0;"/>
+                        <?php if ($_session->isLoggedIn()): ?>
+                        <span><?=$_session->getVendor()->getVendorName();?></span>
+                        <?php endif; ?>
+                </a>
+        </div> 
+        <!-- Logo (end) -->
+
+        <?php if ($_session->isLoggedIn()): ?>
+        <!-- Main navigation (start) -->
+        <nav class="mainNav">				
+                <ul class="mainNav__links">
+                        <li class="mainNav__dashboardLink <?php if ($_active=='dashboard'): ?>active<?php endif ?>"><a href="<?= $_dashboardUrl; ?>" title=""><i class="ico-dashboard"></i>Home</a></li>
+                        <li class="mainNav__catalogLink <?php if ($_active=='manageproducts'): ?>active<?php endif ?>"><a href="<?= $this->getUrl('udropship/vendor/manageproducts') ?>" title=""><i class="ico-catalog"></i>Catalog</a></li>
+                        <li class="mainNav__profileLink <?php if ($_active=='preferences'): ?>active<?php endif ?>"><a href="<?= $this->getUrl('udropship/vendor/preferences'); ?>" title=""><i class="ico-profile"></i>Profile</a></li>
+                        <li class="mainNav__ordersLink <?php if ($_active=='orders'): ?>active<?php endif ?>"><a href="<?= $this->getUrl('udropship/vendor/orders') ?>" title=""><i class="ico-orders"></i>Orders</a></li>
+                </ul>				
+        </nav>
+        <!-- Main navigation (end) -->
+        <?php else: ?>
+        <!-- Login form (start) -->
+        <form id="loginForm" action="" method="post">
+            <div class="loginForm__email">
+                    <label for="f-email">Email address</label>
+                    <input name="login[username]" id="f-email" class="inputText" value="" tabindex=1 />
+                    <p class="loginForm__email__keepme">						
+                            <input id="f-keepme" type="checkbox" />
+                            <label for="f-keepme">Keep me logged in</label>
+                    </p>
+            </div>
+
+            <div class="loginForm__password">
+                    <label for="f-password">Password</label>
+                    <input name="login[password]" id="f-password" class="inputText" type="password" value="" tabindex=2 />
+                    <p class="loginForm__password__forgot">
+                            <a href="<?= $this->getUrl('udropship/vendor/password') ?>" title="">Forgot your password?</a>
+                    </p>
+            </div>
+            <input id="loginForm__submit" type="submit" value="Login" />
+        </form>
+        <!-- Login form (end) -->		        
+        <?php endif;?>
+    </div><!-- .header__content (end) -->
+</header>
+<!-- Header (end) -->

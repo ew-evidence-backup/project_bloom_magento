@@ -1,0 +1,349 @@
+<?xml version="1.0"?>
+<layout>
+
+    <default>
+        <block type="page/html" name="root" output="toHtml" template="page.phtml">
+            <block type="page/html_head" name="head" as="head">
+                <action method="addCss"><stylesheet>redesign/css/reset.css</stylesheet></action>
+                <action method="addCss"><stylesheet>redesign/fonts/fonts.css</stylesheet></action>
+                <action method="addCss"><stylesheet>redesign/css/screen.css</stylesheet></action>
+                <action method="addCss"><stylesheet>redesign/css/validationEngine.jquery.css</stylesheet></action>                
+                
+                <action method="addJs"><script>html5.js</script></action>
+                <action method="addJs"><script>jquery/jquery-1.8.2.min.js</script></action>
+                <action method="addJs"><script>jquery/jquery.simplemodal.1.4.3.min.js</script></action>
+                <action method="addJs"><script>jquery/jsScroll.js</script></action>
+                <action method="addJs"><script>jquery/jquery.validationEngine-en.js</script></action>
+                <action method="addJs"><script>jquery/jquery.validationEngine.js</script></action>
+                <action method="addJs"><script>jquery/other-validations.js</script></action>
+                <action method="addJs"><script>jquery/placeholder.js</script></action>
+                <!--
+                <action method="addItem"><type>skin_css</type><name>css/styles-ie.css</name><params/><if>lt IE 8</if></action>
+                -->
+            </block>
+            <block type="core/template" name="header" template="unirgy/dropship/header.phtml" />
+            <block type="page/html_breadcrumbs" name="breadcrumbs" as="breadcrumbs"/>
+            <block type="core/messages" name="global_messages" as="global_messages"/>
+            <block type="core/messages" name="messages" as="messages"/>
+            <block type="core/text_list" name="content" as="content"/>
+            <block type="core/template" name="footer" template="unirgy/dropship/footer.phtml" />
+            <block type="core/text_list" name="before_body_end" as="before_body_end"/>
+        </block>
+    </default>
+
+    <udropship_vendor>
+        <reference name="root">
+            <action method="setTemplate"><template>page/page.phtml</template></action>
+        </reference>
+        <reference name="head">
+            <action method="setTitle"><title>%florist_name% - Florist Interface</title></action>
+        </reference>
+        <reference name="header">
+            <action method="setTemplate"><template>unirgy/dropship/vendor/header.phtml</template></action>
+        </reference>
+        <reference name="footer">
+            <action method="setTemplate"><template>unirgy/dropship/vendor/footer.phtml</template></action>
+        </reference>
+    </udropship_vendor>
+
+    <udropship_vendor_index>
+        <update handle="udropship_vendor" />
+        <reference name="head">
+            <action method="addJs"><script>jquery/fileuploader.js</script></action>
+        </reference>        
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/dashboard.phtml" name="dashboard" as="dashboard">
+                <block type="core/template" template="unirgy/dropship/shared/aside.phtml" name="aside" as="aside" />
+                <block type="udropship/news" template="unirgy/dropship/shared/news-snippet.phtml" name="news" as="news.snippet"/>
+            </block>
+        </reference>
+    </udropship_vendor_index>
+    
+    <udropship_vendor_orders>
+        <update handle="udropship_vendor" />
+        <reference name="head">
+            <action method="setTitle"><title>%florist_name% - Orders</title></action>
+        </reference>
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/orders.phtml" name="dashboard">
+                <block type="udropship/vendor_shipment_pager" name="shipment.grid.toolbar">
+                    <action method="checkCompat"/>
+                </block>
+                <block type="udropship/vendor_shipment_grid" template="unirgy/dropship/vendor/shipment/grid.phtml" name="shipment.grid" as="shipments"/>
+            </block>
+        </reference>
+    </udropship_vendor_orders>
+
+    <udropship_vendor_login>
+        <update handle="udropship_vendor" />
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/login.phtml" name="login"></block>
+        </reference>
+    </udropship_vendor_login>
+
+    <udropship_vendor_login_ajax>
+        <block type="core/template" template="unirgy/dropship/vendor/login.phtml" name="login" output="toHtml" />
+    </udropship_vendor_login_ajax>
+
+    <udropship_vendor_password>
+        <update handle="udropship_vendor" />
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/password.phtml" name="password" />
+        </reference>
+    </udropship_vendor_password>
+
+    <udropship_vendor_passwordReset>
+        <update handle="udropship_vendor" />
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/password.phtml" name="password">
+                <action method="setMode"><mode>reset</mode></action>
+            </block>
+        </reference>
+    </udropship_vendor_passwordReset>
+
+    <udropship_vendor_logoutsuccess>
+        <update handle="udropship_vendor" />
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/logout.phtml" name="logout" />
+        </reference>
+    </udropship_vendor_logoutsuccess>
+
+    <!-- fix item renderer for simple product -->
+    <sales_order_shipment>
+        <reference name="shipment_items">
+            <action method="addItemRender"><type>simple</type><block>sales/order_item_renderer_default</block><template>sales/order/shipment/items/renderer/default.phtml</template></action>
+            <action method="addItemRender"><type>configurable</type><block>sales/order_item_renderer_default</block><template>sales/order/shipment/items/renderer/default.phtml</template></action>
+            <action method="addItemRender"><type>grouped</type><block>sales/order_item_renderer_grouped</block><template>sales/order/shipment/items/renderer/default.phtml</template></action>
+        </reference>
+    </sales_order_shipment>
+
+    <udropship_vendor_shipmentinfo>
+        <block type="udropship/vendor_shipment_info" template="unirgy/dropship/vendor/shipment/info.phtml" name="info"/>
+    </udropship_vendor_shipmentinfo>
+
+    <udropship_vendor_preferences>
+        <update handle="udropship_vendor" />
+        <reference name="head">
+            <action method="addCss"><stylesheet>redesign/css/pages/catalog/plugins/selectBox.css</stylesheet></action>
+            <action method="addJs"><script>jquery/selectBox.min.js</script></action>
+            <action method="addJs"><script>jquery/fileuploader.js</script></action>
+            <action method="addJs"><script>bloomnation/pagechange.js</script></action>
+            <action method="setTitle"><title>%florist_name% - Manage Profile</title></action>
+        </reference>
+        <reference name="content">
+            <block type="udropship/vendor_preferences" template="unirgy/dropship/vendor/preferences.phtml" name="preferences" />
+        </reference>
+    </udropship_vendor_preferences>
+
+    <udropship_vendor_product>
+        <update handle="udropship_vendor" />
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/product/wrapper.phtml" name="wrapper">
+                <block type="udropship/vendor_product_pager" name="product.grid.toolbar">
+                    <action method="checkCompat"/>
+                </block>
+                <block type="udropship/vendor_product_grid" template="unirgy/dropship/vendor/product/grid.phtml" name="udmulti.product.grid" as="products"/>
+            </block>
+        </reference>
+    </udropship_vendor_product> 
+    
+    <udropship_vendor_batches>
+        <update handle="udropship_vendor" />
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/batches.phtml" name="batches" />
+        </reference>
+    </udropship_vendor_batches>
+
+    <udropship_vendor_wysiwyg>
+        <update handle="udropship_vendor" />
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/wysiwyg/content.phtml" name="wysiwyg_content" />
+        </reference>
+    </udropship_vendor_wysiwyg>
+
+    <uwysiwyg_editor_js>
+        <reference name="head">
+            <action method="addJs"><script>mage/adminhtml/events.js</script></action>
+            <action method="addJs"><script>mage/adminhtml/tools.js</script></action>
+            <action method="addItem"><type>js</type><name>extjs/ext-tree.js</name></action>
+            <action method="addItem"><type>js</type><name>extjs/ext-tree-checkbox.js</name></action>
+            <action method="addItem"><type>js_css</type><name>extjs/resources/css/ext-all.css</name></action>
+            <action method="addItem"><type>js_css</type><name>extjs/resources/css/ytheme-magento.css</name></action>
+            <action method="addItem"><type>js</type><name>mage/adminhtml/wysiwyg/tiny_mce/setup.js</name></action>
+            <action method="addJs"><script>mage/adminhtml/variables.js</script></action>
+            <action method="addJs"><script>prototype/window.js</script></action>
+            <action method="addItem"><type>js_css</type><name>prototype/windows/themes/default.css</name></action>
+            <action method="addItem"><type>js_css</type><name>prototype/windows/themes/magento.css</name></action>
+        </reference>
+    </uwysiwyg_editor_js>
+
+    <uwysiwyg_editor>
+        <reference name="before_body_end">
+            <block type="core/template" name="uwysiwyg_editor_js" template="unirgy/dropship/vendor/wysiwyg.phtml"/>
+        </reference>
+    </uwysiwyg_editor>
+    
+    <udropship_vendor_manageproducts>
+        <update handle="udropship_vendor" />
+        <reference name="head">
+            <action method="addCss"><stylesheet>redesign/css/pages/catalog/plugins/selectBox.css</stylesheet></action>
+            <action method="addCss"><stylesheet>redesign/css/layout/popups/importsPopups.css</stylesheet></action>
+            <action method="addCss"><stylesheet>redesign/css/pages/catalogImport/catalogImport.css</stylesheet></action>
+            <action method="addJs"><script>jquery/selectBox.min.js</script></action>
+            <action method="addJs"><script>bloomnation/product-filter.js</script></action>
+            <action method="setTitle"><title>%florist_name% - Catalog</title></action>
+        </reference>
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/product/wrapper.phtml" name="wrapper">
+                <block type="udropship/manageproducts" template="unirgy/dropship/manage/products.phtml" name="manageproducts" as="products"/>
+            </block>            
+        </reference>
+    </udropship_vendor_manageproducts>
+
+    <udropship_vendor_tempr>
+        <update handle="udropship_vendor" />
+        <reference name="head">
+            <action method="addCss"><stylesheet>redesign/css/pages/catalog/plugins/selectBox.css</stylesheet></action>
+            <action method="addCss"><stylesheet>redesign/css/layout/popups/importsPopups.css</stylesheet></action>
+            <action method="addCss"><stylesheet>redesign/css/pages/catalogImport/catalogImport.css</stylesheet></action>
+        </reference>
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/product/wrapper.phtml" name="wrapper">
+                <block type="udropship/manageproducts" template="unirgy/dropship/manage/temp_products.phtml" name="manageproducts" as="products"/>
+            </block>            
+        </reference>
+    </udropship_vendor_tempr>    
+    
+    <udropship_vendor_editproduct>
+        <update handle="udropship_vendor" />
+        <reference name="head">
+            <action method="addJs"><script>jquery/fileuploader.js</script></action>
+            <action method="addJs"><script>bloomnation/pagechange.js</script></action>
+            <action method="setTitle"><title>%florist_name% - Edit Design</title></action>
+        </reference>                
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/product/wrapper.phtml" name="wrapper">
+                <block type="core/template" template="unirgy/dropship/manage/editproduct.phtml" name="editproduct" as="products"/>
+            </block>            
+        </reference>
+    </udropship_vendor_editproduct>       
+
+    <udropship_vendor_addproduct>
+        <update handle="udropship_vendor" />
+        <reference name="head">
+            <action method="addJs"><script>jquery/fileuploader.js</script></action>
+            <action method="addJs"><script>bloomnation/pagechange.js</script></action>
+            <action method="setTitle"><title>%florist_name% - Add Design</title></action>
+        </reference>                
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/product/wrapper.phtml" name="wrapper">
+                <block type="core/template" template="unirgy/dropship/manage/editproduct.phtml" name="addproduct" as="products"/>
+            </block>            
+        </reference>
+    </udropship_vendor_addproduct>  
+    
+    <udropship_vendor_storefront>
+        <update handle="udropship_vendor" />
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/product/wrapper.phtml" name="wrapper">
+                <block type="core/template" template="unirgy/dropship/manage/storefront.phtml" name="managestorefront" as="products"/>
+            </block>            
+        </reference>        
+    </udropship_vendor_storefront>
+
+    <udropship_vendor_facebook>
+        <update handle="udropship_vendor" />
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/product/wrapper.phtml" name="wrapper">
+                <block type="core/template" template="unirgy/dropship/manage/facebook.phtml" name="managefacebook" as="products"/>
+            </block>            
+        </reference>        
+    </udropship_vendor_facebook>
+    
+    <udropship_vendor_connections>
+        <update handle="udropship_vendor" />
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/product/wrapper.phtml" name="wrapper">
+                <block type="core/template" template="unirgy/dropship/manage/connections.phtml" name="connections" as="products"/>
+            </block>            
+        </reference>        
+    </udropship_vendor_connections>
+
+    <udropship_coupon_index>
+        <update handle="udropship_vendor" />
+        <reference name="root">
+            <block type="core/template" template="unirgy/dropship/shared/aside.phtml" name="aside" as="aside" />
+        </reference>
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/coupon/wrapper.phtml" name="wrapper">
+                <block type="udropship/coupon" template="unirgy/dropship/vendor/coupon/index.phtml"
+                       name="coupon_index" as="coupon"/>
+            </block>
+        </reference>
+    </udropship_coupon_index>
+
+    <udropship_coupon_choose>
+        <update handle="udropship_vendor" />
+        <reference name="root">
+            <block type="core/template" template="unirgy/dropship/shared/aside.phtml" name="aside" as="aside" />
+        </reference>
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/coupon/wrapper.phtml" name="wrapper">
+                <block type="udropship/manageproducts" template="unirgy/dropship/vendor/coupon/products.phtml" name="manageproducts" as="products"/>
+
+            </block>
+        </reference>
+    </udropship_coupon_choose>
+    <udropship_coupon_new>
+        <update handle="udropship_vendor" />
+        <reference name="root">
+            <block type="core/template" template="unirgy/dropship/shared/aside.phtml" name="aside" as="aside" />
+        </reference>
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/coupon/wrapper.phtml" name="wrapper">
+                <block type="udropship/coupon" template="unirgy/dropship/vendor/coupon/new.phtml"
+                       name="managecoupons" as="coupon"/>
+            </block>
+        </reference>
+    </udropship_coupon_new>
+    <udropship_coupon_edit>
+        <update handle="udropship_vendor" />
+        <reference name="root">
+            <block type="core/template" template="unirgy/dropship/shared/aside.phtml" name="aside" as="aside" />
+        </reference>
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/coupon/wrapper.phtml" name="wrapper">
+                <block type="udropship/manageproducts" template="unirgy/dropship/vendor/coupon/index.phtml"
+                       name="managecoupons" as="coupon"/>
+                <block type="udropship/manageproducts" template="unirgy/dropship/vendor/coupon/products.phtml" name="manageproducts" as="products"/>
+
+            </block>
+        </reference>
+    </udropship_coupon_edit>
+
+    <udropship_theme_index>
+        <reference name="head">
+            <action method="addCss"><stylesheet>redesign/css/customization.css</stylesheet></action>
+            <action method="addItem"><type>js_css</type><name>jquery/spectrum.css</name></action>
+            <action method="addJs"><script>jquery/spectrum.js</script></action>
+        </reference>        
+        <update handle="udropship_vendor" />
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/product/wrapper.phtml" name="wrapper">
+                <block type="core/template" template="unirgy/dropship/manage/theme.phtml" name="managetheme" as="products"/>
+            </block>            
+        </reference>        
+    </udropship_theme_index>
+    
+    <udropship_theme_select>
+        <reference name="head">
+            <action method="addCss"><stylesheet>redesign/css/customization.css</stylesheet></action>
+        </reference>
+        <update handle="udropship_vendor" />
+        <reference name="content">
+            <block type="core/template" template="unirgy/dropship/vendor/product/wrapper.phtml" name="wrapper">
+                <block type="core/template" template="unirgy/dropship/manage/theme_select.phtml" name="managetheme" as="products"/>
+            </block>            
+        </reference>        
+    </udropship_theme_select>        
+</layout>

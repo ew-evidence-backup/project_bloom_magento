@@ -1,0 +1,214 @@
+<?php
+/**
+ * Template for Mage_Page_Block_Html
+ */
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo $this->getLang() ?>" lang="<?php echo $this->getLang() ?>">
+<head>
+<?php echo $this->getChildHtml('head') ?>
+
+    <script>
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+	})();
+	
+	 var _gaq = _gaq || [];
+	
+	_gaq.push(['_setAccount', 'UA-19515524-1']);
+	_gaq.push(['_trackPageview']);
+    </script>
+</head>
+<body<?php echo $this->getBodyClass()?' class="'.$this->getBodyClass().'"':'' ?>>
+<!-- ClickTale Top part -->
+<script type="text/javascript">
+var WRInitTime=(new Date()).getTime();
+</script>
+<!-- ClickTale end of Top part -->
+
+<?php echo $this->getChildHtml('after_body_start') ?>
+<div class="wrapper">
+    <?php echo $this->getChildHtml('global_notices'); ?>
+    <div class="page">
+        <?php echo $this->getChildHtml('header') ?>
+        <div class="main-container col1-layout">
+            <div class="homepage-search">
+		<div id="sign-big-post"><h1>Flower Delivery by Local Florists</h1></div>
+		<div id="shop-direct-box">Shop Direct - No Middleman</div>
+		<div id="find-send">Send <span>hand-delivered</span> flowers to someone in</div>		
+		
+                <form id="form-homepage-search" name="form-homepage-search" method="get" action="<?php echo $this->getUrl('custom/index/search') ?>">
+                    <!--
+		    <label for="occasion">Occasion</label>
+                    <?php $category = Mage::getModel('catalog/category')->load(8) ?>
+                    <?php $list = $category->getChildrenCategories() ?>
+	                 <span id="search-message-occasion"></span>
+                    <select id="occasion" name="occasion" style="display:block;">
+                    	<option style="display:block;" value="<?php echo $category->getId() ?>">Select <?php echo $category->getName() ?></option>
+                    	<?php foreach($list as $val){ ?>
+	                    	<option value="<?php echo $val->getId() ?>"><?php echo $val->getName() ?></option>                      
+                      <?php } ?>
+                    </select>-->
+		    <br/>
+		    <input name="occasion" value="8" type="hidden"/>
+                    <input id="input-zipcode" type="text" name="query" value="" autocomplete="off" placeholder="Enter city or zip"/> 
+                    <span id="search-message"></span>
+                    <span class="code-eg">e.g. "Beverly Hills" or "90210"</span>
+		    <div id="search-tooltips" style="">
+			<ul id="tooltip-list" style="">
+			    
+			</ul>
+		    </div>
+		    <button type="button" id="home-search-button" class="home-search-button" onclick="homepageSearch()">Go</button>
+		    <br/><br/>
+                    <div class="button-wrap">
+			<span>Same Day Flower Delivery</span>
+                    </div>
+                </form>
+            </div>
+            <div class="icon-box" style="display: none;">
+            <?php for ($i=1; $i<=4; $i++) { ?>
+            	<a href="javascript: void(0);" onclick="return false;">
+		    <img src="<?php echo Mage::getBaseUrl('media') . 'homeimages/' . Mage::getStoreConfig('design/backend/frontpage_img'.$i); ?>" />
+                    <span class="icon-heading"><?php echo Mage::getStoreConfig('design/backend/frontpage_text'.$i); ?></span>
+                    <span class="icon-text"><?php echo Mage::getStoreConfig('design/backend/frontpage_text'.$i.'2'); ?></span>
+		</a>
+            <?php } ?>
+            </div>
+        </div>
+	<div class="homeMsgs">
+		<?php echo $this->getChildHtml('global_messages'); ?>
+	</div><!--homeMsgs-->
+        <?php echo $this->getChildHtml('footer') ?>
+        <?php echo $this->getChildHtml('before_body_end') ?>
+    </div>
+</div>
+<?php echo $this->getAbsoluteFooter() ?>
+<!-- ClickTale Bottom part -->
+<div id="ClickTaleDiv" style="display: none;"></div>
+<script type='text/javascript'>
+document.write(unescape("%3Cscript%20src='"+
+ (document.location.protocol=='https:'?
+  'https://clicktale.pantherssl.com/':
+  'http://s.clicktale.net/')+
+ "WRc9.js'%20type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var ClickTaleSSL=1;
+if(typeof ClickTale=='function') ClickTale(7723,1,"www09");
+</script>
+<!-- ClickTale end of Bottom part -->
+
+<script>
+    function homepageSearch() {
+	    jQuery('#form-homepage-search').submit();
+	    return false;
+	}
+	
+	jQuery(document).ready(function($) {
+	    
+	    // Put the focus to homepage search
+	    $('#input-zipcode').focus();
+	    // Show the tooltips
+	    $('#input-zipcode').keyup(function(e) {
+		// Dont react on enter and escape
+		if(27 != e.which && 13 != e.which) {
+		    populateTooltips('#tooltip-list');
+		    $('#search-tooltips').show();
+		}
+	    });
+	    
+	    // Go through tooltips
+	    $('html').keydown(function(e) {
+		if($('#search-tooltips').is(":visible")) {
+		    // Up Arrow key
+		    if(38 == e.which) {
+			if($('#search-tooltips li.selected').length > 0) {
+			    if($('#search-tooltips li.selected').prev().length > 0) {
+				$('#search-tooltips li.selected').removeClass('selected').prev().addClass('selected');
+			    } else {
+				$('#search-tooltips li').first().removeClass('selected');
+				$('#search-tooltips li').last().addClass('selected');
+			    }
+			}
+			
+			e.preventDefault();
+		    }
+		    // Arrow Down key
+		    if(40 == e.which) {
+			$('#input-zipcode').blur();
+			if($('#search-tooltips li.selected').length > 0) {
+			    if($('#search-tooltips li.selected').next().length > 0) {
+				$('#search-tooltips li.selected').removeClass('selected').next().addClass('selected');
+			    } else {
+				$('#search-tooltips li').last().removeClass('selected');
+				$('#search-tooltips li').first().addClass('selected');
+			    }
+			} else {
+			    $('#search-tooltips li').first().addClass('selected');
+			}
+			
+			e.preventDefault();
+		    }	    
+		    // Escape key
+		    if(27 == e.which) {
+			$('#search-tooltips').hide();
+			$('#input-zipcode').focus();
+			
+		    }
+		    // Enter key
+		    if(13 == e.which) {
+			if($('#search-tooltips').is(':visible') && $('#search-tooltips li').length > 0) {
+			    $('#search-tooltips').hide();
+			    if($('#search-tooltips li.selected').length > 0) {
+				$('#input-zipcode').val($('#search-tooltips li.selected').html());
+			    } else {
+				$('#input-zipcode').val($('#search-tooltips li:first').html());
+			    }
+			    $('#input-zipcode').focus();
+			    $('#form-homepage-search').submit();
+			    e.preventDefault();
+			}
+		    }		   
+		}
+	    });
+	    
+	    // Set the search value in the box
+	    $('li','#tooltip-list').live('click', function() {
+		$('#search-tooltips').hide();
+		$('#input-zipcode').val($(this).html());
+	    });
+	    
+	    // Hide tooltips when user clicks outside of a tooltip
+	    $('html').click(function(e) {
+		if($(e.target).parents().index($('#search-tooltips')) == -1) {
+		    if($('#search-tooltips').is(":visible")) {
+			$('#search-tooltips').hide();
+		    }
+		}        
+	    });
+	    
+	    // ------------------------------ Functions ----------------------------------------- //
+	    var populateTooltips = function(handler) {
+		var url = '<?php echo $this->getUrl('custom/index/tooltip') ?>?query='+$('#input-zipcode').val();
+		$.get(url, {}, function(response) {
+		    $('#tooltip-list').html('');
+		    if(response.success) {
+			$(response.data).each(function(index, tooltip) {
+			    // Create tooltip
+			    var tooltipEl = $('<li/>');
+			    tooltipEl.html(tooltip);
+			    // Add to tooltip list
+			    $('#tooltip-list').append(tooltipEl);
+			});
+		    }
+		}, 'json');
+	    };
+	});
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,254 @@
+<?php
+$prId = Mage::registry('current_product_id');
+$pr = Mage::getModel('catalog/product')->load($prId);
+$vendor = Mage::getModel('udropship/vendor')->load($pr->getUdropshipVendor());
+Mage::register('current_vendor', $vendor);
+
+// Cut off day\date\time code
+preg_match('/(\d\d):(\d\d):(\d\d)/',$vendor->getCutOffTime(),$cutof);
+$days = Mage::helper('udropship')->getDays($vendor->getId());
+$daysOutput = '';
+if(count($days) > 0) {
+        foreach($days as $day){
+                $daysOutput .= '[' . $day . '],';
+        }
+        $daysOutput = rtrim($daysOutput, ",");
+}
+
+// Zip code checking code
+$vZips = explode("\n", $vendor->getLimitZipcode());
+array_walk($vZips, function(&$item, $key) { $item = trim($item); });
+$vZips = '[' . implode(',',$vZips) . ']';
+
+// Check if zipcode is set already
+$zipVal = ('' == $_COOKIE['bloom_nations_zipcode']) ? '' : $_COOKIE['bloom_nations_zipcode'];
+?>
+
+<div id="zipcodeError" style="">
+        <b><?= $vendor->getVendorName()?></b> doesn&#039;t deliver to this zipcode
+</div>
+
+<div id="layoutFrame">
+
+        <!-- Header (start) -->
+        <header id="header">
+                <div class="header__content">
+
+                        <a class="a-backLink" href="/facebookstore" title="">&#171; Back</a>
+
+                        <!-- Current product (start) -->
+                        <div class="currentProduct">
+                                <div class="currentProduct__image">
+                                        <img src="<?php echo Mage::helper('catalog/image')->init($pr, 'image')->constrainOnly(TRUE)->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->backgroundColor(array(255,255,255))->adaptiveResize(209,227);?>" alt="" />
+                                </div>
+                                <div class="currentProduct__info">
+                                        <header class="currentProduct__info__header">
+                                                <h2 class="currentProduct__title"><?= $pr->getName();?></h2>
+                                                <p class="currentProduct__designed">Designed by <?= $vendor->getVendorName();?></p>
+                                        </header>
+                                        <div class="currentProduct__info__content">
+                                                <p class="currentProduct__desc"><?= $pr->getShortDescription();?></p>
+                                                <span class="currentProduct__cost"><?php echo strip_tags(Mage::helper('checkout')->formatPrice($pr->getPrice())); ?></span>
+                                        </div>
+                                        <form id="orderForm" name="orderForm" action="<?= $this->getSubmitUrl($pr);?>" method="post" target="_blank">
+                                                <label for="f-zipCode"><i class="i-zipCode"></i>Recipient&#039;s Zip-Code</label>
+                                                <input id="f-zipCode" type="text" name="recipZip" maxlength="5" value="<?= $zipVal;?>" class="required"/>
+                                                <label for="f-deliveryDate"><i class="i-calendar"></i>Delivery Date</label>
+                                                <input id="f-deliveryDate" type="text" name="delivery_date" class="required"/>
+                                                <input id="sendBtn" type="submit" name="" value="Send This Now!" />
+                                                
+                                                <input type="hidden" name="product" value="<?= $pr->getId();?>" />
+                                                <input type="hidden" name="related_product" id="related-products-field" value="" />
+                                                <input type="hidden" name="qty" id="qty" maxlength="12" value="0" title="Qty" class="input-text qty" />
+                                                <input type="hidden" name="v" value="<?= $vendor->getId();?>" />
+                                                
+                                        </form>
+                                </div>
+                                <div class="clear"></div>
+                        </div>			
+                        <!-- Current product (end) -->
+                </div>
+                
+                <!-- Social buttons (start) -->
+                <div class="socialContainer">
+                        <div class="fblikes">
+                                
+                        </div>
+                        <div class="pintIt">
+                                
+                        </div>
+                </div>
+                <!-- Social buttons (end) -->
+
+                <!-- Logo (start) -->
+                <div id="produceBy">
+                        <a href="//www.bloomnation.com" target="_blank">
+                                <img src="/js/facebook/i/logo.png" alt="" />
+                        </a>
+                        <p>powered by:</p>
+                </div>
+                <!-- Logo (end) -->
+
+        </header>
+        <!-- Header (end) -->
+
+        <!-- Main content (start) -->
+        <section class="mainContent">
+
+                <!-- Gifts (start) -->
+                <div class="gifts">
+                    <?= $this->getChildHtml('vendor-products'); ?>
+                </div>
+                <!-- Gifts (end) -->
+
+        </section>
+        <!-- Main content (end) -->
+
+</div>
+<script>
+        d = new Date();
+	cutOfDay = '';
+	sameDD = '<?= $vendor->getHasSameDayDelivery();?>';
+	
+	<?php if(sizeof($cutof > 1)) :
+			$dateTime = new DateTime();
+			$timezone = ('' == $vendor->getVTimezone()) ? 'PST' : $vendor->getVTimezone();
+			$dateTime->setTimezone(new DateTimeZone($timezone));
+			$dateTime->setTime($cutof[1],$cutof[2],0);
+		?>
+		cutOfH = new Date(<?= ($dateTime->getTimestamp() * 1000)?>);
+
+		if(cutOfH <= d) {
+			cutOfDay = [d.getMonth()+1,d.getDate()];
+		}
+		if('false' == sameDD) {
+			cutOfDay = [d.getMonth()+1,d.getDate()];
+		}
+	<?php endif; ?>
+        
+ 	function nonWorkingDates(date){
+                var day = date.getDay(), Sunday = 0, Monday = 1, Tuesday = 2, Wednesday = 3, Thursday = 4, Friday = 5, Saturday = 6;
+                var closedDates = [cutOfDay];
+                var closedDays = [<?php echo $daysOutput != '' ? '' . $daysOutput : '' ?>];
+        
+                for (var i = 0; i < closedDays.length; i++) {
+                    if (day == closedDays[i][0]) {
+                        return [false];
+                    }
+        
+                }
+                for (i = 0; i < closedDates.length; i++) {
+                    if (date.getMonth() == closedDates[i][0] - 1 &&
+                    date.getDate() == closedDates[i][1]) {
+                        return [false];
+                    }
+                }
+                return [true];
+	}
+        
+	function setCookie( name, value, expires, path, domain, secure )
+	{
+		// set time, it's in milliseconds
+		var today = new Date();
+		today.setTime( today.getTime() );
+	
+		/*
+		if the expires variable is set, make the correct
+		expires time, the current script below will set
+		it for x number of days, to make it for hours,
+		delete * 24, for minutes, delete * 60 * 24
+		*/
+		if ( expires )
+		{
+		expires = expires * 1000 * 60 * 60 * 24;
+		}
+		var expires_date = new Date( today.getTime() + (expires) );
+	
+		document.cookie = name + "=" +escape( value ) +
+		( ( expires ) ? ";expires=" + expires_date.toGMTString() : "" ) +
+		( ( path ) ? ";path=" + path : "" ) +
+		( ( domain ) ? ";domain=" + domain : "" ) +
+		( ( secure ) ? ";secure" : "" );
+	}        
+</script>
+
+
+<script>
+jQuery(document).ready(function($) {
+        // Florist zips
+        zips = <?= $vZips ?>;
+        
+        /* Check of zipcode is valid
+         *
+         * param string|int checkVal -- value to check against
+         *
+         * return bool isAllowed
+         */
+        var zipIsValid = function(checkVal) {
+            var zipAllowed = false;
+            $.each(zips, function(index, zip) {
+                if(checkVal == zip) {
+                    zipAllowed = true;
+                }
+            });
+            
+            return zipAllowed;
+        };
+        
+        // Date picker
+        $("#f-deliveryDate").datepicker({
+                minDate: 0,
+                buttonImage: "",
+                beforeShowDay: nonWorkingDates
+        });
+        
+        // Zip code check
+        $('#f-zipCode').blur(function() {
+                var el = $(this);
+                
+                if(zipIsValid(el.val())) {
+                        setCookie('bloom_nations_zipcode', el.val(), 0, '/');
+                        $(el).removeClass('redBorder');
+                } else {
+                        $(el).addClass('redBorder');
+                        $(el).effect("shake", { times:3, direction: 'up', distance: 2 }, 300);
+                        $('#zipcodeError').show();
+                        $('#zipcodeError').hide("fade", {}, 2700);
+                }
+        });
+        
+        // For submit check
+        $('#orderForm').submit(function () {
+                var proceed = true;
+                $('input.required').each(function(index, el) {
+                        if('' == $(el).val()) {
+                                $(el).addClass('redBorder');
+                                $(el).effect("shake", { times:3, direction: 'up', distance: 2 }, 300);
+                                proceed = false;
+                        } else {
+                                $(el).removeClass('redBorder');  
+                        }
+                });
+                if(!zipIsValid($('#f-zipCode').val())) {
+                        proceed = false;
+                        $('#zipcodeError').show();
+                        $('#zipcodeError').hide("fade", {}, 2700);                        
+                }
+                
+                return proceed;
+        });
+});
+</script>
+
+<script>
+        (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+        })();
+        
+         var _gaq = _gaq || [];
+        
+        _gaq.push(['_setAccount', 'UA-19515524-1']);
+        _gaq.push(['_trackPageview']);
+</script>

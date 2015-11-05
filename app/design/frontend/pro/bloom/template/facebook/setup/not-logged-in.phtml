@@ -1,0 +1,66 @@
+<body>
+    <div id="layoutFrame" class="createAcc">
+
+            <!-- Header (start) -->
+            <header class="createAcc__header">
+                    <div class="logo">
+                            <a href="#"><img src="/js/facebook/i/logoAcc.png" alt="BloomNation"></a>
+                    </div>
+                    <h1 class="headerAcc__title">Sell your Flowers<br/> on Facebook!</h1>
+            </header>
+            <!-- Header (end) -->
+
+            <!-- Content account (start) -->
+            <div class="contentAcc">
+
+                    <!-- Form login&instal (start) -->
+                    <form id="loginForm">
+                            <h5 class="login__title">Login to your BloomNation account to continue.</h5>
+                            <p class="login__raw">
+                                    <label for="f-username">Username</label>
+                                    <input id="f-username" type="text" name="username"/>
+                            </p>
+                            <p class="login__raw">
+                                    <label for="f-sign__password"> Password</label>
+                                    <input id="f-sign__password" type="password" name="sign__password"/>
+                            </p>
+                            <input id="loginBtn" class="accBtn" type="submit" name="Login&Install" value="Login & Install">
+                            <p class="tooltip">or, <a href="<?= $this->getUrl('facebook/index/register', array('_forced_secure'=>true))?>">Register for a free account</a></p>
+                    </form>
+                    <!-- Form login&instal (end) -->
+
+                    <!-- Prewiev facebook app (start) -->
+                    <div class="previewFbApp">
+                            <img src="/js/facebook/images/prevFbApp_image02.jpg" alt="" />
+                    </div>
+                    <!-- Prewiev facebook app (end) -->
+                    
+            </div>		
+            <!-- Content account (end) -->
+
+            <!-- Footer (start)-->
+            <footer class="createAcc__footer"></footer>
+            <!-- Footer (end) -->
+    </div>
+    
+    
+    <div id="fb-root"></div>
+    <script src='//connect.facebook.net/en_US/all.js'></script>
+    <script>
+        appId = '343690602390212';
+        FB.init({appId: appId, status: true, cookie: true});        
+    </script>
+    
+    <script>
+        (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+        })();
+        
+         var _gaq = _gaq || [];
+        
+        _gaq.push(['_setAccount', 'UA-19515524-1']);
+        _gaq.push(['_trackPageview']);
+    </script>        
+</body>

@@ -1,0 +1,48 @@
+<?php
+$vendor = Mage::getModel('udropship/vendor')->load(Mage::registry('current_svendor'));
+$logoUrl = Mage::getUrl().'media/'.$vendor->getLogo();
+
+?>
+
+<!-- HEADER BOF -->
+<div class="header-container">
+    <div class="top-switch-bg">
+        <div class="row clearfix">
+
+            <div class="grid_6" style="width: 100%;">
+                <?php echo $this->getChildHtml('topLinks') ?>
+            </div>
+        </div>
+    </div>
+    <div class="header-wrapper">
+        <header>
+            <div class="row clearfix">
+                <div class="grid_12">
+                    <?php if ($this->getIsHomePage()):?>
+                    <h1 class="logo"><strong><?php echo $vendor->getVendorName().' logo'; ?></strong><a href="<?php echo $this->getUrl('') ?>" title="<?php echo $vendor->getVendorName().' logo'; ?>" class="logo"><img src="<?= $logoUrl;?>" width="115px" style="width:115px;"/></h1>
+                    <?php else:?>
+                    <a href="<?php echo $this->getUrl('') ?>" title="<?php  echo $vendor->getVendorName().' logo';?>" class="logo"><strong><?php echo $vendor->getVendorName().' logo'; ?></strong><img src="<?= $logoUrl;?>" width="115px" style="width:115px;"/></a>
+                    <?php endif?>
+                    <!-- NAVIGATION -->
+                    <?php
+                        if ( Mage::getStoreConfig('shoppersettings/navigation/use_navigation')) {
+                            echo $this->getChildHtml('topShopperMenu');
+                        } else {
+                            echo $this->getChildHtml('topMenu');
+                        }
+                    ?>
+                    <!-- NAVIGATION EOF -->
+                    <div class="top-dropdowns">
+                        <?php echo $this->getChildHtml('cartTop') ?>
+                        <?php echo $this->getChildHtml('compareTop') ?>
+                        <?php echo $this->getChildHtml('topSearch'); ?>
+                        <div class="clear"></div>
+                    </div>
+                    <?php echo $this->getChildHtml('topContainer'); ?>
+                </div>
+            </div>
+        </header>
+    </div>
+</div>
+<!-- HEADER EOF -->
+<?php echo $this->getChildHtml('slideshow'); ?>

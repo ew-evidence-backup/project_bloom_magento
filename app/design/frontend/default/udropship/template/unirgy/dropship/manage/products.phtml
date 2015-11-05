@@ -1,0 +1,580 @@
+<?php
+    $products = Mage::getModel('catalog/product')
+        ->getCollection()
+        ->addAttributeToFilter('udropship_vendor', Mage::getSingleton('udropship/session')->getId());
+
+    $price = $this->getRequest()->getParam('price', null);
+    // Sort on the fly
+    if($price) {
+        $products->addAttributeToSort('price', $price);
+    } else {
+        $products->addAttributeToSort('entity_id', 'desc');
+    }
+    $products->addAttributeToSort('global_position','desc');
+
+    $showMsg = ('' == $this->getMessagesBlock()->getGroupedHtml() ) ? false : true;
+    
+    $cat = Mage::helper('udropship')->getCategoryByVendor(Mage::getSingleton('udropship/session')->getId());
+    if ($cat) {
+        $cat = Mage::getModel('catalog/category')->load($cat->getId());
+    }
+    
+    $fbUser = Mage::getSingleton('udropship/session')->getVendor()->getFacebookPageId();
+    preg_match('/\/([a-zA-Z_0-9\.]+)$/i',$fbUser,$matches);
+    if(sizeof($matches) > 0) {
+	$fbUser  = $matches[1];
+    }
+    
+    $pendingImport = Mage::getSingleton('core/resource')
+	->getConnection('core_write')
+	->fetchOne('SELECT COUNT(id) FROM udropship_temp_product WHERE vendor_id='.Mage::getSingleton('udropship/session')->getId());
+?>
+
+<script>
+    // Initiate json array of products for filtering purposes
+    products = [];
+</script>
+
+<!-- Layout (start) -->
+<div id="layout" class="catalog">
+
+        <!-- Catalog header (start) -->
+        <header class="catalog__header">
+                <h1 class="catalog__title">Catalog</h1>			
+
+                <!-- Search (start) -->
+                <form class="catalog__search" action="" method="post">
+                    <input id="f-search" type="text" name="" value="" placeholder="Search Catalog" />
+                </form>
+                <!-- Search (end) -->
+
+                <!-- Sorting (start) -->
+                <form class="catalog__sorting" action="" method="post">								
+                        <label for="f-sorting">Sort By</label>
+                        <select id="f-sorting" name="" class="sort-select">
+                            <option value="">Date Added</option>
+                            <option value="asc" <?= ('asc' == $price) ? 'selected="selected"': ''?> >Price low to high</option>
+                            <option value="desc" <?= ('desc' == $price) ? 'selected="selected"': ''?>>Price high to low</option>
+                        </select>
+                        <label for="counter">&nbsp;&nbsp;Count</label>
+                        <span id="counter"></span>
+                </form>			
+                <!-- Sorting (end) -->
+
+        </header>
+        <!-- Catalog header (end) -->
+
+        <!-- Secondary content (start) -->
+        <aside id="secondaryContent">
+
+                <div class="viewStoreBtn secondaryContent__item"><a href="<?= $cat->getUrl();?>" target="_blank" style="color:white; font-family: Arial; display: block; position: absolute; margin: 0px 40px 0 -40px; padding: 13px 68px 12px 75px">View Store</a></div>
+                <button id="importBtn" class="secondaryContent__item" onclick="showFacebook(); return false;">Import</button>
+                <button id="pendingImportBtn" onclick="location.href = '<?=$this->getUrl('udropship/vendor/tempr');?>';">(<span class="importCount"><?= $pendingImport;?></span>) pending import</button>
+		
+                <div id="iconLegend">
+                    <div>
+                        <div class="m-love-i"></div>Great Photo, Price and Design!!!
+                    </div>
+                    <br/>
+			<!--
+                    <div>
+                        <div class="m-warn-i"></div>Please Review Image Quality
+                    </div>
+			-->
+                </div>
+                
+                <!-- Occasion navigation (start) -->			
+                <nav class="catalog__nav">
+                        <header class="catalog__nav__header">
+                                <h2 class="catalog__nav__title">Occasion</h2>
+                        </header>
+                        <?php echo Mage::helper('facebook/filters')->getFilterHtml('occasions','','','unirgy/dropship/manage/filterhtml/product.phtml');?>
+                </nav>
+                <!-- Occasion navigation (end) -->
+
+                <!-- Color navigation (start) -->			
+                <nav class="catalog__nav">
+                        <header class="catalog__nav__header">
+                                <h2 class="catalog__nav__title">Color</h2>
+                        </header>
+                        <?php echo Mage::helper('facebook/filters')->getFilterHtml('color','','','unirgy/dropship/manage/filterhtml/product.phtml');?>
+                </nav>								
+                <!-- Color navigation (end) -->
+
+                <!-- Style navigation (start) -->
+                <nav class="catalog__nav">
+                        <header class="catalog__nav__header">
+                                <h2 class="catalog__nav__title">Style</h2>
+                        </header>
+                        <?php echo Mage::helper('facebook/filters')->getFilterHtml('style','','','unirgy/dropship/manage/filterhtml/product.phtml');?>
+                </nav>
+                <!-- Style navigation (end) -->
+
+                <!-- FLower type navigation (start) -->
+                <nav class="catalog__nav">
+                        <header class="catalog__nav__header">
+                                <h2 class="catalog__nav__title">Flower Type</h2>
+                        </header>
+                        <?php echo Mage::helper('facebook/filters')->getFilterHtml('flower_type','','','unirgy/dropship/manage/filterhtml/product.phtml');?>
+                </nav>			
+                <!-- FLower type navigation navigation (end) -->
+
+                <div class="viewStoreBtn secondaryContent__item" style="line-height: 45px; padding: 0 0 0 80px;"><a href="<?= $cat->getUrl();?>" target="_blank" style="color:white; font-family: Arial;">View Store</a></div>
+
+        </aside>
+        <!-- Secondary content (end) -->
+
+        <!-- Main content (start) -->
+        <div id="mainContent">         
+            <!-- Welcome (start) -->
+            <?php if($showMsg):?>
+            <section id="catalog__tizer" class="tizer">
+                <?= $this->getMessagesBlock()->getGroupedHtml(); ?>
+            </section>
+            <!-- Welcome (end) -->
+            <?php endif; ?>
+            
+            <!-- Catalog content (start) -->
+            <section id="catalogContent">
+                <!-- Add design (start) -->
+                <section id="addDesignContainer" class="m-catalog-addDesign">
+                    <div class="addDesignContainer__content">
+                        <a class="addDesignContainer__link" href="<?php echo $this->getUrl('udropship/vendor/addproduct')?>">
+                            <img src="<?=$this->getSkinUrl()?>redesign/i/add-design-btn.jpg" alt="+" />
+                        </a>
+                    </div>
+                    <footer class="addDesignContainer__footer">
+                        <a class="addDesignContainer__footer__link" href="<?php echo $this->getUrl('udropship/vendor/addproduct')?>" title="">Add design<span>+</span></a>
+                    </footer>
+                </section>
+                <!-- Add design (end) -->
+
+                <?php foreach($products as $_p): $_p = Mage::getModel('catalog/product')->load($_p->getId()); if($_p->getId()): ?>
+                <!-- Catalog item (start) -->
+                <div class="product <?= ($_p->getGlobalPosition() < 151) ? 'm-love' : '' ;?><?= ($_p->getGlobalPosition() > 299 && $_p->getGlobalPosition() < 501) ? 'm-warning-note':''?>" id="p_<?php echo $_p->getId();?>">
+                
+                    <div class="hover_area" style="position: absolute; width: 156px; height: 168px; margin: 1px 0px 0px 3px; padding: 0; z-index: 100;">
+                        <nav class="product__nav" style="display: none;">
+                            <ul class="product__nav__links">
+                                <li><a href="<?= $_p->getProductUrl()?>" title="" target="_blank">View</a></li>
+                                <li><a href="<?= $this->getUrl('udropship/vendor/editproduct')?><?php echo 'id/'.$_p->getId();?>" title="">Edit</a></li>
+                                <li><a href="<?= $this->getUrl('udropship/vendor/delete')?><?php echo 'id/'.$_p->getId();?>" title="" onclick="return confirm('Are you sure you want to delete this product');">Delete</a></li>
+                            </ul>
+                        </nav>
+                    </div>                    
+                    <div class="product__content" style="width:169 ;height:162px;overflow: hidden">
+                        <!--<a href="<?php echo $this->getUrl('udropship/vendor/editproduct')?><?php echo 'id/'.$_p->getId();?>">-->
+                            <img class="product__photo" src="<?php echo (string)Mage::helper('catalog/image')->init($_p, 'small_image')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->resize(169, 180);?>"  alt="" />
+                        <!--</a>-->
+                    </div>
+                    <footer class="product__footer" pid="<?php echo $_p->getId();?>">
+                        <h3 class="product__name" style="min-height: 30px;"><?php echo $_p->getName();?></h3>
+                        <input type="text" class="name_edit" value="<?php echo $_p->getName();?>" style="display: none;"/>
+                        <p class="product__price">$<?= number_format($_p->getPrice(),2);?></p>
+                        <input type="text" class="price_edit" value="<?= number_format($_p->getPrice(),2);?>" style="display: none;"/>
+                    </footer>
+                </div>
+                <script>
+                    products.push(<?php
+                        echo json_encode(array(
+                            'id' => 'p_'.$_p->getId(),
+                            'name' => $_p->getName(),
+                            'price' => (int)$_p->getPrice(),
+                            'color' => explode(',',$_p->getColor()),
+                            'flower_type' => explode(',',$_p->getFlowerType()),
+                            'style' => explode(',',$_p->getStyle()),
+                            'size' => explode(',',$_p->getSize()),
+                            'occasions' => explode(',',$_p->getOccasions()),
+                        ));
+                    ?>);
+                </script>
+                <!-- Catalog item (end) -->
+                <?php endif; endforeach; ?>
+                
+                <!-- Catalog footer (start) -->
+                <footer class="catalog__footer">
+                        <!-- Catalog paginator (start) -->
+                        <!--
+                        <nav class="catalog__paginator">
+                                <button id="catalog__backBtn" class="paginatorBtn defaultBtn">Back</button>
+                                <button id="catalog__nextBtn" class="paginatorBtn">Next</button>
+
+                                <ul class="paginatorNav__links">
+                                        <li class="active">1</li>
+                                        <li><a href="" title="">2</a></li>
+                                        <li><a href="" title="">3</a></li>
+                                        <li><a href="" title="">4</a></li>
+                                        <li><a href="" title="">5</a></li>
+                                        <li><a href="" title="">6</a></li>
+                                </ul>						
+                        </nav>
+                        -->
+                        <!-- Catalog paginator (end) -->    
+                </footer>
+                <!-- Catalog footer (end) -->
+            </section>
+            <!-- Catalog (end) -->
+        </div>
+        <!-- Main content (end) -->		
+</div>
+<!-- Layout (end) -->
+
+<script>jQuery(document).ready(function($) {
+
+// -------------------------------------- FUNCTIONS -----------------------------------------//
+getFilters = function() {
+    var filters = {};
+    // Get name filters
+    filters.name = $('#search-filter').val();
+    // Get additional filters
+    $('ul.filter').each(function(index,el) {
+        elControls = $(el);
+        filters[elControls.attr('attr')] = [];
+        $('.m-selected-item', elControls).each(function (chIndex, chEl) {
+            filters[elControls.attr('attr')].push($(chEl).attr('val'));
+        });
+    });
+
+    return filters;    
+};
+
+// Edit product in ajax mode
+ajaxEditProduct = function(id, data) {
+    var url = '<?= $this->getUrl('udropship/vendor/editproduct');?>';
+    data.id = id;
+    
+    $.post(url, data, function(response) {
+        //alert(response.msg);
+    }, 'json');
+};
+
+var hideEditBoxes = function() {
+    $('.name_edit, .price_edit').each(function(index, el) {
+        $(el).hide();
+        $(el).prev().show();
+    });
+};
+
+// -------------------------------------- DOM EVENTS ---------------------------------------//
+// Apply filters
+$('.filter_item').click(
+    function() {
+        if(!$(this).hasClass('m-selected-item')) {
+            // OR filter for all attributes within one parent
+            $(this).parent().parent().find('a.filter_item').removeClass('m-selected-item');
+            $(this).addClass('m-selected-item'); setFilters(getFilters());
+        } else {
+            $(this).removeClass('m-selected-item'); setFilters(getFilters()); 
+        }
+        // Don't reset to the top of the page
+        return false;
+    }
+);
+// Apply name filter
+$('#f-search').keyup(function() {
+    applyNameFilter($(this).val());
+});
+// Apply price filter
+$('#priceFilterInput').keyup(function() {
+    applyPriceFilter($(this).val());
+});
+// Show number of products
+$('#counter').html(products.length);
+
+// Apply select box
+$('select').selectBox();
+
+// Show\hide the view\modify\delete menu on hover
+$('.hover_area').hover(
+    function() {
+        $(this).children('.product__nav').show();
+    },
+    function() {
+        $(this).children('.product__nav').hide();
+    }
+);
+
+$('body').click(function() {
+    hideEditBoxes();
+});
+// Ajax edit name and price
+$('.product__name, .product__price').click(function(event) {
+    // Prevent default behaviour
+    hideEditBoxes();
+    event.stopPropagation();
+    
+    // Display text edit for this field
+    $(this).css('display','none');
+    $(this).next().css('display','block');
+    $(this).next().focus();
+});
+$('.name_edit, .price_edit').keydown(function(event)  {
+    // Submit product info if enter was pressed
+    if (event.which == 13) {
+        event.preventDefault();
+        // Get local vars
+        var nameField = $(this).parent().children('.name_edit');
+        var priceField  = $(this).parent().children('.price_edit');
+        // Check if price value is a number
+        if(isNaN(priceField.val())) {
+            alert('Price value must be numeric!');
+            return;
+        }        
+        // Css manipulations
+        nameField.css('display','none').prev().css('display','block').html(nameField.val());
+        priceField.css('display','none').prev().css('display','block').html('$'+priceField.val());
+        
+        // Edit product in ajax mode
+        var id = $(this).parent().attr('pid');
+        var data = {
+            'name':  nameField.val(),
+            'price':   priceField.val()
+        };
+        
+        ajaxEditProduct(id,data);
+    } else if (event.which == 27) {
+        hideEditBoxes();
+    }
+});
+
+// Sort by selector price change
+$('#f-sorting').change(function() {
+    switch($(this).val()) {
+        case 'asc':
+            location.href = '<?=$this->getUrl('udropship/vendor/manageproducts')?>price/asc';
+            break;
+        case 'desc':
+            location.href = '<?=$this->getUrl('udropship/vendor/manageproducts')?>price/desc';
+            break;
+        default:
+            location.href = '<?=$this->getUrl('udropship/vendor/manageproducts')?>';
+            break;
+    }
+});
+
+});</script>
+
+
+
+
+<div class="m-overlay" id="fbDiv" style="display: none;">
+	<!-- Popups (start) -->
+	<div id="popupContainer">
+
+		<!-- Imports popup (start) -->
+		<div id="imports" class="popup">
+			<div class="popupContent">
+				<!-- Popup header (start) -->
+				<header id="imports__header">
+					<h3 class="imports__title">Import from Facebook</h3>
+					<ul class="imports__links">
+						<li class="active"><a href="" title="">Import Albums</a></li>
+						<li><a href="" title="">Import Photos</a></li>
+					</ul>
+				</header>
+				<!-- Popup header (start) -->
+
+				<!-- Popup content (start)-->
+				<div id="imports__content">
+					<nav id="breadCrumbs">
+						<p>
+							<a href="#" title="">Your albums</a>
+							<span id="curAlbum"> </span>
+						</p>
+						<a id="backAlbumsLink" href="" title=""><< <span>Go back to all albums</span></a>
+					</nav>
+					<section id="imports__albumsContainer">
+					    
+					    
+					</section>
+					<div id="selAlbum" style="display: none;">
+					    <div class="imports__album m-albumView">
+						    <div class="imports__album__image">
+							    <div>
+								    <img src="" alt="" />
+							    </div>
+						    </div>
+						    <h4 class="imports__album__label"></h4>
+					    </div>
+					    <div class="selectPhoto">
+						    <h3 class="selectPhoto__label">Select all, or individual photos from this album below...</h3>
+						    <span class="arrowSelect"></span>
+					    </div>
+					    <section id="imports__PhotosContainer">
+						
+					    </section>
+					</div>
+					<footer id="viewMore">
+						<a class="viewMoreAlbumsLink" href="">view more albums</a>
+					</footer>
+				</div>
+				<!-- Popup content (end)-->
+
+				<!-- Popup footer (start) -->
+				<footer id="imports__footer">
+					<button id="importSelectedBtn">Import Selected</button>
+					<span>or</span>
+					<a id="cancelLink" href="" title="">Cancel</a>
+					<button id="selectAllBtn">Select All</button>
+					<button id="deselectAllBtn">Deselect All</button>
+				</footer>
+				<!-- Popup footer (end) -->
+			</div>
+		</div>
+		<!-- Imports popup (end) -->
+	</div>
+	<!-- Popups (end) -->
+
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+	// ------------------                  FUNCTIONS --------------------------------- //
+	/* Function show FB Photos
+	 *
+	 * @param object div -- jQuery div object
+	 *
+	 * @return void
+	 */	
+	showAlbumSelection = function(div) {
+	    // Show active div's name and image
+	    $('.m-albumView img').attr('src', div.find('img').first().attr('src'));
+	    $('.m-albumView h4').html(div.find('h4').first().html());
+	    // Populate images
+	    var importsContainer = $('#imports__PhotosContainer');
+	    FB.api('/'+div.attr('id')+'/photos', function(response) {
+		importsContainer.html('');
+		jQuery.each(response.data, function(index,photo) {
+		    // Create elements
+		    var albPhoto = $('<div />', { class:'imports__photo', id: photo.id });
+		    albPhoto.html('<i class="i-select"></i> \
+			<img src="'+photo.source+'" alt="" width="100" />');
+		    importsContainer.append(albPhoto);
+		});
+	    });
+	    
+	    activeAlbumDiv.show();
+	    
+	    return false;
+	};
+	
+	// ------------------                  DOM EVENTS --------------------------------- //
+	var fbDiv = $('#fbDiv');
+	var activeAlbumDiv = $('#selAlbum');
+	
+	showFacebook = function() { displayFbAlbums('<?= $fbUser;?>'); fbDiv.show(); }
+	hideFacebook = function() { fbDiv.hide(); }
+	
+	// Select \ deselect photo
+	$('.imports__photo').live('click', function() {
+	    if($(this).hasClass('m-selected')){
+		$(this).removeClass('m-selected');
+	    } else {
+		$(this).addClass('m-selected');
+	    };	    
+	});
+	
+	// Cancel
+	$('#cancelLink').click(function() {
+	    hideFacebook();
+	    return false;
+	});
+	
+	// Select all
+	$('#selectAllBtn').click(function() {
+	    $('.imports__photo').addClass('m-selected');
+	});
+	
+	// Deselect all
+	$('#deselectAllBtn').click(function() {
+	    $('.imports__photo').removeClass('m-selected');
+	});
+	
+	// Import selected clicked
+	$('#importSelectedBtn').click(function() {
+	    var images = [];
+	    $('.m-selected').each(function(index, el) {
+		images.push($('img',el).attr('src'));
+	    });
+	    $.post('<?= $this->getUrl('udropship/vendor/tempr');?>', {img: images}, function(response) {
+		if(response.success) {
+		    location.reload();
+		}
+	    },'json');
+	});
+    });
+	
+	
+    </script>
+</div>
+
+<div id='fb-root'></div>
+<script> 
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId      : '343690602390212', // App ID
+            //channelUrl : '//WWW.YOUR_DOMAIN.COM/channel.html', // Channel File
+            //status     : true, // check login status
+            cookie     : true, // enable cookies to allow the server to access the session
+            xfbml      : true  // parse XFBML
+        });
+    };
+    
+    // Load the SDK Asynchronously
+    (function(d){
+        var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement('script'); js.id = id; js.async = true;
+        js.src = "//connect.facebook.net/en_US/all.js";
+        ref.parentNode.insertBefore(js, ref);
+    }(document));
+  
+  /* Get FB albums
+   *
+   * @param string user
+   *
+   * @return void
+   */
+    function displayFbAlbums(user) {
+        FB.api('/'+user+'/albums', function(response) {
+	    jQuery('#imports__albumsContainer').html(" ");
+	    
+            jQuery.each(response.data, function(index, data) {
+                var container = jQuery('<div/>', { class: 'imports__album', id: data.id });
+                container.html('	<div class="imports__album__image">\
+					    <a href="#" title=""><div style="overflow:hidden; height: 100px; width: 100px"><img src="//graph.facebook.com/'+data.id+'/picture?type=album" alt="" /></div></a>\
+					</div>\
+					<h4 class="imports__album__label">'+data.name+'</h4>');
+                container.click(function() {
+		    showAlbumSelection(jQuery(this));
+		});
+		
+                jQuery('#imports__albumsContainer').append(container);
+            });
+        });
+    }
+    
+    /* Function show FB Photos
+     *
+     * @param int albumId
+     *
+     * @return void
+     */
+    function showFbPhotos(albumId) {
+        FB.api('/'+albumId+'/photos', function(response) {
+            var imgListForm= jQuery('#new_products');
+            imgListForm.html('');
+            
+            jQuery.each(response.data, function(index,photo) {
+                // Create elements
+                var imgDiv = jQuery('<div/>').addClass('newProduct').attr('id',photo.id);
+                var nameTextInput = jQuery('<input/>').attr('type','text').addClass('productName');
+                var priceTextInput = jQuery('<input/>').attr('type','text').addClass('productPrice');
+                var productImg = jQuery('<img/>').attr({src: photo.source, width: 75}).addClass('productImg');
+                
+                // Append elements to containing div
+                imgDiv.append(productImg).append(nameTextInput).append(priceTextInput);
+                imgListForm.append(imgDiv);
+            });
+        });
+    }
+</script>
+

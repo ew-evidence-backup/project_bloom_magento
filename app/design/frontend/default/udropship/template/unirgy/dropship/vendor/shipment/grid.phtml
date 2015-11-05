@@ -1,0 +1,107 @@
+<?php
+$_hlp = Mage::helper('udropship');
+$_shipments = Mage::helper('core')->decorateArray($_hlp->getVendorShipmentCollection(), '');
+$_vendor = Mage::getSingleton('udropship/session')->getVendor();
+$_vendorMethods = $_vendor->getShippingMethods();
+$_poUsedMethods = $_hlp->getUsedMethodsByPoCollection($_shipments);
+$_statuses = $_hlp->getVendorShipmentStatuses();
+$_reprintUrl = $this->getUrl('udropship/vendor/reprintLabelBatch/track_id/TRACKID/ajax/1');
+$_reprintBatchUrl = $this->getUrl('udropship/vendor/reprintLabelBatch/batch_id/BATCHID/ajax/1');
+$_ajaxInfoUrl = $this->getUrl('udropship/vendor/shipmentInfo/id/ID/ajax/1');
+$_ajaxPostUrl = $this->getUrl('udropship/vendor/shipmentPost/id/ID/ajax/1');
+$_sortBy = $this->getRequest()->getParam('sort_by');
+$_sortDir = $this->getRequest()->getParam('sort_dir');
+$_filterMethods = $this->getRequest()->getParam('filter_method');
+$_filterStatuses = $this->getRequest()->getParam('filter_status');
+$_dateFormat = Varien_Date::convertZendToStrFtime(Mage::app()->getLocale()->getDateFormat(Mage_Core_Model_Locale::FORMAT_TYPE_SHORT), true, false);
+?>
+
+<div class="generic-box">
+
+<div id="debug"></div>
+<?php if($_shipments->count() > 0):?>
+    <table cellspacing="0" class="data-table" id="shipment-grid">
+	<col width="1" />
+	<col />
+	<col />
+	<col />
+	<col />
+	<col />
+	<col width="1" />
+	<col />
+	<thead>
+	    <tr>
+		<th><?php echo $_hlp->__('Order ID')?></th>
+		<th><?php echo $_hlp->__('Delivery Date')?></th>
+		<!--<th><?php echo $_hlp->__('Available On')?></th>
+		<th><?php echo $_hlp->__('Delivery Method')?></th>-->
+		<th><?php echo $_hlp->__('Status')?></th>
+		<th><?php echo $_hlp->__('Items')?></th>
+		<th><?php echo $_hlp->__('Download')?></th>
+	    </tr>
+	</thead>
+	<tbody>
+	<?php foreach ($_shipments as $_id=>$_s):
+	?>
+	    <tr id="row-<?php echo $_id?>" class="trigger <?php echo $_s->getIsEven() ? 'even' : 'odd'?>">
+		<td><?php echo $_s->getOrderIncrementId() ?></td>
+		<td><?php preg_match('/(\d{4})-(\d\d)-(\d\d)/',$_s->getDeliveryDate(),$delDate); echo $delDate[2].'/'.$delDate[3].'/'.$delDate[1]; ?></td>
+		<!--<td><?php echo Mage::helper('core')->formatDate($_s->getCreatedAt(), 'short', true) ?></td>
+		<td><?php echo $_s->getUdropshipMethodDescription() ? $_s->getUdropshipMethodDescription() : $_hlp->__($_vendor->getShippingMethodName($_s->getShippingMethod())) ?></td>-->
+		<td id="status-<?php echo $_id ?>">
+		    <select>
+			<option value=""><?php echo $_hlp->__('* Unknown') ?></option>
+			<?php foreach ($_statuses as $_sid=>$_name): ?>
+			    <option value="<?php echo $_sid ?>" <?= ($_sid == $_s->getUdropshipStatus()) ? 'selected' : '';?>><?php echo $_name ?></option>
+			<?php endforeach ?>
+		    </select>
+		    &nbsp; &nbsp;
+		    <a class="save_status" href="#" rel="<?= $_id?>">Save</a>
+		</td>
+		<td><?php echo $_s->getTotalQty()*1 ?></td>
+		<td>
+		    <a style="white-space:nowrap" href="<?php echo $this->getUrl('udropship/vendor/pdf', array('shipment_id'=>$_s->getId()))?>"><strong><?php echo $_hlp->__('Order Details')?></strong></a>
+		</td>
+	    </tr>
+	<?php endforeach ?>
+	</tbody>
+    </table>
+<?php else:?>
+    <section class="white-frame">
+	<h2 class="latestNews__title">You Have No Orders Yet</h2>
+    
+    </section>
+<?php endif;?>
+</div>
+
+<section class="white-frame" style="margin-top: 20px;">
+    <b>How do I get notified of my orders?</b><br/>
+    When you get an order you will get notified one of several different ways:<br/>
+    -You will get email notification to the email on file with a link to the order<br/>
+    -You will receive a fax is you have added an optional fax number <br/>
+    -You will get a phone call from a BloomNation team member to the number on file<br/>
+    <br/><br/>
+    <b>How will I see my order on here?</b><br/>
+    Once you receive an order, an &quot;Order ID&quot; number will be issued along with an order detail sheet that you can download and print.<br/>
+    <br/><br/>
+    <b>Why do I change the status of my order?</b><br/>
+    Once you have delivered the bouquet you will simply change the status of the bouquet to &quot;Delivered&quot;. This will send a message to the sender that the bouquet was received and also issue your payment.
+    <br/><br/>
+    <b>How do I get paid?</b><br/>
+    Within 7-10 business days, 90% of the sale price (including delivery) will be sent in a check to the address on file. You can continue to receive payment in the form of check or switch payment to direct deposit or even PayPal.
+</section>
+
+<script>
+jQuery(document).ready(function($) {
+    $('a.save_status').click(function() {
+	var data  = {
+	    id: $(this).attr('rel'),
+	    ajax: '1',
+	    status: $(this).prev().val()
+	};
+	var url = '<?php echo $this->getUrl('udropship/vendor/shipmentPost');?>';
+
+	$.post(url, data, function() {}, 'json');
+    });
+});
+</script>

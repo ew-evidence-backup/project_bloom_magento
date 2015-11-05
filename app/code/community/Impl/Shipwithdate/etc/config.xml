@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<config>
+	<modules>
+		<Impl_Shipwithdate>
+			<version>0.1.0</version>
+		</Impl_Shipwithdate>
+	</modules>
+	<frontend>
+		     <layout>
+            <updates>
+                <shipwithdate>
+                    <file>shipwithdate.xml</file>
+                </shipwithdate>
+            </updates>
+        </layout>
+     <events>
+<!--
+      <checkout_cart_product_add_before>
+        <observers>
+          <shipwithdate_observer>
+            <type>model</type>
+            <class>Impl_Shipwithdate_Helper_Data</class>
+            <method>setShipingDate</method>
+          </shipwithdate_observer>
+        </observers>
+      </checkout_cart_product_add_before>
+-->
+            <controller_action_predispatch>
+                <observers>
+                    <controller_action_before>
+                        <class>Impl_Shipwithdate_Helper_Data</class>
+                        <method>hookToControllerActionPreDispatch</method>
+                    </controller_action_before>
+                </observers>
+            </controller_action_predispatch>
+             <controller_action_predispatch_checkout>
+                <observers>
+                    <shipwithdate_observer>
+                        <class>Impl_Shipwithdate_Helper_Data</class>
+                        <method>setProductInfo</method>
+                    </shipwithdate_observer>
+                </observers>
+            </controller_action_predispatch_checkout>
+    </events>
+	</frontend>
+	<global>
+		<models>
+			<shipwithdate>
+				<class>Impl_Shipwithdate_Model</class>
+			</shipwithdate>
+		</models>
+	</global>
+</config>

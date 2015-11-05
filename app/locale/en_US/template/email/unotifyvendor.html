@@ -1,0 +1,37 @@
+<!--@subject New order from {{var store_name}} @-->
+
+<style type="text/css">
+    body,td { color:#2f2f2f; font:11px/1.35em Verdana, Arial, Helvetica, sans-serif; }
+</style>
+
+<div style="font:11px/1.35em Verdana, Arial, Helvetica, sans-serif;">
+<table cellspacing="0" cellpadding="0" border="0" width="98%" style="margin-top:10px; font:11px/1.35em Verdana, Arial, Helvetica, sans-serif; margin-bottom:10px;">
+<tr>
+    <td align="center" valign="top">
+        <!-- [ header starts here] -->
+        <table cellspacing="0" cellpadding="0" border="0" width="650">
+            <tr>
+                <td valign="top"><a href="{{store url=''}}"><img src="{{skin url='images/logo_email.gif' _area='frontend'}}" alt=""  style="margin-bottom:10px;" border="0"/></a></td>
+            </tr>
+        </table>
+        <!-- [ middle starts here] -->
+        <table cellspacing="0" cellpadding="0" border="0" width="650">
+            <tr>
+                <td valign="top">
+                    <p><strong>Dear {{var vendor_name}},</strong></p>
+
+                    <p>This email is to notify you that a customer has purchased your products on our website. Below is a break down of their order.</p>
+                    <p>Please keep this email for your personal records and sales tracking.</p>
+                    <p>Order: {{var order_id}}</p>
+                    <p>Date: {{var order.getCreatedAtFormated('long')}}</p>
+
+                    {{block type="core/template" template="unirgy/notifyvendor/items.phtml" items=$items}}
+
+                    <p>Thank you, <a href="{{store url=''}}">{{var store_name}}</a></p>
+               </td>
+           </tr>
+       </table>
+   </td>
+</tr>
+</table>
+</div>

@@ -1,0 +1,191 @@
+<config>
+    <sections>
+        <design>
+            <groups>
+                <backend translate="homeimages">
+                    <label>Frontpage and Authencity Blocks</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>20</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+					
+						<frontpage_img1 translate="label comment">
+                            <label>Image: Frontpage 1 </label>
+                            <frontend_type>image</frontend_type>
+                            <backend_model>homeimages/system_config_backend_image</backend_model>
+                            <upload_dir config="system/filesystem/media" scope_info="1">homeimages</upload_dir>
+                            <base_url type="media" scope_info="1">homeimages</base_url>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Image.&lt;br /&gt;(png) - 207px X 207px</comment>
+                        </frontpage_img1>										
+
+                        <frontpage_link1 translate="label">
+                            <label>Link: Frontpage 1</label>
+                            <comment>text</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </frontpage_link1>
+        									
+						<frontpage_text1 translate="label">
+                            <label>Head: Frontpage 1</label>
+                            <comment>text</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </frontpage_text1>	
+											
+						<frontpage_text12 translate="label">
+                            <label>Text: Frontpage 1</label>
+                            <comment>text</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </frontpage_text12>
+						
+                        <frontpage_img2 translate="label comment">
+                            <label>Image: Frontpage 2 </label>
+                            <frontend_type>image</frontend_type>
+                            <backend_model>homeimages/system_config_backend_image</backend_model>
+                            <upload_dir config="system/filesystem/media" scope_info="1">homeimages</upload_dir>
+                            <base_url type="media" scope_info="1">homeimages</base_url>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Image.&lt;br /&gt;(png) - 207px X 207px</comment>
+                        </frontpage_img2>										
+
+                        <frontpage_link2 translate="label">
+                            <label>Link: Frontpage 2</label>
+                            <comment>text</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </frontpage_link2>
+						
+						<frontpage_text2 translate="label">
+                            <label>Head: Frontpage 2</label>
+                            <comment>text</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </frontpage_text2>	
+						
+						<frontpage_text22 translate="label">
+                            <label>Text: Frontpage 2</label>
+                            <comment>text</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>8</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </frontpage_text22>
+						
+						<frontpage_img3 translate="label comment">
+                            <label>Image: Frontpage 3 </label>
+                            <frontend_type>image</frontend_type>
+                            <backend_model>homeimages/system_config_backend_image</backend_model>
+                            <upload_dir config="system/filesystem/media" scope_info="1">homeimages</upload_dir>
+                            <base_url type="media" scope_info="1">homeimages</base_url>
+                            <sort_order>9</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Image.&lt;br /&gt;(png) - 207px X 207px</comment>
+                        </frontpage_img3>										
+
+                        <frontpage_link3 translate="label">
+                            <label>Link: Frontpage 3</label>
+                            <comment>text</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </frontpage_link3>
+						
+						<frontpage_text3 translate="label">
+                            <label>Head: Frontpage 3</label>
+                            <comment>text</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>11</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </frontpage_text3>	
+						
+						<frontpage_text32 translate="label">
+                            <label>Text: Frontpage 3</label>
+                            <comment>text</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>12</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </frontpage_text32>	
+						
+						<frontpage_img4 translate="label comment">
+                            <label>Image: Frontpage 4 </label>
+                            <frontend_type>image</frontend_type>
+                            <backend_model>homeimages/system_config_backend_image</backend_model>
+                            <upload_dir config="system/filesystem/media" scope_info="1">homeimages</upload_dir>
+                            <base_url type="media" scope_info="1">homeimages</base_url>
+                            <sort_order>13</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Image.&lt;br /&gt;(png) - 207px X 207px</comment>
+                        </frontpage_img4>										
+
+                        <frontpage_link4 translate="label">
+                            <label>Link: Frontpage 4</label>
+                            <comment>text</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>14</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </frontpage_link4>
+							
+						<frontpage_text4 translate="label">
+                            <label>Head: Frontpage 4</label>
+                            <comment>text</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>15</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </frontpage_text4>
+						
+						<frontpage_text42 translate="label">
+                            <label>Text: Frontpage 4</label>
+                            <comment>text</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>16</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </frontpage_text42>	
+											
+                    </fields>
+                </backend>
+            </groups>
+        </design>
+    </sections>
+</config>

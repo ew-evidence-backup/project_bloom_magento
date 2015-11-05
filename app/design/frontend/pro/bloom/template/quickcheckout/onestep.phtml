@@ -1,0 +1,86 @@
+<?php
+$checkUseForShipping = Mage::getSingleton('checkout/session')->getData('use_for_shipping');
+if(is_null($checkUseForShipping)){
+    Mage::getSingleton('checkout/session')->setData('use_for_shipping',true);
+    $checkUseForShipping = true;
+
+}?>
+<?php
+$vendor = Mage::getModel('udropship/vendor')->load(Mage::getSingleton('checkout/session')->getQuote()->getItemsCollection()->getFirstItem()->getUdropshipVendor());
+Mage::register('vendor_checkout', $vendor->getVendorName());
+$vZips = $vendor->getLimitZipcode();
+$vZips = explode("\n",$vZips);
+array_walk($vZips, function(&$item, $key) { $item = trim($item); });
+$vZips = implode(',',$vZips);
+$vZips = '['.$vZips.']';
+?>
+<script type="text/javascript">
+countryRegions = <?php echo $this->helper('directory')->getRegionJson() ?>
+</script>
+<style>
+    li.shipping_method{display: none;}
+</style>
+<div class="main_checkout v-fix f-fix">
+    <div class="main_header">
+        <h1><?php echo Mage::helper('quickcheckout')->getQuickCheckoutTitle(); ?></h1>
+        <h2><?php //echo Mage::helper('quickcheckout')->getQuickCheckoutContent() ?></h2>       
+    </div>
+    <?php if(!$this->isCustomerLoggedIn() && Mage::helper('quickcheckout')->getQuickCheckoutConfig('general/enable_login')): ?>
+        <?php echo $this->getChildHtml('osc-login'); ?>  
+    <?php endif; ?>
+    <div style="clear: both;"></div>
+    <div id="quickcheckout-ajax-loader" style="display:none;">
+        <div id="quickcheckout-ajax-loader-text"> Loading...</div>
+    </div>
+    
+    <form id="onestepcheckout-form" action="" method="post">
+    <?php foreach($this->getSteps() as $_stepId => $_stepInfo): 
+                if (!$this->getChild($_stepId) || !$this->getChild($_stepId)->isShow()):
+                        continue;
+                endif;
+    ?>
+            <div class="check-step"><?php echo $this->getChildHtml($_stepId) ?></div>
+    <?php endforeach; ?>
+    </form>
+            <div class="clear"></div>
+            <?php if(Mage::helper('quickcheckout')->getQuickCheckoutConfig('general/enable_coupon')): ?>
+                <?php echo $this->getChildHtml('coupon') ?> 
+            <?php endif; ?>
+</div>
+<script type="text/javascript">
+//<![CDATA[
+var cartupdate = new CartUpdate('<?php echo $this->getUrl('checkout/onestep/cartupdate') ?>');
+    var addaddressb4review='<?php echo $this->getUrl('checkout/onestep/save_Before_Review') ?>';
+    var onestepcheckout = new Onestepcheckout(
+                {
+                    failure: '<?php echo $this->getUrl('checkout/onepage/failure') ?>',
+                    reloadReview: '<?php echo $this->getUrl('checkout/onestep/reloadReview') ?>',
+                    reloadPayment: '<?php echo $this->getUrl('checkout/onestep/reloadPayment') ?>',
+                    success: '<?php echo $this->getUrl('checkout/onepage/success') ?>'
+                }                                      
+            );
+    if($('billing-address-select')) {
+        billing.setAddress($('billing-address-select').value);
+    } else {
+        billing.saveCountry();
+    }
+//]]>
+</script>
+<script>
+    jQuery(document).ready(function($) {
+        zips = <?= $vZips ?>;
+        $('#shipping\\:postcode').blur(function() {
+            var zipAllowed = false;
+            $.each(zips, function(index, zip) {
+                if($('#shipping\\:postcode').val() == zip) {
+                    zipAllowed = true;
+                }
+            });
+            if(!zipAllowed) {
+                $('#no-del-note').show();
+            } else {
+                $('#no-del-note').hide();
+            }
+        });
+    });
+</script>

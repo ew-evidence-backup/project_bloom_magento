@@ -1,0 +1,40 @@
+<?php
+$name = $this->getAttrCode();
+// Get attribute values array
+
+
+$attrObj = $this->getAttrObj();
+$images = $this->getAttrImages();
+if ($image_width = $attrObj->getImageWidth()) {
+    $image_width = 'width="' . $image_width . '"';
+} else {
+    $image_width = '';
+}
+if ($image_height = $attrObj->getImageHeight()) {
+    $image_height = 'height="' . $image_height . '"';
+} else {
+    $image_height = '';
+}
+$image_align = $attrObj->getImageAlign();
+
+$attrValues = $attrObj->getSource()->getAllOptions(false);
+?>
+
+<ul attr="<?php echo $name?>" class="catalog__nav__links filter">
+    <?php foreach ($attrValues as $_item): ?>
+    <?php
+
+    $image_url = '';
+
+    if (!empty($images[$_item['value']])) {
+        if (file_exists(Mage::getBaseDir('media') . '/option_image/' . $images[$_item['value']])) {
+            $image_url = Mage::getBaseUrl('media') . '/option_image/' . $images[$_item['value']];
+
+        } else {
+            $image_url = Mage::getBaseUrl('media') . '/catalog/category/' . $images[$_item['value']];
+        }
+    }
+    ?>
+    <li><a val="<?php echo $_item['value']?>" href="#" title="" class="filter_item"><img <?php echo $image_width, ' ', $image_height;?> title="<?php echo $_item['label'] ?>" src="<?php echo $image_url;?>" alt="<?php echo $_item['label']?>" /></a></li>
+    <?php endforeach; ?>
+</ul>

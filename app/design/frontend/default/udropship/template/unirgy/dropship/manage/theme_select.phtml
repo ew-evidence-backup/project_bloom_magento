@@ -1,0 +1,234 @@
+<?php
+
+$_v = Mage::getSingleton('udropship/session')->getVendor();
+
+?>	
+        
+        <!-- Layout (start) -->
+	<div id="layout" class="cust">		
+
+		<!-- Customization form (begin) -->
+		<form id="custForm" method="post" action="#">
+
+			<!-- Intro (begin) -->
+			<section id="custIntro" class="custStep">		
+				
+				<div class="custStep__content">					
+					<h2 class="custIntro__title">Set up your own premium<br />website in just a few easy steps.</h2>
+					<img class="custIntro__image" src="<?= $this->getSkinUrl()?>redesign/i/custIntro.jpg" alt="" />
+				</div>
+
+			</section>
+			<!-- Intro (end) -->
+
+			<!-- Step1: Store Url (begin) -->
+			<section id="custStoreUrl" class="custStep">
+				
+				<header class="custStep__header">
+					<h2 class="custStep__title">Step 1 - Select a Domain Name</h2>
+				</header>				
+				
+				<div class="custStep__content">					
+					<div id="subdomainForm"> 
+						<p id="subdomainForm__httpLabel">http://</p>
+						<input id="f-subdomainForm__url" class="inputText" type="text" value="<?=$_v->getSubdomain();?>" />
+						<p id="subdomainForm__bloomnationLabel">.bloomnation.com</p>
+						<input id="a-subdomainForm__saveBtn" type="submit" value="Save" />
+						<p class="validLabel labl" id="validLabel" style="display: none;">Name is available!</p>
+                                                <p class="invalidLabel labl" style="color:red; font-size: 14px; margin: 5px 0 0 150px; display: none;">Name is not available!</p>
+                                                <ul style="padding: 10px 0 0 64px; font-size:13px; color: grey;">
+                                                    <li>- Only alphabetical characters and dashes(-)</li>
+                                                    <li>- Must be unique</li>
+                                                    <li>- Must be 4 characters or longer</li>
+                                                </ul>
+					</div>
+                                        
+                                        
+					<div id="newdomainForm">
+						<h2 class="newdomainForm__title">Want to use your own personalized domain? <span>(optional)</span></h2>
+						<input id="f-newdomainForm__url" class="inputText" type="text" value="<?= $_v->getVendorWebsite();?>" placeholder="www.example.com"/>
+						<input id="a-newdomainForm__addBtn" type="submit" value="Add" />
+						<p class="validLabel" id="customUrlAdded" style="display: none;">Your request has been sent.</p>
+					</div>
+                                        
+				</div>
+
+			</section>
+			<!-- Step1: Store Url (end) -->
+
+			<!-- Step2: select theme (begin) -->
+			<section id="custSelectTheme" class="custStep">
+				
+				<header class="custStep__header">
+					<h2 class="custStep__title">Step 2 - Select your theme</h2>
+				</header>				
+				
+				<div class="custThemesList">				
+
+					<!-- Theme (begin) -->					
+					<div class="custTheme active">
+						<div class="custTheme__preview">
+							<img src="<?= $this->getSkinUrl()?>redesign/i/themePreview.jpg" alt="" />
+						</div>
+						<footer class="custTheme__footer">
+							<h6 class="custTheme__status">Selected</h6>
+						</footer>
+						<nav class="custTheme__nav">
+							<ul>
+								<li><a href="#" title="Preview theme">Preview</a></li>
+								<li><a href="#" title="Select theme">Select</a></li>
+							</ul>
+						</nav>
+					</div> 
+					<!-- Theme (end) -->
+
+					<!-- Theme (begin) -->					
+					<div class="custTheme">
+						<div class="custTheme__preview">
+							<img src="<?= $this->getSkinUrl()?>redesign/i/themeComingSoon.jpg" alt="" />
+						</div>
+						<footer class="custTheme__footer">
+							<h6 class="custTheme__status">Select</h6>
+						</footer>
+						<nav class="custTheme__nav">
+							<ul>
+								<li><a href="#" title="Preview theme">Preview</a></li>
+								<li><a href="#" title="Select theme">Select</a></li>
+							</ul>
+						</nav>
+					</div> 
+					<!-- Theme (end) -->
+
+					<!-- Theme (begin) -->					
+					<div class="custTheme">
+						<div class="custTheme__preview">
+							<img src="<?= $this->getSkinUrl()?>redesign/i/themeComingSoon.jpg" alt="" />
+						</div>
+						<footer class="custTheme__footer">
+							<h6 class="custTheme__status">Select</h6>
+						</footer>
+						<nav class="custTheme__nav">
+							<ul>
+								<li><a href="#" title="Preview theme">Preview</a></li>
+								<li><a href="#" title="Select theme">Select</a></li>
+							</ul>
+						</nav>
+					</div> 
+					<!-- Theme (end) -->
+
+					<!-- Theme (begin) -->					
+					<div class="custTheme">
+						<div class="custTheme__preview">
+							<img src="<?= $this->getSkinUrl()?>redesign/i/themeComingSoon.jpg" alt="" />
+						</div>
+						<footer class="custTheme__footer">
+							<h6 class="custTheme__status">Select</h6>
+						</footer>
+						<nav class="custTheme__nav">
+							<ul>
+								<li><a href="#" title="Preview theme">Preview</a></li>
+								<li><a href="#" title="Select theme">Select</a></li>
+							</ul>
+						</nav>
+					</div> 
+					<!-- Theme (end) -->
+
+				</div>
+
+			</section>
+			<!-- Step2: select theme (end) -->
+
+			<!-- Step3 (begin) -->
+			<section id="custYourTheme" class="custStep">
+				
+				<header class="custStep__header">
+					<h2 class="custStep__title">Step 3 - Customize your theme</h2>
+				</header>				
+				
+				<div class="custStep__content">					
+					<h4 class="custSelectTheme__title"><a style="color: #008C91"  href="<?= $this->getUrl('udropship/theme/index');?>">Edit</a> colors, backgrounds or styles in your theme</h4>
+                                        <h3 style="font-size:21px;"><a style="color: #008C91" href="<?= $this->getUrl('udropship/theme/index');?>">Customize</a></h3><br/>
+				</div>
+
+			</section>
+			<!-- Step3 (end) -->
+			
+			<!-- Customization footer (begin) -->
+			<footer id="cust__footer">
+				<input id="a-custLaunchBtn" type="submit" value="Launch"/>
+			</footer>
+			<!-- Customization footer (end) -->
+			
+		</form>
+		<!-- Customization form (end) -->
+
+	</div>
+	<!-- Layout (end) -->
+        
+<script>
+    jQuery(document).ready(function($) {
+        /*
+        $('#f-subdomainForm__url').blur(function() {
+            var data = { subdomain: $(this).val() };
+            var url = '<?= $this->getUrl('udropship/vendor/preferencesPost');?>';
+            $.post(url, data, function(response) { }, 'json');
+        });*/
+        
+        // Save their subdomain
+        var savedFlag = false;
+        var activeSubdomain = <?= ('' == $_v->getSubdomain()) ? 'false' : 'true'; ?>;
+        $('#a-subdomainForm__saveBtn').click(function() {
+            if(!confirm('You can save your domain name only once. Continue?')) { return false; }
+            var patt = /^[a-zA-Z0-9-]+$/;
+            if(!patt.test($('#f-subdomainForm__url').val())) { alert('Please follow the name rules'); return false;}
+            
+            if(!savedFlag && !activeSubdomain) {
+                var data = { subdomain: $('#f-subdomainForm__url').val() };
+                var url = '<?= $this->getUrl('udropship/vendor/preferencesPost');?>';
+                $.post(url, data, function(response) {
+                    savedFlag = true;
+                }, 'json');                
+            } else {
+                alert('Your store name is already saved, email support@bloomnation.com if you want to change it');
+            }
+            return false;
+        });
+        // Check name availability as user typing
+        $('#f-subdomainForm__url').keyup(function() {
+            input = $(this);
+            if(input.val().length > 3) {
+                var url = '<?= $this->getUrl('udropship/theme/checkname');?>';
+                var data  = { name: input.val() };
+                $.post(url, data, function(response) {
+                    $('.labl').hide();
+                    if(response.success) {
+                        $('#validLabel').show();
+                    } else {
+                        $('.invalidLabel').show();
+                    }
+                }, 'json');
+            }
+        });
+        // Launch button
+        $('#a-custLaunchBtn').click(function() {
+            var url = '//'+$('#f-subdomainForm__url').val()+'.bloomnation.com';
+            window.open(url, '_blank');
+            return false;
+        });
+        // Custom domain button
+        $("#a-newdomainForm__addBtn").click(function() {
+            
+            var url = '<?= $this->getUrl('udropship/theme/domainname')?>';
+            var data = { domain: $('#f-newdomainForm__url').val()  };
+            $.post(url, data, function(response) {
+            }, 'json');
+            
+            data = { vendor_website: $('#f-newdomainForm__url').val() };
+            url = '<?= $this->getUrl('udropship/vendor/preferencesPost');?>';
+            $.post(url, data, function(response) { }, 'json');                   
+            
+            $('#customUrlAdded').show();
+            return false;
+        });
+    });
+</script>

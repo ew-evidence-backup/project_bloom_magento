@@ -1,0 +1,28 @@
+<?php
+$vendor = Mage::registry('current_vendor');
+$col = Mage::getModel('catalog/product')->getCollection()
+    ->addFieldToFilter('udropship_vendor', $vendor->getId())
+    ->addAttributeToSort('global_position','asc')
+    ->setPageSize(14);
+
+?>
+
+<!-- Gifts header (start) -->
+<header class="gifts__header">
+        <h2 class="gifts__header__title"><i class="i-gifts"></i>Other Gifts by <?=$vendor->getVendorName();?></h2>
+        <a class="a-seeALl" href="/facebookstore" title="">See All</a>
+</header>
+<!-- Gifts header (start) -->
+
+<!-- Gifts content (start) -->
+<div class="gifts__gallery">
+        <?php foreach($col as $pr): $pr = Mage::getModel('catalog/product')->load($pr->getId());?>
+        <div class="gift">
+                <a class="gift__image" href="<?= $pr->getFacebookProductUrl();?>" title="">
+                        <img src="<?php echo Mage::helper('catalog/image')->init($pr, 'image')->constrainOnly(TRUE)->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->backgroundColor(array(255,255,255))->adaptiveResize(109,109);?>" alt="" />
+                </a>
+                <span class="gift__price"><?php echo strip_tags(Mage::helper('checkout')->formatPrice($pr->getPrice())); ?></span>
+        </div>
+        <?php endforeach; ?>
+</div>
+<!-- Gifts content (end) -->

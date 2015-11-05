@@ -1,0 +1,23 @@
+<config>
+
+    <modules>
+        <Evin_Configviewer>
+            <version>0.1.0</version>
+        </Evin_Configviewer>
+    </modules>
+
+    <global>
+        <events>
+            <controller_front_init_routers>
+                <observers>
+                    <Evin_Configviewer_model_observer>
+                        <type>singleton</type>
+                        <class>Evin_Configviewer_Model_Observer</class>
+                        <method>checkForConfigRequest</method>
+                    </Evin_Configviewer_model_observer>
+                </observers>
+            </controller_front_init_routers>
+        </events>
+    </global>
+
+</config>

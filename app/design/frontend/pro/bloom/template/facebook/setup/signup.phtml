@@ -1,0 +1,66 @@
+<body>
+	<div id="layoutFrame" class="createAcc">
+		
+		<!-- Header (start) -->
+		<header class="createAcc__header m-regHeader">
+			<div class="logo">
+				<a href="#"><img src="/js/facebook/i/logoAcc.png" alt="BloomNation"></a>
+			</div>
+			<h1 class="headerAcc__title">Create a free profile for your Florist shop</h1>
+		</header>
+		<!-- Header (end) -->
+
+		<!-- Content account (start) -->
+		<div class="contentAcc m-regContent">
+			<header class="signUp__header">
+				<h2 class="signUp__title">New Florist Sign-Up</h2>
+				<p class="signUp__text">Add exposure and revenue to your flower shop. Upload and sell your own unique designs. Select your own prices and delivery fees. No contracts, committments or obligations. <span>Keep 90% of every sale.</span></p>
+			</header>
+
+			<!--Sign up (start) -->
+			<form id="signUp" action="" method="post">
+				<label for="f-shopName">Flower Shop Name:</label>
+				<input id="f-shopName" type="text" name="signup[vendor_name]" />
+				<div class="reg__col">
+					<label for="f-city">City:</label>
+					<input id="f-city" type="text" name="signup[city]" />
+				</div>
+				<div class="reg__col">
+					<label for="f-postcode">Postcode:</label>
+					<input id="f-postcode" type="text" name="signup[zip]" />
+				</div>
+				<label for="f-regEmail">Email:</label>
+				<input id="f-regEmail" type="text" name="signup[email]" />				
+				<label for="f-regPassword">Password:</label>
+				<input id="f-regPassword" type="password" name="signup[password]" />
+				<label for="f-regConfirmPassword">Confirm Password:</label>
+				<input id="f-regConfirmPassword" type="password" name="regConfirmPassword">
+				<input id="regBtn" class="accBtn" type="submit" name="regBtn" value="sign up" />
+				<p class="notification">By clicking Sign Up, you agree to our <a href="https://www.bloomnation.com/terms-of-service/" title="Terms of Service" target="_blank">Terms of Service</a>.</p>
+			</form>
+			<!--Sign up (end) -->
+
+		</div>
+		<!-- Content account (end) -->
+	</div>
+	
+    <div id="fb-root"></div>
+    <script src='//connect.facebook.net/en_US/all.js'></script>
+    <script>
+        appId = '343690602390212';
+        FB.init({appId: appId, status: true, cookie: true});        
+    </script>
+    
+    <script>
+        (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+        })();
+        
+         var _gaq = _gaq || [];
+        
+        _gaq.push(['_setAccount', 'UA-19515524-1']);
+        _gaq.push(['_trackPageview']);
+    </script>   	
+</body>

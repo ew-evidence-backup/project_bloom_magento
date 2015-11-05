@@ -1,0 +1,176 @@
+<?php
+$pModels = array(); 
+$cat = Mage::getModel('catalog/category')->load(Mage::registry('current_category')->getId());
+$vendor = Mage::getModel('udropship/vendor')->load($cat->getYelpApi());
+$yelp_helper = Mage::helper('yelp');
+// Split phone for display
+preg_match('/(\d{3})(\d{3})(\d{4})/', $vendor->getTelephone(), $phone);
+
+$vendor_yelp_id  = $vendor->getUrlKey();
+$yelp_rating_image = $yelp_helper->getRatingImage($vendor_yelp_id, 'vertical-align:bottom;');
+$yelp_url    	   = $yelp_helper->getUrl($vendor_yelp_id);
+$yelp_review_count = $yelp_helper->getReview_count($vendor_yelp_id);
+
+?>
+
+<div id="layoutFrame">
+
+        <!-- Header (start) -->
+        <header id="header">
+                <div class="header__content">
+
+                        <!-- Store info (start) -->
+                        <div class="storeInfo">
+                                <div class="storeInfo__image">
+                                        <img src="/media/<?php echo $vendor->getLogo();?>" alt="" width="209"/>
+                                </div>
+                                <address class="storeInfo__contacts">
+                                        <h1><?php echo $vendor->getVendorName();?></h1>
+                                        <p><i class="i-location"></i><?= $vendor->getStreet(-1) . ', ' . $vendor->getCity() . ', ' .Mage::getModel('directory/region')->load($vendor->getRegionId())->getCode(). ', ' . $vendor->getZip();?></p>
+                                        <p><i class="i-phone"></i><?php echo $phone[1].'-'.$phone[2].'-'.$phone[3];?></p>
+                                </address>
+                                <div class="storeInfo__reviews">
+                                        <?php if($yelp_review_count > 3):?>
+                                        <div class="yelpReview">
+                                                <img src="/js/facebook/i/yelpReview.png" alt="" style="vertical-align: bottom;"/><?= $yelp_rating_image?>
+                                                <a href="<?= $yelp_url;?>" target="_blank" style="padding-botton: 10px;"><?= $yelp_review_count; ?> Reviews</a>
+                                        </div>
+                                        <?php endif ;?>
+                                        <!--
+                                        <div class="googleReview">
+                                                <img src="/js/facebook/i/googleReview.png" alt="" />
+                                        </div>
+                                        -->
+                                </div>
+                        </div>
+                        <!-- Store info (end) -->
+                        
+                        <!-- Header footer (start) -->
+                        <footer class="header__footer">
+                                <p><?php echo $vendor->getAboutUs();?></p>
+                        </footer>
+                        <!-- Header footer (end) -->
+
+                </div>
+
+                <!-- Logo (start) -->
+                <div id="produceBy">
+                        <a href="http://www.bloomnation.com" target="_blank">
+                                <img src="/js/facebook/i/logo.png" alt="" />
+                        </a>
+                        <p>powered by:</p>
+                </div>
+                <!-- Logo (end) -->
+
+        </header>
+        <!-- Header (end) -->
+
+        <!-- Main content (start) -->
+        <section class="mainContent">
+
+                <!-- Product filter (start) -->
+                <div class="productsFilter">
+                        <form class="productsFilter__form" action="" method="">
+                                <p class="filterResult"><i class="i-filterResult"></i><span id="counter" class="filterResult__count"><?php echo $this->getProductCollection()->getSize();?></span> Products Found</p>
+                                
+                                <select attr="occasions" id="occasions" class="filter-select filter">
+                                    <option value="">Occasion</option>
+                                    <?= Mage::helper('facebook/filters')->getFilterHtml('occasions'); ?>
+                                </select>
+                            
+                                <select attr="flower_type" id="flower_type" class="filter-select filter">
+                                    <option value="">Flower type</option>                                
+                                    <?= Mage::helper('facebook/filters')->getFilterHtml('flower_type'); ?>
+                                </select>    
+                                
+                                <div class="price">
+                                        <label for="priceUpTo">Price up to:</label>
+                                        <div class="price__field">
+                                            <input id="priceFilterInput" class="f-price" type="text" />
+                                            <span>$</span>
+                                        </div>
+                                </div>		
+                        </form>
+                </div>
+                <!-- Product filter (end) -->
+
+                <!-- Product (start) -->
+                <div class="product-cont">
+
+                        <!-- Product content (start) -->
+                        <div class="product__gallery">
+                            <?php foreach($this->getProductCollection() as $p): $p = Mage::getModel('catalog/product')->load($p->getId());$pModels[] = $p; ?>
+                            <div class="product__gallery__item product" id="p_<?php echo $p->getId();?>">
+                                <a class="product__item__image" href="<?php echo $p->getFacebookProductUrl();?>" title="" style="display: block; margin: 0px 0 0 0px;">
+                                        <img src="<?php echo Mage::helper('catalog/image')->init($p, 'small_image')->constrainOnly(TRUE)->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->backgroundColor(array(255,255,255))->adaptiveResize(169, 181);?>" />
+                                </a>
+                                <span class="product__item__price"><?php echo strip_tags(Mage::helper('checkout')->formatPrice($p->getPrice())); ?></span>
+                                <h2 class="product__item__name"><?php echo $p->getName();?></h2>
+                            </div>
+                            <?php endforeach;?>                            
+
+                        </div>
+                        <!-- Product content (end) -->
+
+                        <!-- Product footer (start)
+                        <footer class="product__footer">
+
+                                <!-- Product paginator (start) 
+                                <nav class="product__paginator">
+                                        <a class="paginator__backLink" href="#" title="">Ç Back</a>
+                                        <a class="paginator__nextLink" href="#" title="">Next È</a>
+                                        <ul class="paginatorLinks">
+                                                <li><a href="" title="">1</a></li>
+                                                <li class="active">2</li>
+                                                <li><a href="" title="">3</a></li>
+                                                <li><a href="" title="">4</a></li>
+                                                <li><a href="" title="">5</a></li>
+                                                <li><a href="" title="">É</a></li>
+                                                <li><a href="" title="">9</a></li>
+                                        </ul>
+                                </nav>
+                                <!-- Product paginator (end)
+
+                        </footer>
+                        <!-- Product footer (end) -->
+
+                </div>
+                <!-- Product (end) -->
+
+        </section>
+        <!-- Main content (end) -->
+
+</div>
+
+
+<script>
+    products = [];
+    <?php foreach($pModels as $pr):?>
+    products.push(<?php
+        echo json_encode(array(
+            'id' => 'p_'.$pr->getId(),
+            'name' => $pr->getName(),
+            'price' => (int)$pr->getPrice(),
+            'color' => explode(',',$pr->getColor()),
+            'flower_type' => explode(',',$pr->getFlowerType()),
+            'style' => explode(',',$pr->getStyle()),
+            'size' => explode(',',$pr->getSize()),
+            'occasions' => explode(',',$pr->getOccasions()),
+        ));
+    ?>);
+    <?php endforeach; ?>
+</script>
+
+
+<script>
+        (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+        })();
+        
+         var _gaq = _gaq || [];
+        
+        _gaq.push(['_setAccount', 'UA-19515524-1']);
+        _gaq.push(['_trackPageview']);
+</script>

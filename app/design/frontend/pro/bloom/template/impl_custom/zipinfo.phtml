@@ -1,0 +1,31 @@
+<?php if(isset($_COOKIE["bloom_nations_zipcode"]) && $_COOKIE["bloom_nations_zipcode"] == '00000'): ?>
+  <div class="delivery-go-local">
+      <a class="zipcode-location" href="javascript: void(0);" onclick="tb_show('', '#TB_inline?height=200&width=350&inlineId=zippopup&modal=true', '');">Add Recipient's Delivery Zip-Code&raquo;</a>
+  </div>
+<?php else: ?>
+	<?php if($_SESSION['nolocal'] == true): ?>
+    <?php if($this->showInfo()): 
+      $override = Mage::helper('urls')->getTitleOverride();?>
+      <div class="delivery-no-local catLocal">
+	  <br/>
+	  <?php echo $override;?>
+	  <br/>
+	  <a href="#" onclick="tb_show('', '#TB_inline?height=200&width=350&inlineId=zippopup&modal=true', '');">Click</a>
+	  to search different Zip Code
+      </div>
+    <?php endif; ?>
+  <?php else: ?>
+    <?php if($this->showInfo() && $_SESSION['localBannerBloom'] == false) : ?>
+      <div class="direct-delivery-head">
+          
+      </div>
+    <?php else : ?>
+	<div class="delivery-no-local catLocal">
+	<?php
+		echo Mage::app()->getLayout()->createBlock('cms/block')->setBlockId('nofloristProd')->toHtml();
+	  ?>
+          <a class="are-you-florist"  target="_blank" href="http://www.flowercloud.org">Are you a Florist in the area? &raquo;</a>
+      </div>
+	<?php endif; ?>
+  <?php endif; ?>
+<?php endif; ?>

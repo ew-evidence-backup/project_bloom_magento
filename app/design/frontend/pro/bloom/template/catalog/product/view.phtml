@@ -1,0 +1,473 @@
+<?php	
+	$yelp_helper = Mage::helper('yelp'); 
+	$_helper     = $this->helper('catalog/output');
+	$_product    = $this->getProduct();
+	
+	// ******* REDIRECT TO GENUINE \ ORIGINAL PRODUCT URL  *********//
+	$curUrl = $_SERVER["REQUEST_URI"];
+	$origUrl = $_product->getProductUrl();
+	if($curUrl != $origUrl) {
+		header("HTTP/1.1 301 Moved Permanently"); 
+		header('Location: '.$origUrl);die;
+	}
+?>
+
+<?php
+	$vendor_id       = $_product->getUdropship_vendor();
+	$dropship_vendor = Mage::getModel('udropship/vendor')->load($vendor_id);
+
+	//print_r($_product);
+	$vendor_yelp_id  = $dropship_vendor->getUrl_key();
+	$vendor_telephone = $dropship_vendor->getTelephone();
+
+	$yelp_rating_image = $yelp_helper->getRatingImage($vendor_yelp_id);
+	$yelp_rating	   = $yelp_helper->getRating($vendor_yelp_id)*20;
+	$yelp_review_count = $yelp_helper->getReview_count($vendor_yelp_id);
+	$vendor_url_yelp   = $yelp_helper->getUrl($vendor_yelp_id);
+
+
+	// Get Florist category view link, from Vednor ID on category admin page
+
+	$florist_category = Mage::getModel('catalog/category')->getCollection()
+		->addAttributeToFilter('yelp_api', $vendor_id )
+		->load();
+	foreach ($florist_category as $cat) {
+		$cat = Mage::getModel('catalog/category')->load($cat->getId());
+		$category_url = $cat->getUrl();
+	}
+?>
+	
+<script type="text/javascript">
+	jQuery(document).ready(function($) {
+		//check zip code
+		validZipProduct(<?php echo json_encode($dropship_vendor->getLimitZipcode()); ?>);
+		$('img').bind('contextmenu', function(e) {
+			return false;
+		}); 
+	});
+
+	function validZipProduct(zipArray) {
+
+		jQuery(".zipWarn").remove();
+		var zipPut_length = jQuery(".inputZip input").val().length;
+		var zip_val = jQuery(".inputZip input").val();
+
+		isAnError = false;
+
+		//is the zip code in the zip array?
+		var zips = zipArray.split("\n");
+		// Make sure to trim values
+		for(i = 0; i < zips.length; i++) {
+			zips[i] = jQuery.trim(zips[i]);
+		}
+		
+		//match integers only
+		var intRegex = /[0-9 -()+]+$/;
+		if(zip_val != '')
+		{
+			if(!zip_val.match(intRegex))
+			{
+				jQuery(".inputZip input").after('<span class="zipWarn" style="color:red;">Invalid Zip Code</span>');
+				isAnError = true;
+				jQuery(".btn-cart").attr("disabled", "disabled");
+			}
+			if (zipPut_length!=5 && isAnError == false)
+			{
+				jQuery(".inputZip input").after('<span class="zipWarn" style="color:red;">Invalid Zip Code</span>');
+				isAnError = true;
+				jQuery(".btn-cart").attr("disabled", "disabled");
+			}
+			if (jQuery.inArray(zip_val,zips) == -1 && isAnError == false && zips != '00001')
+			{
+				jQuery(".inputZip input").after('<span class="zipWarn" style="color:red;">Sorry! The Florist Can\'t Deliver to that Area.</span><br/><br/><a href="<?=$this->getUrl('custom/index/search');?>?occasion=8&query='+jQuery(".inputZip input").val()+'" ><b>Click here.</b></a> To See other product in your area. <br/><br/>');
+				isAnError = true;
+				jQuery(".btn-cart").attr("disabled", "disabled");
+			}
+			if ((isAnError == false && jQuery.inArray(zip_val,zips) != -1) || (zips == '00001' && isAnError == false))
+			{
+				jQuery(".inputZip input").after('<span class="zipWarn" style="color:green;">Woohoo! The Florist can Deliver to that Area</span>');
+			}
+		}
+		if(isAnError != true && zip_val != '')
+		{
+			jQuery(".btn-cart").removeAttr("disabled");
+			setCookie('bloom_nations_zipcode', zip_val, 0, '/');
+		}
+
+	}
+	function setCookie( name, value, expires, path, domain, secure )
+	{
+		// set time, it's in milliseconds
+		var today = new Date();
+		today.setTime( today.getTime() );
+	
+		/*
+		if the expires variable is set, make the correct
+		expires time, the current script below will set
+		it for x number of days, to make it for hours,
+		delete * 24, for minutes, delete * 60 * 24
+		*/
+		if ( expires )
+		{
+		expires = expires * 1000 * 60 * 60 * 24;
+		}
+		var expires_date = new Date( today.getTime() + (expires) );
+	
+		document.cookie = name + "=" +escape( value ) +
+		( ( expires ) ? ";expires=" + expires_date.toGMTString() : "" ) +
+		( ( path ) ? ";path=" + path : "" ) +
+		( ( domain ) ? ";domain=" + domain : "" ) +
+		( ( secure ) ? ";secure" : "" );
+	}
+</script>
+		
+<script type="text/javascript">
+    var optionsPrice = new Product.OptionsPrice(<?php echo $this->getJsonConfig() ?>);
+</script>
+<script type="text/javascript">
+jQuery(document).ready(function() {
+	if (jQuery('.florist-spliter').length == 0) {jQuery('.col-main').css('marginBottom','-10px');};
+})
+</script>
+<div class="backButton"><a href="javascript: history.go(-1)" title="Back" >Back</a></div>
+<div id="messages_product_view"><?php echo $this->getMessagesBlock()->getGroupedHtml() ?></div>
+<div class="product-view">
+    <div class="product-essential">
+    <form action="<?php echo $this->getSubmitUrl($_product) ?>" method="post" id="product_addtocart_form"<?php if($_product->getOptions()): ?> enctype="multipart/form-data"<?php endif; ?>>
+        <div class="no-display">
+            <input type="hidden" name="product" value="<?php echo $_product->getId() ?>" />
+            <input type="hidden" name="related_product" id="related-products-field" value="" />
+        </div>
+
+          <div class="product-img-box">
+              <?php echo $this->getChildHtml('media') ?>
+          </div>
+
+        <div class="product-shop">
+            <div class="product-name">
+                <h1><?php echo $_helper->productAttribute($_product, $_product->getName(), 'name') ?></h1>
+            </div>
+
+			<div class="florist-data">
+            <?php if ( $vendor_id  <> 1 ) { ?>
+				<p>by <span><a href="<?php echo $category_url; ?>"><?php echo $dropship_vendor->getVendor_name(); ?></a> </span></p>
+				<div class="rating-stars-back">
+                   <?php echo $yelp_rating_image ?>
+                </div>
+				<?php echo $yelp_helper->getPopUpYelpUrl($vendor_yelp_id); ?>
+				<?php /*?>by <?php echo $yelp_helper->getYelpLogoSmall(); ?><?php */?>
+               <?php } ?>
+			</div>
+
+			 <?php if ($_product->getShortDescription()):?>
+                <div class="short-description">
+                      <div class="std"><?php echo $_helper->productAttribute($_product, nl2br($_product->getShortDescription()), 'short_description') ?></div>
+                </div>
+            <?php endif;?>
+
+
+
+        </div>
+
+        <div class="product-view-big-wrapper">
+        	<div class="product-view-big-left">
+          <div class="product-plus"><?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('product_plus')->toHtml() ?></div>
+
+          <?php echo $this->getChildHtml('alert_urls') ?>
+          <?php echo $this->getChildHtml('product_type_data') ?>
+          <?php echo $this->getTierPriceHtml() ?>
+          <?php echo $this->getChildHtml('extrahint') ?>
+  			</div>
+	  <div class="inputZip">
+		<label>Recipient's Zip Code:</label>
+		<?php // determine val for zipcde
+			$displayZip = '';
+			$zipcode = Mage::registry('bloom_nations_zipcode');
+			if(!empty($zipcode) && strlen($zipcode) == 5) {
+				$displayZip = $zipcode;
+			} elseif (isset($_COOKIE['bloom_nations_zipcode']) && strlen($_COOKIE['bloom_nations_zipcode']) == 5) {
+				$displayZip = $_COOKIE['bloom_nations_zipcode'];
+			}
+		?>
+		<input type="text" name="recipZip" maxlength="5" class="zipInputPView required-entry" value="<?php echo $displayZip;?>" onblur='validZipProduct(<?php echo json_encode($dropship_vendor->getLimitZipcode()); ?>);' />
+	  </div><!--zipPut-->
+          <?php if (!$this->hasOptions()):?>
+              <div class="add-to-box">
+                  <?php if($_product->isSaleable()): ?>
+                      <?php echo $this->getChildHtml('addtocart') ?>
+                      <?php if( $this->helper('wishlist')->isAllow() || $_compareUrl=$this->helper('catalog/product_compare')->getAddUrl($_product)): ?>
+                          <span class="or"><?php echo $this->__('OR') ?></span>
+                      <?php endif; ?>
+                  <?php endif; ?>
+                  <?php echo $this->getChildHtml('addto') ?>
+              </div>
+              <?php echo $this->getChildHtml('extra_buttons') ?>
+          <?php elseif (!$_product->isSaleable()): ?>
+              <div class="add-to-box">
+                  <?php echo $this->getChildHtml('addto') ?>
+              </div>
+          <?php endif; ?>
+
+          <?php echo $this->getChildHtml('other');?>
+
+          <?php if ($_product->isSaleable() && $this->hasOptions()):?>
+              <?php echo $this->getChildChildHtml('container1', '', true, true) ?>
+          <?php endif;?>
+
+
+          <?php if ($_product->isSaleable() && $this->hasOptions()):?>
+              <?php echo $this->getChildChildHtml('container2', '', true, true) ?>
+          <?php endif;?>
+
+        </div>
+        <script src="<?php echo $this->getBaseUrl()?>js/jquery/jquery.dropdownized.js" type="text/javascript"></script>
+        <script type="text/javascript">
+			jQuery(document).ready (function () {
+				jQuery('.product-options dd select').dropdownized();
+
+			})
+		</script>
+        <div class="clearer"></div>
+
+
+    </form>
+    <script type="text/javascript">
+    //<![CDATA[
+        var productAddToCartForm = new VarienForm('product_addtocart_form');
+        productAddToCartForm.submit = function(button, url) {
+            if (this.validator.validate()) {
+                var form = this.form;
+                var oldUrl = form.action;
+
+                if (url) {
+                   form.action = url;
+                }
+                var e = null;
+                try {
+                    this.form.submit();
+                } catch (e) {
+                }
+                this.form.action = oldUrl;
+                if (e) {
+                    throw e;
+                }
+
+                if (button && button != 'undefined') {
+                    button.disabled = true;
+                }
+            }
+        }.bind(productAddToCartForm);
+
+        productAddToCartForm.submitLight = function(button, url){
+            if(this.validator) {
+                var nv = Validation.methods;
+                delete Validation.methods['required-entry'];
+                delete Validation.methods['validate-one-required'];
+                delete Validation.methods['validate-one-required-by-name'];
+                if (this.validator.validate()) {
+                    if (url) {
+                        this.form.action = url;
+                    }
+                    this.form.submit();
+                }
+                Object.extend(Validation.methods, nv);
+            }
+        }.bind(productAddToCartForm);
+
+
+    //]]>
+    </script>
+    </div>
+    <script type="text/javascript">
+			jQuery(document).ready(function () {
+				//jQuery('.product_multi_vendors').hide();
+				jQuery('.select_other_vendors').click(function() {
+					jQuery('.product_multi_vendors').slideToggle();
+				});
+				jQuery("#call-us").live('click', function() {
+					jAlert('<?php echo $vendor_telephone; ?>', 'Telephone number');
+				});
+			})
+	</script>
+	<?php
+		if ( $vendor_id  <> 1 ) {
+		// Get all vendors who has same product on offer
+
+		$collection         = $_product->getProductVendors();
+		$total_vendor_count = count($collection)-1;
+
+		if ( $total_vendor_count > 0 ) {
+	?>
+
+	<div class="select_other_vendors">OR SELECT SIMILAR PRODUCT FROM  <?php echo $total_vendor_count; ?>  OTHER VENDOR FLORISTS BELOW <span></span></div>
+
+	<?php
+		// Setting up sorting methods
+
+		$order_price = $_GET["order_price"];
+		if ( $order_price == "asc" ) $order_price = "desc";
+		else  $order_price = "asc";
+
+		$order_name = $_GET["order_name"];
+		if ( $order_name == "asc" ) $order_name = "desc";
+		else  $order_name = "asc";
+
+		$type = $_GET["type"];
+		if ( $type=="" ) $type = "price";
+
+	?>
+	<div class="product_multi_vendors">
+	<ul class="florist-more-list">
+		<li class="florist-header">
+		<ul>
+			<li class="flo-product-photo">Product photo</li>
+			<li class="flo-florist"><a href="<?php echo $_product->getProductUrl().'?type=name&order_name='.$order_name.'&v='.$_product->getUdropship_vendor() ?>">Florist<a></li>
+			<li class="flo-rating">Rating</li>
+			<li class="flo-price"><a href="<?php echo $_product->getProductUrl().'?type=price&order_price='.$order_price.'&v='.$_product->getUdropship_vendor() ?>">Price</a></li>
+			<li class="flo-purchase">Purchase</li>
+		</ul>
+		</li>
+
+		<?php
+			// transfer to array
+
+			$alternate_vendors = array();
+			$i=0;
+			foreach ($collection as $item) {
+				if ( $item->getId() != $vendor_id ) {
+
+					$alternate_vendors[$i]["id"]           = $item->getId();
+					$alternate_vendors[$i]["vendors_name"] = $item->getVendorName();
+					$alternate_vendors[$i]["about_us"]     = fit_text($item->getData('about_us'),130);
+					$alternate_vendors[$i]["yelp_key"]     = $item->getUrl_key();
+					$alternate_vendors[$i]["price"]        = $_product->getVendorPrice($item);
+					$i++;
+				}
+			}
+
+			if ( $type =="price" ) $alternate_vendors = $_product->sortmulti($alternate_vendors,"price",$order_price);
+			else $alternate_vendors = $_product->sortmulti($alternate_vendors,"vendors_name",$order_name);
+
+			foreach ($alternate_vendors as $item) {
+
+				$mvendor_yelp_id  = $item["yelp_key"];
+
+				$yelp_rating_image = $yelp_helper->getRatingImage($mvendor_yelp_id);
+				$yelp_review_count = $yelp_helper->getReview_count($mvendor_yelp_id);
+				$mvendor_url_yelp  = $yelp_helper->getUrl($mvendor_yelp_id);
+				$myelp_rating	   = $yelp_helper->getRating($mvendor_yelp_id)*20;
+
+				$florist_category_tmp = Mage::getModel('catalog/category')->getCollection()->addAttributeToFilter('yelp_api', $item["id"])->load()->getFirstItem();
+
+				echo '<li class="florist-item-list">';
+				echo '<ul>';
+				echo '<li class="flo-product-photo"><a href="'.$_product->getProductUrl().'"><img src="'.$this->helper('catalog/image')->init($_product, 'small_image')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->adaptiveResize(169,180).'"></a></li>';
+				echo '<li class="flo-florist"><span><a href="'.$florist_category_tmp->getUrl().'">'.$item["vendors_name"].'</a></span>'.$item["about_us"].'</li>';
+				echo '<li class="flo-rating">'.$yelp_helper->getYelpLogoSmall().'<div class="rating-stars-back">
+						'.$yelp_rating_image.'
+					</div>'.$yelp_helper->getPopUpYelpUrl($mvendor_yelp_id).'</li>';
+				echo '<li class="flo-price">$'.number_format($item["price"],2).'</li>';
+				echo '<li class="flo-purchase"><a href="'.$_product->getProductUrl().'">Product Details</a></li>';
+				echo '</ul>';
+				echo '</li>';
+
+			}
+			?>
+	</ul>
+	</div>
+<?php } ?>
+<!--check for zip-->
+	<?php
+
+	//if zip is already set, lets get it.
+	$vendorProsDisplay = "display:block;";
+	?>
+	<div class="florist-spliter"  style="<?php echo $vendorProsDisplay; ?>"></div>
+	<div class="vendor_wrapper" style="<?php echo $vendorProsDisplay; ?>">
+		<div class="florist-data">
+				<h2><?php echo $dropship_vendor->getVendor_name(); ?></h2>
+				<div class="rating-stars-back">
+                    <?php echo $yelp_rating_image; ?>
+                </div>
+				<?php echo $yelp_helper->getPopUpYelpUrl($vendor_yelp_id); ?>
+				<span class="yelp-logo">by <?php echo $yelp_helper->getYelpLogoSmall(); ?></span>
+		</div>
+        <div class="vendor_left">
+
+		<div class="vendor_logo"><a href="<?php echo $category_url ?>"><img src="/media/<?php echo $dropship_vendor->getLogo(); ?>"></a></div>
+		<div class="vendor_address">
+			<span><?php
+				$street = $dropship_vendor->getStreet();
+				echo $street[0];
+
+				$regionModel = Mage::getModel('directory/region')->load($dropship_vendor->getRegion_id());
+			?><br/>
+
+			<?php echo $dropship_vendor->getCity(); ?>, <?php echo $regionModel->getCode(); ?>
+			<?php /*?><?php echo $dropship_vendor->getZip(); ?>
+			<?php echo $dropship_vendor->getCountry_id(); ?><?php */?></span>
+            <a href="javascript: void(0);" id="call-us" class="call-us">Call Us Now &raquo;</a>
+		</div>
+        </div>
+		<div class="vendor_about">
+			<span>About Us:</span>
+			<p><?php echo $dropship_vendor->getData('about_us')?></p>
+			<?php
+				$www = $dropship_vendor->getData('www');
+				if ( !strstr($www,'http://') ) $www='http://'.$www;
+			?>
+
+            <a href="<?php echo $category_url ?>" class="vendor-web">VISIT FLORIST'S SHOP</a>
+		</div>
+        <div class="clearer"></div>
+	</div>
+
+	<div class="vendor_prducts"  style="<?php echo $vendorProsDisplay; ?>">
+    				<h2>Other items by <span><?php echo $dropship_vendor->getVendor_name(); ?></span></h2>
+		<ul class="products-grid">
+	<?php
+		$products = array_keys($dropship_vendor->getAssociatedProducts());
+		$i = 0;
+		$max = (sizeof($products) < 5) ? sizeof($products) :5;
+		for($i=0;$i<$max;$i++):
+			if($max > sizeof($products)) { break; } 
+			$pr = Mage::getModel('catalog/product')->load($products[$i]);
+
+			if('' == $pr->getName()) { $max++; continue; }
+			?>
+			 <li >
+				<a href="<?php echo $pr->getProductUrl()  ?>" title="<?php echo $this->stripTags($this->getImageLabel($pr, 'small_image'), null, true) ?>" class="product-image"><img src="<?php echo $this->helper('catalog/image')->init($pr, 'small_image')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->backgroundColor(array(255,255,255))->adaptiveResize(169,181); ?>" alt="<?php echo $this->stripTags($this->getImageLabel($pr, 'small_image'), null, true) ?>" /></a>
+				<h2 class="product-name"><a href="<?php echo $pr->getProductUrl()  ?>" title="<?php echo $this->stripTags($pr->getName(), null, true) ?>"><?php echo $_helper->productAttribute($pr, $pr->getName(), 'name') ?></a></h2>
+				<?php if($pr->getRatingSummary()): ?>
+				<?php echo $this->getReviewsSummaryHtml($pr, 'short') ?>
+				<?php endif; ?>
+				<div class="price-box">
+									<span class="regular-price" id="product-price-44">
+									<span class="price">$<?php echo number_format($pr->getVendorPrice($dropship_vendor), 2)?></span>
+												</span>
+								</div>
+						<div class="florist-rating">
+							<?php echo $yelp_rating_image ?>
+						</div>
+						<div class="flourist-name">
+							<?php echo $dropship_vendor->getVendorName(); ?>
+						</div>
+			    </li>
+			<?php
+		endfor;
+	?>
+		</ul>
+        <?php echo $this->getLayout()->createBlock('catalog/product_list_related')->setTemplate('catalog/product/list/related.phtml')->toHtml() ?>
+        <?php //echo $this->getLayout()->createBlock('custom/zippopup')->setTemplate('impl_custom/zipchange.phtml')->toHtml() ?>
+		<?php
+			  // Get Florist category view link, from Vednor ID on category admin page
+			  $florist_category = Mage::getModel('catalog/category')->getCollection()->addAttributeToFilter('yelp_api', $vendor_id )->load();
+		  	  foreach ($florist_category as $cat) {
+				$cat = Mage::getModel('catalog/category')->load($cat->getId());
+				$category_url = $cat->getUrl();
+			  }
+	    ?>
+		<a href="<?php echo $category_url; ?>" class="view-gifts">View All Gifts &raquo;</a>
+	</div>
+	<?php }  // end if of vendor != 1?>
+</div>

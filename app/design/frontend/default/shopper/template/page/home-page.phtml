@@ -1,0 +1,104 @@
+<?php
+    $vendor = Mage::getModel('udropship/vendor')->load(Mage::registry('current_svendor'));
+    $products = Mage::getModel('catalog/product')->getCollection()
+        ->addFieldToFilter('udropship_vendor', $vendor->getId())
+	->addAttributeToFilter('visibility', 4)
+        ->addAttributeToSort('global_position','asc')
+        ->setPageSize(8);
+?>
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en" xmlns:fb="http://www.facebook.com/2008/fbml"> <![endif]-->
+<!-- Consider adding a manifest.appcache: h5bp.com/d/Offline -->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+	<?php echo $this->getChildHtml('head') ?>
+</head>
+<body class="<?php echo $this->getBodyClass()?' '.$this->getBodyClass().'':'' ?><?php echo Mage::getStoreConfig('shoppersettings/design/responsive') ? '': ' non-responsive ' ?>">
+<!-- Prompt IE 6 users to install Chrome Frame. Remove this if you support IE 6.
+     chromium.org/developers/how-tos/chrome-frame-getting-started -->
+<!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
+<?php echo $this->getChildHtml('after_body_start') ?>
+<div class="wrapper">
+    <?php echo $this->getChildHtml('global_notices') ?>
+    <div class="page">
+        <?php echo $this->getChildHtml('header') ?>
+        <div class="main-container col1-layout">
+            <div class="main row clearfix">
+                <?php echo $this->getChildHtml('breadcrumbs') ?>
+                <div class="col-main">
+                    <?php echo $this->getChildHtml('global_messages'); ?>
+                        <div class="std">
+                            <div class="home-main">
+                                <div class="category-products">
+                            <h2>Featured Products</h2>
+                                <ul class="products-grid two_columns_3">
+                                    <? foreach($products as $pr): $pr = Mage::getModel('catalog/product')->load($pr->getId()); ?>
+                                    <li class="item calc-price-box">
+                                        <div class="regular">
+                                            <a href="<?= $pr->getProductUrl();?>" title="<?= $pr->getName();?>" class="product-image">
+                                                <!--
+                                                <div class="new-label new-top-right"></div>
+                                                <div class="sale-label new-top-left"></div>
+                                                -->
+                                                <img src="<?php echo $this->helper('catalog/image')->init($pr, 'image')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->backgroundColor(array(255,255,255))->adaptiveResize(252, 252); ?>" data-srcx2="<?php echo $this->helper('catalog/image')->init($pr, 'image')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->backgroundColor(array(255,255,255))->adaptiveResize(504, 504); ?>" width="" height="" alt="">
+                                            </a>
+                                            <div class="product-info" style="height: 53px;">
+                                                <div class="button-container">
+                                                    <p>
+                                                        <button type="button" title="Add to Cart" class="button btn-cart ajax-cart" data-url="<?php echo Mage::helper('checkout/cart')->getAddUrl($pr, array()); ?>" data-id="<?= $pr->getId();?>"><span><span>Add to Cart</span></span></button>
+                                                    </p>
+                                                </div>
+                                                <a class="product-name" href="<?= $pr->getProductUrl();?>" title="<?= $pr->getName();?>"><?= $pr->getName();?></a>
+                                                        
+                                                <div class="price-box">
+                                                    <span class="regular-price" id="product-price-172">
+                                                    <span class="price"><?php echo strip_tags(Mage::helper('checkout')->formatPrice($pr->getPrice())); ?></span>
+                                                    </span> 
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="hover" style="display: none;">
+                                            <a href="<?= $pr->getProductUrl();?>" title="<?= $pr->getName();?>" class="product-image">
+                                                <!--
+                                                <div class="new-label new-top-right"></div>
+                                                <div class="sale-label new-top-left"></div>
+                                                -->
+                                                <img src="<?php echo $this->helper('catalog/image')->init($pr, 'image')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->backgroundColor(array(255,255,255))->adaptiveResize(252, 252); ?>" data-srcx2="<?php echo $this->helper('catalog/image')->init($pr, 'image')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->backgroundColor(array(255,255,255))->adaptiveResize(504, 504); ?>" width="" height="" alt="">
+                                            </a>
+                                            <a href="<?= $pr->getProductUrl();?>" title="<?= $pr->getName();?>" style="">
+                                                <div class="price-box" style="opacity: 1; padding: 43px 15px; margin: -134px 0px 0px;">
+                                                    <span class="regular-price" id="product-price-172">
+                                                        <span class="price"><?php echo strip_tags(Mage::helper('checkout')->formatPrice($pr->getPrice())); ?></span>
+                                                    </span>
+                                                </div>
+                                            </a>
+                                            <a class="product-name" href="<?= $pr->getProductUrl();?>" title="<?= $pr->getName();?>"><?= $pr->getName();?></a>
+                                        
+                                            <div class="button-container">
+                                                <p><button type="button" title="Add to Cart" class="button btn-cart ajax-cart" data-url="<?php echo Mage::helper('checkout/cart')->getAddUrl($pr, array()); ?>" data-id="<?= $pr->getId();?>"><span><span><em></em>Add to Cart</span></span></button></p>
+                                            </div>
+
+                                        </div>                                        
+                                    </li>
+                                    <? endforeach; ?>
+  
+                                </ul>
+                        </div>
+                        </div>
+                        </div>
+                </div>
+
+                
+            </div>
+	        <?php echo $this->getChildHtml('footer') ?>
+        </div>
+        <?php echo $this->getChildHtml('before_body_end') ?>
+    </div>
+</div>
+<?php echo $this->getAbsoluteFooter() ?>
+</body>
+</html>

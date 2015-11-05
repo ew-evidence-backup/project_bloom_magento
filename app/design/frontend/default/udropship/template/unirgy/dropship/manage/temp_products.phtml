@@ -1,0 +1,94 @@
+<?php
+    $cat = Mage::helper('udropship')->getCategoryByVendor(Mage::getSingleton('udropship/session')->getId());
+    if ($cat) {
+        $cat = Mage::getModel('catalog/category')->load($cat->getId());
+    }
+
+    $pendingImport = Mage::getSingleton('core/resource')
+	->getConnection('core_write')
+	->fetchOne('SELECT COUNT(id) FROM udropship_temp_product WHERE vendor_id='.Mage::getSingleton('udropship/session')->getId());
+    $products = Mage::getSingleton('core/resource')
+	->getConnection('core_write')
+	->fetchAll('SELECT id,img FROM udropship_temp_product WHERE vendor_id='.Mage::getSingleton('udropship/session')->getId());
+?>
+
+<script>
+    // Initiate json array of products for filtering purposes
+    products = [];
+</script>
+
+<!-- Layout (start) -->
+<div id="layout" class="catalog">
+
+        <!-- Catalog header (start) -->
+        <header class="catalog__header">
+                <h1 class="catalog__title">Finish Product Import</h1>			
+
+        </header>
+        <!-- Catalog header (end) -->
+
+        <!-- Secondary content (start) -->
+        <aside id="secondaryContent">
+
+                <div class="viewStoreBtn secondaryContent__item"><a href="<?= $cat->getUrl();?>" target="_blank" style="color:white; font-family: Arial; display: block; position: absolute; margin: 0px 40px 0px -40px; padding: 13px 68px 12px 75px">View Store</a></div>
+		<br/>
+                <button id="pendingImportBtn" onclick="location.href = '<?=$this->getUrl('udropship/vendor/tempr');?>';">(<span class="importCount"><?= $pendingImport;?></span>) pending import</button>
+
+        </aside>
+        <!-- Secondary content (end) -->
+
+        <!-- Main content (start) -->
+        <div id="mainContent">         
+            <!-- Welcome (start) -->
+            <?php if($showMsg):?>
+            <section id="catalog__tizer" class="tizer">
+                <?= $this->getMessagesBlock()->getGroupedHtml(); ?>
+            </section>
+            <!-- Welcome (end) -->
+            <?php endif; ?>
+            
+            <!-- Catalog content (start) -->
+            <section id="catalogContent" class="m-importProduct">
+	    <?php foreach($products as $p):?>
+		<!-- Catalog item (start) -->
+		<div class="product">
+			<div class="product__content">
+				<img class="product__photo" src="<?= $p['img']?>" alt="" />
+			</div>
+			<footer class="product__footer">
+				<i class="i-deleteFromCart" onclick="location.href='<?= $this->getUrl('udropship/vendor/tempr');?>?del_product=<?= $p['id']?>';"></i>
+				<button class="compelteImportBtn" onclick="location.href='<?= $this->getUrl('udropship/vendor/addproduct');?>?temp_product=<?= $p['id']?>';">Complete import</button>
+			</footer>
+		</div>
+		<!-- Catalog item (end) -->
+	    <?php endforeach; ?>                
+			    <!-- Catalog footer (start) -->
+                <footer class="catalog__footer">
+                        <!-- Catalog paginator (start) -->
+                        <!--
+                        <nav class="catalog__paginator">
+                                <button id="catalog__backBtn" class="paginatorBtn defaultBtn">Back</button>
+                                <button id="catalog__nextBtn" class="paginatorBtn">Next</button>
+
+                                <ul class="paginatorNav__links">
+                                        <li class="active">1</li>
+                                        <li><a href="" title="">2</a></li>
+                                        <li><a href="" title="">3</a></li>
+                                        <li><a href="" title="">4</a></li>
+                                        <li><a href="" title="">5</a></li>
+                                        <li><a href="" title="">6</a></li>
+                                </ul>						
+                        </nav>
+                        -->
+                        <!-- Catalog paginator (end) -->    
+                </footer>
+                <!-- Catalog footer (end) -->
+            </section>
+            <!-- Catalog (end) -->
+        </div>
+        <!-- Main content (end) -->		
+</div>
+<!-- Layout (end) -->
+
+
+

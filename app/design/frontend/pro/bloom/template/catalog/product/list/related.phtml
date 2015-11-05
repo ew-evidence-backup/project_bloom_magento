@@ -1,0 +1,67 @@
+<?php
+/**
+ * Magento Commercial Edition
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Magento Commercial Edition License
+ * that is available at: http://www.magentocommerce.com/license/commercial-edition
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2011 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://www.magentocommerce.com/license/commercial-edition
+ */
+?>
+<?php if ($this->getItems()->getSize()): ?>
+  <?php $_product = Mage::registry('product'); ?>
+  <?php $yelp_helper = Mage::helper('yelp'); ?>
+  <?php $_helper = $this->helper('catalog/output'); ?>
+  <?php $vendor_id = $_product->getUdropship_vendor(); ?>
+  <?php $dropship_vendor = Mage::getModel('udropship/vendor')->load($vendor_id); ?>
+  <?php $vendor_yelp_id = $dropship_vendor->getUrl_key(); ?>
+  <?php $vendor_telephone = $dropship_vendor->getTelephone(); ?>
+  <?php $yelp_rating_image = $yelp_helper->getRatingImage($vendor_yelp_id); ?>
+  <?php $yelp_rating = $yelp_helper->getRating($vendor_yelp_id) * 20; ?>	
+  <?php $yelp_review_count = $yelp_helper->getReview_count($vendor_yelp_id); ?>
+  <?php $vendor_url_yelp = $yelp_helper->getUrl($vendor_yelp_id); ?>
+  <div class="block block-related">
+    <div class="block-title">
+      <strong><span><?php echo $this->__('You may also be interested in') ?></span></strong>
+    </div>
+    <div class="vendor_prducts">
+      <ul class="products-grid">
+        <?php foreach ($this->getItems() as $_item): ?>
+          <?php $pr = $_item; ?>
+          <li >
+            <a href="<?php echo $pr->getProductUrl()  ?>" title="<?php echo $this->stripTags($this->getImageLabel($pr, 'small_image'), null, true) ?>" class="product-image"><img src="<?php echo $this->helper('catalog/image')->init($pr, 'small_image')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->adaptiveResize(169, 180); ?>" width="169" height="180" alt="<?php echo $this->stripTags($this->getImageLabel($pr, 'small_image'), null, true) ?>" /></a>
+            <h2 class="product-name"><a href="<?php echo $pr->getProductUrl()  ?>" title="<?php echo $this->stripTags($pr->getName(), null, true) ?>"><?php echo $_helper->productAttribute($pr, $pr->getName(), 'name') ?></a></h2>
+            <?php if ($pr->getRatingSummary()): ?>
+              <?php echo $this->getReviewsSummaryHtml($pr, 'short') ?>
+            <?php endif; ?>
+            <div class="price-box">
+              <span class="regular-price" id="product-price-44">
+                <span class="price">$<?php echo number_format($pr->getVendorPrice($dropship_vendor), 2) ?></span>
+              </span>
+            </div>
+            <div class="florist-rating">	
+              <?php echo $yelp_rating_image ?>                     
+            </div>     
+            <div class="flourist-name">
+              <?php echo $dropship_vendor->getVendorName(); ?>
+            </div>
+          </li>	
+        <?php endforeach ?>
+      </ul>
+    </div>
+  </div>
+<?php endif ?>

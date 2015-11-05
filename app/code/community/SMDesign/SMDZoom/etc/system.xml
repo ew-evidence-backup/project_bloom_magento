@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<config>
+	<sections>
+		<smdesign_colorswatch>
+			<groups>
+				<general>
+					<fields>
+						
+					</fields>
+				</general>
+				<zoom translate="label">
+					<label>Zoom Settings</label>
+					<frontend_type>text</frontend_type>
+					<sort_order>200</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+					<fields>
+						<enabled>
+							<label>Enable Zoom</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>150</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+							<comment>Enable Zoom script</comment>
+						</enabled>
+						
+						<more_view_change_main_image>
+							<label>Allow More View images to update Main image</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>160</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+							<comment>When clicking on any of the "more view" images, main image will be updated</comment>
+						</more_view_change_main_image>
+						
+						<width>
+							<label>Zoom Wrapper Width</label>
+							<frontend_type>text</frontend_type>
+							<sort_order>170</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+							<comment>The width of the zoom box (in pixels)</comment>
+						</width>
+						<height>
+							<label>Zoom Wrapper Height</label>
+							<frontend_type>text</frontend_type>
+							<sort_order>171</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+							<comment>The height of the zoom box (in pixels)</comment>
+						</height>
+						<offset_left>
+							<label>Zoom Wrapper Offset Left</label>
+							<frontend_type>text</frontend_type>
+							<sort_order>175</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+							<comment> The left offset of the zoom box (in pixels)</comment>
+						</offset_left>
+						<offset_top>
+							<label>Zoom Wrapper Offset Top</label>
+							<frontend_type>text</frontend_type>
+							<sort_order>176</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+							<comment>The top offset of the zoom box (in pixels)</comment>
+						</offset_top>
+						
+						<image_size_type>
+							<label>Image Size Type</label>
+							<frontend_type>select</frontend_type>
+							<source_model>smdzoom/imagetype</source_model>
+							<sort_order>300</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+							<comment>How to resize the images</comment>
+						</image_size_type>
+						
+						<container_width>
+							<label>Zoom Container Width</label>
+							<frontend_type>text</frontend_type>
+							<sort_order>320</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+							<comment>Image Container Width (in pixels); Active only when Image Size Type is set to Resize</comment>
+						</container_width>
+						<container_height>
+							<label>Zoom Container Height</label>
+							<frontend_type>text</frontend_type>
+							<sort_order>321</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+							<comment>Image Container Height (in pixels); Active only when Image Size Type is set to Resize</comment>
+						</container_height>
+						<zoom_ratio>
+							<label>Zoom Ratio</label>
+							<frontend_type>text</frontend_type>
+							<sort_order>330</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+							<comment>Zoom predefined aspect ratio; Active only when Image Size Type is set to Resize</comment>
+						</zoom_ratio>
+						
+						<show_info_error>
+							<label>Show infos/errors</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>350</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+							<comment>Use for debuging</comment>
+						</show_info_error>
+						
+						<zoom_type>
+							<label>Zoom Type</label>
+							<frontend_type>select</frontend_type>
+							<source_model>smdzoom/zoomtype</source_model>
+							<sort_order>351</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+							<comment>Zoom placement</comment>
+						</zoom_type>
+						
+						
+					</fields>
+				</zoom> 				
+				
+			</groups>
+		</smdesign_colorswatch>
+	</sections>
+</config>

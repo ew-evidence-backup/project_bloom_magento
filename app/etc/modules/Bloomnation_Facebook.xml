@@ -1,0 +1,8 @@
+<config>
+  <modules>
+    <Bloomnation_Facebook>
+      <active>true</active>
+      <codePool>local</codePool>
+    </Bloomnation_Facebook>
+  </modules>
+</config>

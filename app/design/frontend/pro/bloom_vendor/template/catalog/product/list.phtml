@@ -1,0 +1,358 @@
+<?php
+
+?>
+<?php
+/**
+ * Product list template
+ *
+ * @see Mage_Catalog_Block_Product_List
+ */
+?>
+<?php $yelp_helper = Mage::helper('yelp'); ?>
+<?php $current_category = Mage::registry('current_category'); ?>
+<?php
+    $_productCollection=$this->getLoadedProductCollection();
+    $_helper = $this->helper('catalog/output');
+
+	$vendor_id    = $current_category->getYelp_api();
+
+	$dropship_vendor = Mage::getModel('udropship/vendor')->load($vendor_id);
+	$vendor_yelp_id  = $dropship_vendor->getUrl_key();
+	$vendor_telephone = $dropship_vendor->getTelephone();
+
+	//echo '-------------------------'.$vendor_yelp_id;
+	$yelp_rating_image = $yelp_helper->getRatingImage($vendor_yelp_id);
+	$yelp_review_count = $yelp_helper->getReview_count($vendor_yelp_id);
+	$yelp_url    	   = $yelp_helper->getUrl($vendor_yelp_id);
+	$yelp_rating	   = $yelp_helper->getRating($vendor_yelp_id)*20;
+
+?>
+    <script type="text/javascript">
+			jQuery(document).ready(function () {
+				jQuery("#call-us").live('click', function() {
+					jAlert('<?php echo $vendor_telephone; ?>', 'Telephone number');
+				});
+			})
+	</script>
+	<div class="florist-data">
+				<h1><?php echo $dropship_vendor->getVendor_name(); ?></h1>
+                <?php if ($yelp_url   && $yelp_rating != 0 ) { ?>
+				<div class="rating-stars-back">
+                    <?php echo $yelp_rating_image ?>
+                </div>
+                <?php } ?>
+				<?php echo $yelp_helper->getPopUpYelpUrl($vendor_yelp_id); ?>
+				<?php /*?>by <?php echo $yelp_helper->getYelpLogoSmall(); ?><?php */?>
+	</div>
+	<?php
+		  if ( !$yelp_url  )  {
+			$addtional_class_no_yelp_id  = "no_yelp_id";
+			$addtional_class_address_no_yelp_id = "wide";
+		  }
+	?>
+	<div class="main_vendor_wrapper <?php echo $addtional_class_no_yelp_id; ?>">
+		<div class="vendor_logo">
+		<img src="/media/<?php echo $dropship_vendor->getLogo(); ?>"></div>
+		<div class="vendor_address <?php echo $addtional_class_address_no_yelp_id; ?>">
+			<?php
+				$street = $dropship_vendor->getStreet();
+				echo $street[0];
+
+				$regionModel = Mage::getModel('directory/region')->load($dropship_vendor->getRegion_id());
+				//print_r($regionModel);
+
+			?><br/>
+			<?php echo $dropship_vendor->getCity(); ?>, <?php echo $regionModel->getCode(); ?>
+			<?php /*?><?php echo $dropship_vendor->getZip(); ?>
+			<?php echo $regionModel->getCode(); ?><?php */?>
+            <div class="call_us">
+            <a href="javascript: void(0)" id="call-us" >Call Us Now &raquo;</a>
+			<?php //echo $dropship_vendor->getTelephone(); ?>
+			</div>
+		</div>
+		<div class="vendor_about">
+			<?php echo $dropship_vendor->getData('about_us')?>
+		</div>
+		<?php $ratingArr = array('4','4.5','5'); ?>
+		<div xmlns:v="http://rdf.data-vocabulary.org/#" typeof="v:Review" style="display: none;">
+			<span property="v:itemreviewed"><?=$dropship_vendor->getVendorName()?></span>
+			Reviewed by
+			<span property="v:reviewer">BloomNation</span> on
+			<span property="v:dtreviewed" content="<?= date('Y-m-d');?>"><?= date('M, j');?></span>.
+			Rating:
+			<span property="v:rating"><?= $ratingArr[mt_rand(0,2)];?></span>
+		</div>		
+		<div class="vendor_share" style="height:30px;">
+        	<g:plusone size="medium"></g:plusone>
+
+<!-- Google+ +1 button -->
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+
+<div style="width:53px; height:24px; overflow:hidden; margin-bottom:10px;">
+<!-- Facebook Like Button -->
+<script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script>
+<fb:like <?php
+    $fbpage = $dropship_vendor->getData('facebook_page_id');
+    if(!empty($fbpage)){echo  'href="'.$fbpage.'"';}   ?>></fb:like>
+<!-- Ends Facebook like Button -->
+</div>
+        </div>
+	</div>
+	<?php if ( $yelp_url  )  { ?>
+	<div class="main_vendor_reviews">
+		<span>Reviews</span><div class="by-yelp">by <?php echo $yelp_helper->getYelpLogoSmall(); ?></div>
+		<ul>
+		<?php
+			$yelp_review_list = $yelp_helper->getReviews($vendor_yelp_id);
+
+			$logo             = $yelp_helper->getYelpLogoSmall();
+			$vendor_url_yelp  = $yelp_helper->getUrl($vendor_yelp_id);
+			$i=0;
+			foreach ( $yelp_review_list  as $review ) :
+				$i++;
+				//print_r($review );
+				$raiting        = '<img src="'.$review->rating_image_url.'"/>';
+				$raiting_number = $review->rating;
+				$raiting_text   = fit_text($review->excerpt,110);
+				$rainting_image = $review->rating_image_url;
+				$time           = date('m/d/Y',$review->time_created);
+				$user           = $review->user;
+				$user_image     = '<img src="'.$user->image_url.'"/>';
+				$user_name      = $user->name;
+				$popup   = "onclick=\"window.open('".$vendor_url_yelp."#".$review->id."','popup','width=1000,height=510,scrollbars=yes,resizable=no,toolbar=no,directories=no,location=no,menubar=no,status=no,left=0,top=0'); return false\"";
+
+				$review_link    = '<a href="'.$vendor_url_yelp.'#'.$review->id.'" '.$popup.'>Read Review &raquo;</a>';
+				$yelp_rating    = $yelp_helper->getRating($vendor_yelp_id)*20;
+
+				echo "<li>
+						<div class='review_wrapper'>
+							<div class='review_user'>$user_image<span>$user_name</span></div>
+							<div class='review_content'><img src='$rainting_image'/><span class='flo-date'>$time</span><p>$raiting_text</p>$review_link </div>
+						</div>
+					 </li>";
+				if ($i==2) break;
+			endforeach;
+			$popup   = "onclick=\"window.open('".$yelp_url."','popup','width=1000,height=510,scrollbars=yes,resizable=no,toolbar=no,directories=no,location=no,menubar=no,status=no,left=0,top=0'); return false\"";
+
+			echo "<div class='read-more-reviews'><a href='$yelp_url' $popup >Read More Reviews &raquo;</a></div>";
+		    ?>
+		</ul>
+	</div>
+	<?php } ?>
+    <div class="florist-spliter"></div>
+<?php $yelp_helper = Mage::helper('yelp'); ?>
+<?php if(!$_productCollection->count()): ?>
+<p class="note-msg"><?php echo $this->__('There are no products matching this Florist.') ?></p>
+<?php else: ?>
+<div class="category-products">
+    <div class="vendor-store"><?php echo $dropship_vendor->getVendor_name(); ?> Store</div>
+	<?php echo $this->getToolbarHtml() ?>
+    <?php // List mode ?>
+    <?php if($this->getMode()!='grid'): ?>
+    <?php $_iterator = 0; ?>
+    <ol class="products-list" id="products-list">
+    <?php foreach ($_productCollection as $_product): ?>
+        <li class="item<?php if( ++$_iterator == sizeof($_productCollection) ): ?> last<?php endif; ?>">
+            <?php // Product Image ?>
+            <a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->stripTags($this->getImageLabel($_product, 'small_image'), null, true) ?>" class="product-image"><img src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(135); ?>" width="135" height="135" alt="<?php echo $this->stripTags($this->getImageLabel($_product, 'small_image'), null, true) ?>" /></a>
+            <?php // Product description ?>
+            <div class="product-shop">
+                <div class="f-fix">
+                    <?php $_productNameStripped = $this->stripTags($_product->getName(), null, true); ?>
+                    <h2 class="product-name"><a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $_productNameStripped; ?>"><?php echo $_helper->productAttribute($_product, $_product->getName() , 'name'); ?></a></h2>
+                    <?php if($_product->getRatingSummary()): ?>
+                    <?php echo $this->getReviewsSummaryHtml($_product) ?>
+                    <?php endif; ?>
+                    <?php echo $this->getPriceHtml($_product, true) ?>
+
+                    <?php if($_product->isSaleable()): ?>
+                        <p><button type="button" title="<?php echo $this->__('Add to Cart') ?>" class="button btn-cart" onclick="setLocation('<?php echo $this->getAddToCartUrl($_product) ?>')"><span><span><?php echo $this->__('Add to Cart') ?></span></span></button></p>
+                    <?php else: ?>
+                        <p class="availability out-of-stock"><span><?php echo $this->__('Out of stock') ?></span></p>
+                    <?php endif; ?>
+                    <div class="desc std">
+                        <?php echo $_helper->productAttribute($_product, $_product->getShortDescription(), 'short_description') ?>
+                        <a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $_productNameStripped ?>" class="link-learn"><?php echo $this->__('Learn More') ?></a>
+                    </div>
+                    <ul class="add-to-links">
+                        <?php if ($this->helper('wishlist')->isAllow()) : ?>
+                            <li><a href="<?php echo $this->helper('wishlist')->getAddUrl($_product) ?>" class="link-wishlist"><?php echo $this->__('Add to Wishlist') ?></a></li>
+                        <?php endif; ?>
+                        <?php if($_compareUrl=$this->getAddToCompareUrl($_product)): ?>
+                            <li><span class="separator">|</span> <a href="<?php echo $_compareUrl ?>" class="link-compare"><?php echo $this->__('Add to Compare') ?></a></li>
+                        <?php endif; ?>
+                    </ul>
+                </div>
+            </div>
+        </li>
+    <?php endforeach; ?>
+    </ol>
+    <script type="text/javascript">decorateList('products-list', 'none-recursive')</script>
+
+    <?php else: ?>
+
+    <?php // Grid Mode ?>
+
+    <?php
+	if(!$this->getRequest()->getParam('occasions')) {
+	     foreach ($_productCollection as $key=>$_product) {
+		if(array_intersect($notShowCats, $_product->getCategoryIds() )) {
+		    $_productCollection->removeItemByKey($key);
+		}
+	     }
+	}
+	
+	$_collectionSize = $_productCollection->count();
+	$_columnCount = 4;
+	$notShowCats = array(53,54);
+    ?>
+    
+    <?php $i=0; foreach ($_productCollection as $_product): ?>
+		<?php
+			$dropship_vendor = Mage::getModel('udropship/vendor')->load($vendor_id);
+
+			//$dropship_vendor = $_product->getRandomVendor();
+			$vendor_yelp_id  = $dropship_vendor->getUrl_key();
+			$yelp_rating_image = $yelp_helper->getRatingImage($vendor_yelp_id);
+			$yelp_rating	   = $yelp_helper->getRating($vendor_yelp_id)*20;
+			
+	   ?>
+        <?php if ($i++%$_columnCount==0): ?>
+        <ul class="products-grid">
+        <?php endif ?>
+            <li class="item<?php if(($i-1)%$_columnCount==0): ?> first<?php elseif($i%$_columnCount==0): ?> last<?php endif; ?>">
+                <a href="<?php echo $_product->getProductUrl()  ?>" title="<?php echo $this->stripTags($this->getImageLabel($_product, 'small_image'), null, true) ?>" class="product-image"><img src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->backgroundColor(array(255,255,255))->adaptiveResize(169, 181); ?>" alt="<?php echo $this->stripTags($this->getImageLabel($_product, 'small_image'), null, true) ?>" /></a>
+                <h2 class="product-name"><a href="<?php echo $_product->getProductUrl()  ?>" title="<?php echo $this->stripTags($_product->getName(), null, true) ?>"><?php echo $_helper->productAttribute($_product, $_product->getName(), 'name') ?></a></h2>
+                <?php if($_product->getRatingSummary()): ?>
+                <?php echo $this->getReviewsSummaryHtml($_product, 'short') ?>
+                <?php endif; ?>
+                <div class="price-rate">
+									<div class="price-box">
+					        	<span class="regular-price" id="product-price-44">
+					          	<span class="price">$<?php echo number_format($_product->getVendorPrice($dropship_vendor), 2)?></span>
+										</span>
+					        </div>
+
+				<?php if ($yelp_url   && $yelp_rating != 0) { ?>
+				<div class="florist-rating">
+                    <?php echo $yelp_rating_image; ?>
+				</div>
+                <?php } ?>
+                </div>
+				<div class="flourist-name">
+
+
+					<?php echo $dropship_vendor->getVendorName(); ?>
+				</div>
+            </li>
+        <?php if ($i%$_columnCount==0 || $i==$_collectionSize): ?>
+        </ul>
+        <?php endif ?>
+        <?php endforeach ?>
+        <script type="text/javascript">decorateGeneric($$('ul.products-grid'), ['odd','even','first','last'])</script>
+    <?php endif; ?>
+
+    <div class="toolbar-bottom">
+        <?php echo $this->getToolbarHtml() ?>
+    </div>
+</div>
+<?php endif; ?>
+<?php
+/*
+ * 	Truncate string to specified length and add dots
+*/
+function fit_text($text, $max) {
+	if(strlen($text)<$max){
+		$izlaz=$text;
+	} else {
+		$start = $max;
+		if (strstr($text," "))
+		{
+			while (substr($text, $start, 1)!=" "){
+				$start=$start-1;
+			}
+		}
+		$izlaz=substr($text, 0, $start)."...";
+	}
+	return $izlaz;
+}
+?>
+<div id="map_canvas" style="width: 100px; height: 100px; top:-10000px; position: absolute;"></div>
+
+
+<script src="https://maps.googleapis.com/maps/api/js?libraries=places&sensor=true"></script>
+<script>
+  var geocoder;
+  var map;
+  var markersArray = [];
+  
+  function initialize() {
+    geocoder = new google.maps.Geocoder();
+    latlng = new google.maps.LatLng(-34.397, 150.644);
+    var mapOptions = {
+      zoom: 15,
+      center: latlng,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+    map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+  }
+  
+</script>
+
+<script type="text/javascript">
+jQuery(document).ready(function ($) {
+    /* get place reviews
+     *
+     * param string reference -- reference of google place
+     *
+     * return void
+     */
+    var  getPlaceReviews =  function (reference) {
+        var request = {
+            reference: reference
+        };
+        
+        service = new google.maps.places.PlacesService(map);
+        service.getDetails(request, function (place, status) {
+            if (status == google.maps.places.PlacesServiceStatus.OK) {
+                $.each(place.reviews, function(index, review) {
+		    var addLi = $('<li/>');
+		    var dt = new Date(review.time * 1000);
+		    var contentString = 'Author: '+review.author_name+'  Time: '+dt+
+		    '<br/>'+
+		    review.text;
+		    addLi.html(contentString);
+		    $("#google_reviews").append(addLi);
+		});
+            }
+        });
+    }
+    
+    
+	//------------------------------------------------- DOM Code ------------------------------------//
+	//initialize();
+	//getPlaceReviews('<?php echo $dropship_vendor->getGoogleReference();?>');
+	if( $('.products-grid .florist-rating').length == 0 ) {
+		$('.price-box').addClass('price-no-rating');
+	}
+	//adjust height
+	var mw = $(".main_vendor_wrapper").height();
+	var mr = $(".main_vendor_reviews").height();
+	if(mw > mr)
+	{
+		var h = mw;
+	}
+	else
+	{
+		var h = mr;
+	}	
+
+	$(".col-left.sidebar").css("margin-top", (h+134)+"px");
+});
+</script>

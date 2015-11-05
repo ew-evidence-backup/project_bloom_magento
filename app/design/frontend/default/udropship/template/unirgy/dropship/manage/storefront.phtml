@@ -1,0 +1,22 @@
+<?php
+$_hlp = Mage::helper('udropship');
+$_v = Mage::getSingleton('udropship/session')->getVendor();
+?>
+
+<?php if(!$_hlp->getCategoryByVendor($_v->getId())):?>
+    <h4>Sorry this section is not available because approval for your store is still pending</h4>
+    <h5>Average wait time: 8 hours</h5>
+<? return; endif;?>
+
+<form id="uPrefForm" method="post" action="<?php echo $this->getUrl('udropship/vendor/preferencesPost')?>" enctype="multipart/form-data">
+    <fieldset class="generic-box">
+        <div class="box-head"><h3>StoreFront options</h3></div>
+        <h5>Description:</h5>
+        <textarea name="about_us"><?php echo $_v->getAboutUs();?></textarea>
+        <br/><br/>
+        <h5>Choose an image (<a href="/media/<?php echo $_v->getLogo();?>" target="_blank" style="color:blue;">View Current</a>)</h5>
+        <input type="file" class="input-file" name="logo" />
+        <br/><br/>
+        <button class="form-button" type="submit"><span><?php echo $_hlp->__('Save Settings') ?></span></button>
+    </fieldset>
+</form>

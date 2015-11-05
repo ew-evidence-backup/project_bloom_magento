@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <urls_index_index>
+        <reference name="head">
+            <action method="setTitle" translate="title"><title>BloomNation Flower Delivery by City</title></action>
+        </reference>        
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="urls/cities" name="cities" as="cities" template="urls/cities.phtml"/>
+        </reference>
+    </urls_index_index>
+
+    <urls_index_topcity>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="urls/cities" name="topcity" as="topcity" template="urls/topcity.phtml"/>
+        </reference>        
+    </urls_index_topcity>
+    <urls_index_topflorist>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="urls/cities" name="topflorist" as="topflorist" template="urls/topflorist.phtml"/>
+        </reference>        
+    </urls_index_topflorist>    
+
+    
+    
+    <cms_index_index translate="label" module="page">
+        <label>Homepage Layout</label>
+        <block type="page/html" name="root" output="toHtml" template="page/home-page.phtml">
+            
+        <block type="page/html_head" name="head" as="head">
+                <action method="addJs"><script>prototype/prototype.js</script></action>
+                <action method="addJs"><script>lib/ccard.js</script></action>
+                <action method="addJs"><script>prototype/validation.js</script></action>
+                <action method="addJs"><script>scriptaculous/builder.js</script></action>
+                <action method="addJs"><script>scriptaculous/effects.js</script></action>
+                <action method="addJs"><script>scriptaculous/dragdrop.js</script></action>
+                <action method="addJs"><script>scriptaculous/controls.js</script></action>
+                <action method="addJs"><script>scriptaculous/slider.js</script></action>
+                <action method="addJs"><script>varien/js.js</script></action>
+                <action method="addJs"><script>varien/form.js</script></action>
+                <action method="addJs"><script>varien/menu.js</script></action>
+                <action method="addJs"><script>mage/translate.js</script></action>
+                <action method="addJs"><script>mage/cookies.js</script></action>
+                <action method="addJs"><script>jquery-1.7.1.min.js</script></action>
+                <action method="addJs"><script>thickbox-compressed.js</script></action>
+                <action method="addJs"><script>jquery.alerts.js</script></action>
+                <action method="addJs"><script>jquery.limit-1.2.source.js</script></action>
+        
+                <block type="page/js_cookie" name="js_cookies" template="page/js/cookie.phtml"/>
+        
+                <action method="addCss"><stylesheet>css/styles.css</stylesheet></action>
+                <action method="addItem"><type>skin_css</type><name>css/styles-ie.css</name><params/><if>lt IE 8</if></action>
+                <action method="addItem"><type>skin_css</type><name>css/ie-8.css</name><params/><if>gte IE 8</if></action>
+                <action method="addItem"><type>skin_css</type><name>css/styles-ie9.css</name><params/><if>IE 9</if></action>
+                <action method="addCss"><stylesheet>css/widgets.css</stylesheet></action>
+                <action method="addCss"><stylesheet>css/print.css</stylesheet><params>media="print"</params></action>
+                <action method="addCss"><stylesheet>css/thickbox.css</stylesheet></action>
+                <action method="addCss"><stylesheet>css/jquery.alerts.css</stylesheet></action>
+        
+                <action method="addItem"><type>js</type><name>lib/ds-sleight.js</name><params/><if>lt IE 7</if></action>
+                        <!--action method="addItem"><type>skin_js</type><name>js/ie6.js</name><params/><if>lt IE 7</if></action-->
+                                        <!--action method="addItem"><type>skin_js</type><name>js/ie6.js</name></action-->
+              </block>
+        
+              <block type="core/text_list" name="after_body_start" as="after_body_start" translate="label">
+                <label>Page Top</label>
+              </block>
+        
+              <block type="page/html_notices" name="global_notices" as="global_notices" template="page/html/notices.phtml" />
+        
+              <block type="page/html_header" name="header" as="header">
+                <block type="page/template_links" name="top.links" as="topLinks"/>
+                <block type="page/switch" name="store_language" as="store_language" template="page/switch/languages.phtml"/>
+                <block type="core/text_list" name="top.menu" as="topMenu" translate="label">
+                  <label>Navigation Bar</label>
+                </block>
+                <block type="page/html_wrapper" name="top.container" as="topContainer" translate="label">
+                  <label>Page Header</label>
+                  <action method="setElementClass">
+                    <value>top-container</value>
+                  </action>
+                </block>
+            </block>
+            <block type="page/html_footer" name="footer" as="footer" template="page/html/footer.phtml">
+              <block type="page/html_wrapper" name="bottom.container" as="bottomContainer" translate="label">
+                <label>Page Footer</label>
+                <action method="setElementClass">
+                  <value>bottom-container</value>
+                </action>
+              </block>
+              <block type="page/switch" name="store_switcher" as="store_switcher" template="page/switch/stores.phtml"/>
+                      <!--<block type="page/template_links" name="footer_links" as="footer_links" template="page/template/links.phtml"/>-->
+            </block>
+      
+            <block type="core/text_list" name="before_body_end" as="before_body_end" translate="label">
+              <label>Page Bottom</label>
+            </block>        
+            
+            
+        </block>
+    </cms_index_index>    
+    
+</layout>

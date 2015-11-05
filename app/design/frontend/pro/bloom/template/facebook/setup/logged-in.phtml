@@ -1,0 +1,59 @@
+<body>
+	<div id="layoutFrame" class="createAcc">
+
+		<!-- Header (start) -->
+		<header class="createAcc__header">
+			<div class="logo">
+				<a href="#"><img src="/js/facebook/i/logoAcc.png" alt="BloomNation"></a>
+			</div>
+			<h1 class="headerAcc__title">Sell your Flowers<br/> on Facebook!</h1>
+		</header>
+		<!-- Header (end) -->
+
+		<!-- Content account (start) -->
+		<div class="contentAcc">
+
+			<!-- Install app (start) -->
+			<form id="installApp">
+				<button id="installAppBtn" class="accBtn">Open Store Now</button>
+				<!--
+				<label for="signUpBtn">Or, create an account</label>
+				<a id="signUpBtn" style="padding: 10px 10px;" href="<?= $this->getUrl('facebook/index/register')?>">sign up now</a>
+				-->
+			</form>
+			<!-- Install app (end) -->
+			
+			<!-- Prewiev facebook app (start) -->
+			<div class="previewFbApp">
+				<img src="/js/facebook/images/prevFbApp_image03.jpg" alt="" />
+			</div>
+			<!-- Prewiev facebook app (end) -->
+		</div>
+		<!-- Content account (end) -->
+
+		<!-- Footer (start) -->
+		<footer class="createAcc__footer"></footer>
+		<!-- Footer (start) -->
+
+	</div>
+        
+    <div id="fb-root"></div>
+    <script src='//connect.facebook.net/en_US/all.js'></script>
+    <script>
+        appId = '343690602390212';
+        FB.init({appId: appId, status: true, cookie: true});        
+    </script>
+    
+    <script>
+        (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+        })();
+        
+         var _gaq = _gaq || [];
+        
+        _gaq.push(['_setAccount', 'UA-19515524-1']);
+        _gaq.push(['_trackPageview']);
+    </script>           
+</body>

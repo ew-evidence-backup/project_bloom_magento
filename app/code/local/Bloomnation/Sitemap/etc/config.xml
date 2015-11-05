@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<config>
+  <modules>
+    <Bloomnation_Sitemap>
+      <version>0.1.0</version>
+    </Bloomnation_Sitemap>
+  </modules>
+  <global>
+    <models>
+      <sitemap>
+        <rewrite>
+          <sitemap>Bloomnation_Sitemap_Model_Sitemap</sitemap>
+        </rewrite>
+      </sitemap>
+      <sitemap_resource>
+        <rewrite>
+          <catalog_product>Bloomnation_Sitemap_Model_Resource_Catalog_Product</catalog_product>
+          <catalog_category>Bloomnation_Sitemap_Model_Resource_Catalog_Category</catalog_category>
+        </rewrite>
+      </sitemap_resource>
+    </models>
+  </global>
+</config>

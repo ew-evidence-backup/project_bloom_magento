@@ -1,0 +1,16 @@
+<table>
+<?php
+$coupons = $this->getVendorCoupons();
+foreach($coupons as $c):
+$rule = Mage::getModel('salesrule/rule')->load($c->getCouponId());
+    ?>
+<tr>
+<td><?php echo $rule->getCouponCode();?></td>
+    <td><?php echo $c->getCreatedAt();?></td>
+<td><a href="#">Edit</a></td>
+
+</tr>
+
+
+<?php endforeach;?>
+</table>

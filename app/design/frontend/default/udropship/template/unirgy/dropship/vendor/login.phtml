@@ -1,0 +1,94 @@
+<?php $_session = Mage::getSingleton('udropship/session') ?>
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+<!-- Layout (start) -->
+<div id="layout" class="signUp">
+	<!-- Promo content (start) -->
+	<section id="signUpPromo">
+
+		<!-- Promo video (start) -->
+		<div class="signUpPromo__video">
+			<img src="<?= $this->getSkinUrl();?>redesign/images/promo.jpg" />
+		</div>
+		<!-- Promo video (end) -->
+
+		<h3 class="signUpPromo__title">Create a free flower shop profile</h3>
+		<p class="signUpPromo__text">
+			Add exposure and revenue to your flower shop.<br/>
+			Upload and sell your own unique designs.
+			Select your own prices and delivery fees.
+			No contracts, committments or obligations.
+			Keep 90% of every sale.
+			<br/><br/>
+			<a href="http://www.bloomnation.com/flowercloud/about-us/">Who is behind this crazy idea?</a>
+		</p>
+
+	</section>
+	<!-- Promo content (end) -->
+
+	<!-- Sign up form (start) -->
+	<form id="signUpForm" action="" method="post" name="signUpForm">
+		<h2 class="signUpForm__title">New Florist Sign-Up</h2>
+
+		<div class="signUpForm__row">
+			<label for="f-signUpForm__shopName">Flower Shop Name</label>
+			<input name="signup[vendor_name]" id="f-signUpForm__shopName" class="validate[required] text-input inputText"
+                   type="text" value="" />
+		</div>
+		<div class="signUpForm__row">
+			<div class="signUpForm__col m-col220px">
+				<label for="f-signUpForm__city">City</label>
+				<input name="signup[city]" id="f-signUpForm__city" class="validate[required] text-input inputText"
+                       type="text" value="" />
+			</div>
+			<div class="signUpForm__col m-col84px m-last-col">
+				<label for="f-signUpForm__zipCode">Zip Code</label>
+				<input name="signup[zip]" id="f-signUpForm__zipCode" class="validate[custom[postcodeUS]] inputText"
+                       type="text"
+                       value="" />
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div class="signUpForm__row">
+			<label for="f-signUpForm__email">Email Address</label>
+			<input name="signup[email]"  id="f-signUpForm__email" class="validate[required,custom[email]] text-input inputText" type="email" value="" />
+		</div>
+		<div class="signUpForm__row">
+			<label for="f-signUpForm__email_conf">Confirm Email Address</label>
+			<input name="signup[email_conf]"  id="f-signUpForm__email_conf" class="validate[required,equals[f-signUpForm__email]] text-input inputText" type="email" value="" />
+		</div>		
+		<div class="signUpForm__row">
+			<label for="f-signUpForm__password">Password</label>
+			<input name="signup[password]" id="f-signUpForm__password" class="validate[required,minSize[6]] inputText" type="password" value="" />
+		</div>
+		<div class="signUpForm__row">
+			<label for="f-signUpForm__confirmPassword">Confirm Password</label>
+			<input id="f-signUpForm__confirmPassword" class="validate[required,minSize[6],equals[f-signUpForm__password]] inputText" type="password" value="" />
+		</div>
+		<input id="signUpForm__submit" type="submit" value="Sign Up" />
+		<br/><br/>
+		<p style="font-family: arial">
+		By clicking Sign Up, you agree to our <a href="http://www.bloomnation.com/terms-of-service/" target="_blank">Terms and Services.</a><br/>
+		</p>
+	</form>
+	<!-- Sign up form (end) -->
+</div>
+<!-- Layout (end) -->
+
+<script>
+    $(document).ready(function(){
+        jQuery("#signUpForm").validationEngine({autoHidePrompt:true});
+	$('#signUpForm').submit(function(e) {
+		if($('#signUpForm').validationEngine('validate')) {
+			_gaq.push(['Florists', 'Signup', 'Signup Button Clicked by' + $('#f-signUpForm__shopName').val()]);
+		}
+	});
+	
+	$('#loginForm__submit').click(function() {
+		$('#f-email').val($('#f-email').val().replace(/^\s+|\s+$/g, ''));
+	});
+	
+	$('#f-signUpForm__email_conf').bind("cut copy paste",function(e) {
+		e.preventDefault();
+	});
+    });
+</script>

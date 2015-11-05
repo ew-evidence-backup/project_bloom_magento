@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Bloomnation_Urls>
+            <version>0.1.0</version>
+        </Bloomnation_Urls>
+    </modules>
+    <frontend>
+        <routers>
+            <urls>
+                <use>standard</use>
+                <args>
+                    <module>Bloomnation_Urls</module>
+                    <frontName>cities</frontName>
+                </args>
+            </urls>
+            <cms>
+                <use>standard</use>
+                <args>
+                    <modules>
+                        <urls before="Mage_Cms_IndexController">Bloomnation_Urls_Rewrites_Cms</urls>
+                    </modules>
+                </args>
+            </cms>
+            <catalog>
+                <use>standard</use>
+                <args>
+                    <modules>
+                        <urls before="Mage_Catalog">Bloomnation_Urls_Rewrites_Catalog</urls>
+                    </modules>
+                </args>
+            </catalog>
+            <customer>
+                <use>standard</use>
+                <args>
+                    <modules>
+                        <urls before="Mage_Catalog">Bloomnation_Urls_Rewrites_Customer</urls>
+                    </modules>
+                </args>                
+            </customer>
+            <sendfriend>
+                <use>standard</use>
+                <args>
+                    <modules>
+                        <urls before="Mage_Catalog">Bloomnation_Urls_Rewrites_Sendfriend</urls>
+                    </modules>
+                </args>                       
+            </sendfriend>
+        </routers>
+        <layout>
+            <updates>
+                <urls>
+                    <file>urls.xml</file>
+                </urls>
+            </updates>
+        </layout>        
+    </frontend>
+    <global>
+        
+        <models>
+            <urls>
+                <class>Bloomnation_Urls_Model</class>
+            </urls>
+            <sales>
+                <rewrite>
+                    <quote_item>Bloomnation_Urls_Model_Quote_Item</quote_item>
+                </rewrite>
+            </sales>
+            <catalog>
+                <rewrite>
+                    <product>Bloomnation_Urls_Model_Product</product>
+                    <category>Bloomnation_Urls_Model_Category</category>
+                </rewrite>
+            </catalog>
+            <core>
+                <rewrite>
+                    <url>Bloomnation_Urls_Model_Rewrite_Core_Url</url>
+                </rewrite>
+            </core>
+        </models>
+        
+        <helpers>
+            <urls>
+                <class>Bloomnation_Urls_Helper</class>
+            </urls>
+        </helpers>
+        
+        <blocks>
+            <urls>
+                <class>Bloomnation_Urls_Block</class>
+            </urls>            
+        </blocks>
+        
+        <events>
+            <controller_front_init_before>
+                <observers>
+                    <urls>
+                        <class>Bloomnation_Urls_Controller_SubdomainRouter</class>
+                        <method>initControllerRouters</method>
+                    </urls>
+                </observers>
+            </controller_front_init_before>
+            <controller_front_init_routers>
+                <observers>
+                    <urls>
+                        <class>Bloomnation_Urls_Controller_Router</class>
+                        <method>initControllerRouters</method>
+                    </urls>
+                </observers>
+            </controller_front_init_routers>
+        </events>
+        
+    </global>
+</config>

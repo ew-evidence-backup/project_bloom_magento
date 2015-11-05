@@ -1,0 +1,151 @@
+<?php
+$vendor = Mage::getModel('udropship/vendor')->load(Mage::registry('current_svendor'));
+$address = $vendor->getStreet(-1).' '.$vendor->getCity().', '.$vendor->getZip();
+preg_match('/(\d\d\d)(\d\d\d)(\d\d\d\d)/',$vendor->getTelephone(),$phone);
+?>
+
+
+
+
+
+
+<!-- Layout (start) -->
+<div id="layoutm">
+
+    <!-- Secondary content (start) -->
+    <div id="secondaryContent">
+
+        <!-- Map (start) -->
+        <div id="mapLocation" style="width: 300px; height: 300px;">
+            
+        </div>
+        <!-- Map (end) -->
+
+        <!-- Contact (start) -->
+        <div id="contactShop">
+            <h3>Contact</h3>
+            <p><i class="i-location"></i><?= $address;?></p>
+            <p class="contactShop__phone"><i class="i-phone"></i><?= '('.$phone[1].') '.$phone[2].'-'.$phone[3];?></p>
+            <a class="a-mail" href="" title=""><i class="i-email"></i><?= $vendor->getEmail();?></a>
+        </div>
+        <!-- Contact (end) -->
+
+        <!-- Hours operation (start) -->
+        <div id="hoursOperation">
+            <h3>Hours of Operation</h3>
+            <p class="weekDays">Weekdays<br/> <?= date("g:i a",strtotime($vendor->getOpenAt()));?> -<br/> <?= date("g:i a",strtotime($vendor->getCloseAt()));?></p>
+            <p class="weekEnds">Weekends<br/> <?= date("g:i a",strtotime($vendor->getWopenAt()));?> -<br/> <?= date("g:i a",strtotime($vendor->getWcloseAt()));?></p>
+        </div>
+        <!-- Hours operation (end) -->
+
+    </div>
+    <!-- Secondary content (end) -->
+
+    <!-- Main content (start) -->
+    <div id="mainContent">
+        <h2><?= $vendor->getVendorName();?></h2>
+        <p><?= $vendor->getAboutUs();?></p>
+
+        <!-- Owner (start) -->
+        <div id="owner">
+            <div class="owner__image">
+                <?php
+                    $src = ('' != $vendor->getOwnerPhoto()) ? '/media/'.$vendor->getOwnerPhoto() : '/skin/frontend/default/udropship/redesign/i/ownerPhotoDefault.jpg';
+                ?>
+                <img src="<?= $src; ?>" alt="" width="123" />
+            </div>
+            <div class="owner__info">
+                <h3><?= $vendor->getVendorAttn();?></h3>
+                <span>Owner</span>
+                <p><?= $vendor->getAboutOwner();?></p>
+            </div>
+        </div>
+        <!-- Owner (end) -->
+
+        <!-- Delivery info (start) -->
+        <div class="deliveryInfo">
+            <h3><i class="i-delivery"></i>Flower Delivery</h3>
+            We deliver to the following hospitals:<br/>
+            <p><i>coming soon</i></p>
+            <br/>
+            We deliver to the following funeral homes:<br/>
+            <p><i>coming soon</i></p>            
+        </div>
+        <!-- Delivery info (start) -->
+
+        <!-- Substitutuin policy (start) -->
+        <div class="substitutionPolicy" id="substPolicy">
+            <h3><i class="i-subPolicy"></i>Substitution Policy</h3>
+            <p>In some instances, the florists photo may represent an overall theme or look and include a one-of-a-kind vase which cannot be exactly replicated. Although the actual bouquet may not precisely match the photo, its temperament will. Occasionally, substitutions of flowers or containers happen due to weather, seasonality and market conditions which may affect availability. If this is the case with the gift you've selected, the local florist will ensure that the style, theme and color scheme of your arrangement is preserved and will only substitute items of equal or higher value.</p>
+        </div>
+        <!-- Substitutuin policy (end) -->
+
+    </div>
+    <!-- Main content (end) -->
+    
+</div>
+<!-- Layout (end) -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    jQuery(document).ready(function($) {
+        codeAddress('<?= $address;?>');
+    });
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+<script>
+var geocoder, map;
+function codeAddress(address) {
+    geocoder = new google.maps.Geocoder();
+    geocoder.geocode( { address: address}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        var myOptions = {
+            zoom: 16,
+            center: results[0].geometry.location,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        }
+        map = new google.maps.Map(document.getElementById("mapLocation"), myOptions);
+
+        var marker = new google.maps.Marker({
+            map: map,
+            position: results[0].geometry.location
+        });
+        
+        var contentString = '<?= $address;?><br/><a href="#">Click here</a> for directions';
+        
+        var infowindow = new google.maps.InfoWindow({
+            content: contentString,
+            maxWidth: 200
+        });
+        
+        google.maps.event.addListener(marker, 'click', function() {
+          infowindow.open(map,marker);
+        });
+        
+      }
+    });
+}
+</script>

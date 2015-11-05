@@ -1,0 +1,26 @@
+<?php 
+return;
+
+
+
+
+
+
+
+
+/********************************************* DISABLED FOR NOW ******************************************/
+
+?>
+<?php $_prev = $this->getPreviousProduct(); ?>
+<?php $_next = $this->getNextProduct(); ?>
+
+<?php if($_prev || $_next): ?>
+<div class="prev-next clearfix">
+    <?php if($_next): ?>
+    <a rel="next" class="product-next" title="<?php echo $this->escapeHtml($_next->getName()); ?>" href="<?php echo $_next->getProductUrl(); ?>"><span><?php echo $this->__('next') ?></span></a>
+    <?php endif; ?>
+    <?php if($_prev): ?>
+    <a rel="prev" class="product-prev" title="<?php echo $this->escapeHtml($_prev->getName()); ?>" href="<?php echo $_prev->getProductUrl(); ?>"><span><?php echo $this->__('prev') ?></span></a>
+    <?php endif; ?>
+</div>
+<?php endif; ?>

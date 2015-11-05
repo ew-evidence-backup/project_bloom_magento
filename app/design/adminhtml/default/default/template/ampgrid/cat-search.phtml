@@ -1,0 +1,19 @@
+<script src="/js/jquery/jquery-1.8.2.min.js"></script>
+<script>
+    jQuery.noConflict();
+    jQuery(document).ready(function($) {
+        $('#cat-search').keyup(function() {
+            var filter = $(this).val();
+            $('#productGrid_product_filter_categories option:hidden').show();
+            
+            $('#productGrid_product_filter_categories option').each(function(index,el) {
+                var re = new RegExp(filter,"ig");
+                if(!$(el).html().match(re)) {
+                    $(el).hide();
+                }           
+            });
+        });
+    });
+</script>
+<br/><br/>
+Filter categories: <input type="text" id="cat-search" value=""/>

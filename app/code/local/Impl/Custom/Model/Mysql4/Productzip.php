@@ -1,0 +1,1 @@
+<?phpclass Impl_Custom_Model_Mysql4_Productzip extends Mage_Core_Model_Mysql4_Abstract{    public function _construct()    {            $this->_init('custom/productzip', 'id');    }}

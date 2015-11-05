@@ -1,0 +1,33 @@
+<?php if ($this->includeTax() && $this->getTotalExclTax()>=0):?>
+
+<tr>
+    <td class="a-right" colspan="<?php echo $this->getColspan(); ?>">Florist's Delivery Fee</td>
+    <td class="a-left"><?php echo $this->helper('checkout')->formatPrice($this->getTotalShipmentCost()) ?></td>
+</tr>
+<tr id="total-exclude-tax">
+    <td style="<?php echo $this->getStyle() ?>" class="a-right" colspan="<?php echo $this->getColspan(); ?>">
+        <strong><?php echo $this->helper('tax')->__('Total')?></strong>
+    </td>
+    <td style="<?php echo $this->getStyle() ?>" class="a-left">
+        <strong><?php echo $this->helper('checkout')->formatPrice(Mage::getSingleton('checkout/cart')->getQuote()->getSubtotalWithDiscount() + $this->getTotalShipmentCost()) ?></strong>
+    </td>
+</tr>
+<?php //echo $this->renderTotals('taxes', $this->getColspan()); ?>
+<tr style="display:none;" id="total-include-tax">
+    <td style="<?php echo $this->getStyle() ?>" class="a-right" colspan="<?php echo $this->getColspan(); ?>">
+        <strong><?php echo $this->helper('tax')->__('Grand Total')?></strong>
+    </td>
+    <td style="<?php echo $this->getStyle() ?>" class="a-left">
+        <strong><?php echo $this->helper('checkout')->formatPrice($this->getTotal()->getValue()) ?></strong>
+    </td>
+</tr>
+<?php else:?>
+<tr style="display:none;">
+    <td style="<?php echo $this->getStyle() ?>" class="a-right" colspan="<?php echo $this->getColspan(); ?>">
+        <strong><?php echo $this->getTotal()->getTitle() ?></strong>
+    </td>
+    <td style="<?php echo $this->getStyle() ?>" class="a-left">
+        <strong><?php echo $this->helper('checkout')->formatPrice($this->getTotal()->getValue()) ?></strong>
+    </td>
+</tr>
+<?php endif;?>

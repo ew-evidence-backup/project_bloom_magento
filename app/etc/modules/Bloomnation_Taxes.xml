@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Bloomnation_Taxes>
+            <active>true</active>
+            <codePool>local</codePool>
+        </Bloomnation_Taxes>
+    </modules>
+</config>

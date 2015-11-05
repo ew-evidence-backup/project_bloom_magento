@@ -1,0 +1,13 @@
+
+
+<?php foreach($this->getProductCollection() as $p):?>
+
+<div>
+<a href="<?= Mage::getUrl('iframemod/product/view').'id/'.$p->getId()?>"><?= $p->getName();?></a>
+<span><?= strip_tags(Mage::helper('checkout')->formatPrice($p->getPrice())); ?></span>
+<br/>
+<img src="<?php echo Mage::helper('catalog/image')->init($p, 'small_image')->constrainOnly(TRUE)->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->backgroundColor(array(255,255,255))->adaptiveResize(169, 181);?>" />
+
+</div>
+
+<?php endforeach; ?>

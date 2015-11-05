@@ -1,0 +1,628 @@
+<div id="modal_window" style="display: none; text-align: center;">
+    <img src="http://www.mytreedb.com/uploads/mytreedb/loader/ajax_loader_orange_128.gif" width="65"/>
+    <h2 style="color: white; font-size: 26px;">Saving design</h2>
+</div>
+
+<?php
+// Get product
+$_product = $this->getProduct();
+$vendor = Mage::getSingleton('udropship/session')->getVendor();
+if(is_object($_product->getMediaGalleryImages()) && $_product->getMediaGalleryImages()->getSize() > 0){$hasImage = true;}
+if($tempProduct  = $this->getRequest()->getParam('temp_product',false)) {
+    $imgSrc = Mage::getSingleton('core/resource')
+	->getConnection('core_write')
+	->fetchOne('SELECT img FROM udropship_temp_product WHERE id='.$tempProduct);
+}
+?>
+<form id="productForm" name="productForm" method="post" action="">
+    <!-- Layout (start) -->
+    <div id="layout" class="addDesign">
+
+        <!-- Add design header (start) -->
+        <header class="addDesign__header">
+            <h1 class="addDesign__title"><span>+</span> Add Design</h1>
+
+            <div class="addDesign__import">
+                <p class="addDesign__importLabel">Import your images from facebook</p>
+                <button id="addDesign__importBtn">Import</button>
+            </div>
+        </header>
+        <!--  Add design header (end) -->
+
+        <!-- Add design content (start) -->
+        <section id="addDesign__content">
+
+            <!-- Step 1 (start) -->
+            <div id="addDesign__step1" class="addDesign__question">
+                <div id="addDesignForm">
+                    <aside class="addDesignForm__aside">
+                        <div class="addDesignForm__imageContainer">
+                            <div class="addDesignForm__addImageBtn" style="cursor: pointer;" id="file_upload">
+                                <img id="upload-progress" src="<?= $this->getSkinUrl()?>redesign/i/upload-progress.gif"
+                                     style="display: block; position: absolute; margin: 100px 0 0 80px; z-index: 100; display: none;"/>
+                                <div style="overflow: hidden; position: relative; width: 200px; height: 200px;">
+                                <?php if (isset($hasImage)): ?>
+                                <img style="position: absolute;" width="200" src="<?php echo (string)Mage::helper('catalog/image')->init($_product,'image')->resize(250);?>" id="productImg"/>
+                                <?php elseif(isset($imgSrc)): ?>
+                                <img style="position: absolute;" width="200" src="<?= $imgSrc; ?>" id="productImg"/>
+                                <?php else: ?>
+                                <img id="productImg" style="position: absolute;" width="200" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" id="productImg"/>
+                                <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                        <input class="f-addDesignForm__name validate[required] text-input"
+                               type="text"
+                               placeholder="Product Name" id="product_name" name="name" value="<?php echo $_product->getName()?>"
+                               data-errormessage-value-missing="Product name required!"/>
+                        <input id="f-addDesignForm__price" class="f-addDesignForm__price validate[required,custom[number]]" type="text"
+                               placeholder="Price"
+                               name="price" value="<?php if ($_product->getPrice()) {
+                            echo number_format($_product->getPrice(), 2);
+                        }?>" data-errormessage-value-missing="Product price required!"
+                               data-errormessage-custom-error = "Invalid Price Value"/>
+                        <a style="font-size: 13px" id="vendor_delivery" target="_blank"
+                           href="/florist/vendor/preferences/#deliveryForm">
+                            &nbsp; * Price excluding delivery</a>
+
+                    </aside>
+                    <textarea id="f-addDesignForm__description" class="validate[required] text-input"
+                              name="short_description" placeholder="enter detailed product Description..."
+                              data-errormessage-value-missing="Product description required!"><?php echo $_product->getShortDescription();?></textarea>
+                </div>
+            </div>
+            <!-- Step 1 (end) -->
+
+            <!-- Step 2 (start) -->
+            <div id="addDesign__step2" class="addDesign__question" style="display: none;">
+                <header class="addDesign__question__header">
+                    <h2 class="addDesign__question__title">What occasion(s) is this for?<span></span></h2>
+                </header>
+
+                <?php echo Mage::helper('udropship/inputhtml')->getSelectHtml('occasions', $_product->getOccasions(), '4-row');?>
+            </div>
+            <!-- Step 2 (end) -->
+
+            <!-- Step 3 (start) -->
+            <div id="addDesign__step3" class="addDesign__question singleSelect" style="display: none;">
+                <header class="addDesign__question__header">
+                    <h2 class="addDesign__question__title">What is the style? </h2>
+                </header>
+
+                <?php echo Mage::helper('udropship/inputhtml')->getSelectHtml('style', $_product->getStyle(), '3-row');?>
+            </div>
+            <!-- Step 3 (end) -->
+
+            <!-- Step 3 (start)
+            <div id="addDesign__step3" class="addDesign__question">
+                <header class="addDesign__question__header">
+                    <h2 class="addDesign__question__title">What kind of sympathy arrangement is this? <span>(select one)</span></h2>
+                </header>
+
+                <div class="addDesign__answer">
+                    <div class="addDesign__answer__content">
+                        <img class="addDesign__answer__image" src="webroot/images/image02.jpg" alt="" />
+                    </div>
+                    <footer class="addDesign__answer__footer">
+                        <h3 class="addDesign__answer__title">Bouquet</h3>
+                    </footer>
+                </div>
+                <div class="addDesign__answer">
+                    <div class="addDesign__answer__content">
+                        <img class="addDesign__answer__image" src="webroot/images/image02.jpg" alt="" />
+                    </div>
+                    <footer class="addDesign__answer__footer">
+                        <h3 class="addDesign__answer__title">Bouquet</h3>
+                    </footer>
+                </div>
+                <div class="addDesign__answer">
+                    <div class="addDesign__answer__content">
+                        <img class="addDesign__answer__image" src="webroot/images/image02.jpg" alt="" />
+                    </div>
+                    <footer class="addDesign__answer__footer">
+                        <h3 class="addDesign__answer__title">Bouquet</h3>
+                    </footer>
+                </div>
+            </div>
+            <!-- Step 3 (end) -->
+
+            <!-- Step 4 (start) -->
+            <div id="addDesign__step4" class="addDesign__question singleSelect" style="display: none;">
+                <header class="addDesign__question__header">
+                    <h2 class="addDesign__question__title">Main flower in this bouquet?</h2>
+                </header>
+
+                <?php echo Mage::helper('udropship/inputhtml')->getSelectHtml('flower_type', $_product->getFlowerType(), '8-row');?>
+            </div>
+            <!-- Step 4 (end) -->
+
+            <!-- Step 5 (start) -->
+            <div id="addDesign__step5" class="addDesign__question" style="display: none;">
+                <header class="addDesign__question__header">
+                    <h2 class="addDesign__question__title">What color(s) are in this bouquet?
+                    </h2>
+                </header>
+
+                <?php echo Mage::helper('udropship/inputhtml')->getSelectHtml('color', $_product->getColor(), '4-row');?>
+            </div>
+            <!-- Step 5 (end) -->
+        </section>
+        <!-- Add design content (end) -->
+
+        <!-- Add design footer (start) -->
+        <footer class="addDesign__footer">
+
+            <!-- Add design progress (start) -->
+            <nav class="addDesign__progress">
+                <button class="addDesignBackBtn defaultBtn">Back</button>
+                <button class="addDesignNextBtn" rel="1" onclick="return false;">Next</button>
+                <!--<div class="addDesign__progress__step">Step<br><span>2</span>/13</div>-->
+            </nav>
+            <!-- Add design progress (end) -->
+
+        </footer>
+        <!--  Add design footer (end) -->
+    </div>
+    <!-- Layout (end) -->
+    <?php if (!$_product->getId()): ?>
+    <input type="hidden" name="imageFile" id="p_img" value="<?= (isset($imgSrc)) ? $imgSrc : '' ?>"/>
+    <?php endif;?>
+</form>
+
+
+<!--
+<form name="edit_product_form" action="" method="post">
+    <div style="width: 150px;">Upload Image</div><br/>
+    <br/><br/>
+    <input type="text" name="name" value="<?php echo $_product->getName()?>"/>
+    <br/><br/>
+    <textarea name="short_description"><?php echo $_product->getShortDescription()?></textarea>
+    <br/><br/>
+    <input type="text" name="price" value="<?php echo $_product->getPrice()?>"/>
+    <br/><br/>
+    <?php echo Mage::helper('udropship/inputhtml')->getSelectHtml('style', $_product->getStyle());?>    
+    <br/><br/>
+    <?php echo Mage::helper('udropship/inputhtml')->getSelectHtml('flower_type', $_product->getFlowerType());?>
+    <br/><br/>
+    <?php echo Mage::helper('udropship/inputhtml')->getSelectHtml('size', $_product->getSize());?>
+    <br/><br/>
+    <?php echo Mage::helper('udropship/inputhtml')->getSelectHtml('occasions', $_product->getOccasions(), 'multiselect');?>
+    <br/><br/>
+    <?php echo Mage::helper('udropship/inputhtml')->getSelectHtml('color', $_product->getColor(), 'multiselect');?>
+    <br/><br/>
+
+    <input type="submit" value="Submit"/>
+</form>
+-->
+
+<script type="text/javascript" src="http://feather.aviary.com/js/feather.js"></script>
+<?php $imgInfo = Mage::helper('urls')->getImagePath($_product); ?>
+<script>
+var step = 1;
+<?php if($_product->getId()):?>
+var nameOk = true;
+<?php else:?>
+var nameOk = false;
+
+<?php endif;?>
+var pImgUrl;
+var originalFilename = '<?php echo $imgInfo['path'] ?> ';
+var origPath = '<?php echo  $imgInfo['url'] ?>';
+var featherEditor = new Aviary.Feather({
+    apiKey:'a4a534064',
+    apiVersion:2,
+    tools:'sharpness,saturation,contrast,brightness,crop,orientation,effects,enhance',
+    onSave:function (imageID, newURL) {
+        var img = document.getElementById(imageID);
+        img.src = newURL;
+        $('#file_upload').css('background-image','none');
+        featherEditor.close();
+        return false;
+        //{if $js_case eq 'add_design'}
+        //var imgSrc = $('#productImg').attr('src');
+        //queryPos = imgSrc.indexOf('?');
+        //if(queryPos != -1) {
+        //    imgSrc = imgSrc.substring(0, queryPos);
+        //}
+        //$('#upload_thing').attr('src', imgSrc + '?' + new Date().getTime());
+        //{else if $js_case eq 'edit_design'}
+        //location.reload();
+        //{/if}
+    },
+    postUrl:'<?php echo Mage::getUrl('florist/file/aviary/')?>?pid=<?= $_product->getId(); ?>'
+});
+
+function openAviary() {
+    launchEditor('productImg', origPath);
+}
+function launchEditor(id, src) {
+    featherEditor.launch({
+        image:id,
+        postUrl:'<?php echo Mage::getUrl('florist/file/aviary/')?>?pid=<?= $_product->getId(); ?>',
+        url:src
+    });
+}
+$('#addDesign__importBtn').live('click', function () {
+    alert("Coming soon!");
+})
+$('.addDesignBackBtn').live('click', function () {
+    $('html, body').animate({
+        scrollTop:10
+    }, 'slow');
+    return false;
+})
+
+function checkElem(elm, c, el, validate) {
+    if (typeof c == "undefined") {
+        c = 0;
+    }
+    if (typeof el == "undefined") {
+        el = 0;
+    }
+    name = elm.attr('name');
+    namex = name.replace('[', '');
+    namex = namex.replace(']', '');
+    error = '';
+    if (name == 'occasions[]') {
+        min = 1;
+        max = 7;
+        error = 'Select between 1 to 7 occasions'
+    } else if (name == 'style[]') {
+        min = 1;
+        max = 1;
+        error = 'Pick a style'
+
+
+    } else if (name == 'flower_type[]') {
+        min = 1;
+        max = 1;
+        error = 'Pick 1 main flower'
+
+    } else if (name == 'color[]') {
+        min = 1;
+        max = 3;
+        error = 'Select between 1 to 3 colors'
+
+    }
+    count = $("input[name='" + name + "']:checked").length;
+    if (count + c >= min && count + c <= max) {
+        $('#addDesign__answer' + namex).validationEngine('hide');
+        return true;
+    } else {
+        if ((min == max) && !validate) {
+            nel = el.parent('span').parent('div').find('div.selected').first();
+            if (count + c > max) {
+                nel.removeClass('selected');
+                $("input:checkbox[name='" + name + "']").removeAttr('checked');
+                $("input:checkbox[name='" + name + "']").attr('checked', false);
+                $('#addDesign__answer' + namex).validationEngine('showPrompt', error, 'error', 'topLeft')
+//                    $('#addDesign__answer'+namex).validationEngine('hide');
+                return true;
+            }
+
+        }
+        $('#addDesign__answer' + namex).validationEngine('showPrompt', error, name, 'topLeft', true)
+        return false;
+    }
+}
+function isNumber(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+}
+function validStep()
+{
+    c1 = false;
+    c2 = false;
+    c3 = false;
+    c4 = false;
+
+    $desc = $('#f-addDesignForm__description').val();
+    if($desc.length > 1){
+        c1 = true;
+    }else{
+        error ='Product description is required!';
+        $('#f-addDesignForm__description').validationEngine('showPrompt', error, name, 'topLeft', true);
+    }
+    $price = $('#f-addDesignForm__price').val();
+    if(isNumber($price)){
+        c2 = true;
+    }else{
+        error ='Product price is required!';
+        $('#f-addDesignForm__price').validationEngine('showPrompt', error, name, 'topLeft', true);
+    }
+    $name = $('#product_name').val();
+    if($name.length > 1){
+        c3 = true;
+        if(!nameOk){
+            c3 = false;
+            error ='Product name already exist!';
+            $('html, body').animate({
+                scrollTop:$('#product_name').offset().top - 40
+            }, 'slow');
+            $('#product_name').validationEngine('showPrompt', error, name, 'topLeft', true);
+
+            return;
+        }
+    }else{
+        error ='Product name is required!';
+        $('#product_name').validationEngine('showPrompt', error, name, 'topLeft', true);
+    }
+    $img = $('#productImg').attr('src');
+    if($img !='data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' && $img.length > 1){
+        c4 = true;
+    }else{
+        error ='Product image is required!';
+        $('#file_upload').validationEngine('showPrompt', error, name, 'topLeft', true);
+    }
+    return c1 && c2 && c3 && c4;
+
+}
+function vForm() {
+    rs1 = checkElem($('input[name="occasions[]"]').first(), 0, 0, true);
+    rs2 = checkElem($('input[name="style[]"]').first(), 0, 0, true);
+    rs3 = checkElem($('input[name="flower_type[]"]').first(), 0, 0, true);
+    rs4 = checkElem($('input[name="color[]"]').first(), 0, 0, true);
+    if (rs1 && rs2 && rs3 && rs4) {
+        return true;
+    }
+    return false;
+
+}
+var nameData = '';
+function checkName()
+{
+    val = $('#product_name').val();
+    var request = $.ajax({
+        url: '/florist/vendor/checkname',
+        data: {name: val,id: '<?php echo $_product->getId();?>'},
+        async: false
+    });
+    request.done(function(data) {
+        obj = JSON.parse(data);
+        nameData = obj;
+        if(nameData.status =='true'){
+            nameOk = true;
+            $('#product_name').validationEngine('hide');
+        }else{
+            nameOk = false;
+            $('#product_name').validationEngine('showPrompt', obj.msg, name, 'topLeft', true);
+        }
+    });
+
+    return nameOk;
+}
+$('#product_name').live('change',function(){
+    checkName();
+});
+
+
+function ScaleImage(srcwidth, srcheight, targetwidth, targetheight, fLetterBox) {
+
+    var result = { width: 0, height: 0, fScaleToTargetWidth: true };
+
+    if ((srcwidth <= 0) || (srcheight <= 0) || (targetwidth <= 0) || (targetheight <= 0)) {
+        return result;
+    }
+
+    // scale to the target width
+    var scaleX1 = targetwidth;
+    var scaleY1 = (srcheight * targetwidth) / srcwidth;
+
+    // scale to the target height
+    var scaleX2 = (srcwidth * targetheight) / srcheight;
+    var scaleY2 = targetheight;
+
+    // now figure out which one we should use
+    var fScaleOnWidth = (scaleX2 > targetwidth);
+    if (fScaleOnWidth) {
+        fScaleOnWidth = fLetterBox;
+    }
+    else {
+        fScaleOnWidth = !fLetterBox;
+    }
+
+    if (fScaleOnWidth) {
+        result.width = Math.floor(scaleX1);
+        result.height = Math.floor(scaleY1);
+        result.fScaleToTargetWidth = true;
+    }
+    else {
+        result.width = Math.floor(scaleX2);
+        result.height = Math.floor(scaleY2);
+        result.fScaleToTargetWidth = false;
+    }
+    result.targetleft = Math.floor((targetwidth - result.width) / 2);
+    result.targettop = Math.floor((targetheight - result.height) / 2);
+
+    return result;
+}
+
+function OnImageLoad() {
+
+    var img = $('#productImg');
+
+    // what's the size of this image and it's parent
+    var w = $(img).width();
+    var h = $(img).height();
+    var tw = $(img).parent().width();
+    var th = $(img).parent().height();
+    // compute the new size and offsets
+    var result = ScaleImage(w, h, tw, th, false);
+
+    // adjust the image coordinates and size
+    img.width = result.width;
+    img.height = result.height;
+    $(img).css("left", result.targetleft);
+    $(img).css("top", result.targettop);
+}
+$(document).ready(function ($) {
+    <?php if(isset($hasImage)):?>
+    $('#addDesign__step1 > #addDesignForm > .addDesignForm__aside').before('<button id="edit_image"  onclick="openAviary();return false;">Edit Image</button>');
+    <?php endif;?>
+    /* -------------------------------------------- FUNCTION DEFINITIONS --------------------*/
+    /* Show next step
+     *
+     * @param object this - element that called the function
+     *
+     * return void
+     */
+    var showNextStep = function () {
+        var nextStep = $('.addDesign__question:visible').last().next();
+        btn = $('.addDesignNextBtn');
+        stepId = parseInt(btn.attr('rel'));
+        stepPassed = false;
+        switch (stepId) {
+            case 1:
+                //stepPassed = $("#productForm").validationEngine('validate');
+
+                stepPassed = validStep();
+                break;
+            case 2:
+                stepPassed = checkElem($('input[name="occasions[]"]').first(), 0, 0, true);
+                break;
+            case 3:
+                stepPassed = checkElem($('input[name="style[]"]').first(), 0, 0, true);
+                break;
+            case 4:
+                stepPassed = checkElem($('input[name="flower_type[]"]').first(), 0, 0, true);
+                break;
+            case 5:
+                stepPassed = checkElem($('input[name="color[]"]').first(), 0, 0, true);
+                break;
+            default:
+                stepPassed = true;
+        }
+        if (!stepPassed) {
+            return false;
+        }
+        stepId = stepId + 1;
+        btn.attr('rel', stepId);
+        nextStep.show();
+        // Scroll to next element if not all steps were shown
+        if (nextStep.length > 0) {
+            $('html, body').animate({
+                scrollTop:nextStep.offset().top
+            }, 'slow');
+        }
+        // Submit form if all elements were shown
+        if ($('.addDesign__question:visible').length == $('.addDesign__question').length) {
+            $('.addDesignNextBtn').html('Save');
+            $('.addDesignNextBtn').click(submitForm);
+            return;
+        }
+    }
+    /* Submit product form
+     *
+     * no params
+     *
+     * return void
+     */
+    var submitForm = function () {
+        // Trim price to avoid added space issues
+        $('#f-addDesignForm__price').val($.trim($('#f-addDesignForm__price').val()));
+        $('#productForm').submit();
+    }
+
+    /* -------------------------------------------- DOM CODE ---------------------------------- */
+    // File uploader
+    var uploader = new qq.FileUploaderBasic({
+        button:document.getElementById('file_upload'),
+        action:'<?php echo Mage::getUrl('florist/file/upload/')?>',
+        allowedExtensions:['jpg', 'jpeg', 'png', 'gif'],
+        onComplete:function (id, fileName, response) {
+            $('#upload-progress').hide();
+
+            if (response.success) {
+                $('#file_upload').validationEngine('hide');
+                var productImg = '/media/vendor/' + response.msg;
+                pImgUrl = '<?php echo Mage::getUrl('');?>media/vendor/' + response.msg;
+                pImgMedia = '/media/vendor/' + response.msg;
+                var data = {'image':productImg};
+                $('#p_img').val(productImg);
+                $('#productImg').attr('src', productImg);
+            <?php if ($_product->getId()) { ?>
+                $.post('', data, function (response) {
+                    $('#productImg').attr('src', response.data);
+                    originalFilename = response.image;
+                    origPath = response.path;
+                    $('#vendor_delivery').after('<button onclick="openAviary();return false;">Edit Image</button>');
+                }, 'json');
+                <?php } else { ?>
+                originalFilename = '<?php echo Mage::getBaseDir('media')?>' + '/vendor/' + response.msg;
+                origPath = '<?php echo Mage::getUrl('');?>media/vendor/' + response.msg;
+                $('button#edit_image').remove();
+                $('#addDesign__step1 > #addDesignForm > .addDesignForm__aside').before('<button id="edit_image"  onclick="openAviary();return false;">Edit Image</button>');
+                <?php }?>
+                $('.addDesignForm__addImageBtn').css('background','none');
+                //OnImageLoad();
+            }
+        },
+        onProgress:function (id, fileName, loaded, total) {
+
+        },
+        onSubmit:function (id, fileName) {
+            $('#upload-progress').show();
+        },
+        debug:false
+    });
+
+    // Select box and select frame check/uncheck
+    $('.addDesign__answer').click(function () {
+        if ($(this).hasClass('selected')) {
+            c = -1;
+        } else {
+            c = 1
+        }
+        rs = checkElem($(this).children('input[type="checkbox"]'), c, $(this), false);
+        if (!rs) {
+            return false;
+        }
+        if ($(this).hasClass('selected')) {
+            $(this).removeClass('selected');
+            $(this).children('input[type="checkbox"]').removeAttr('checked');
+        } else {
+            // Uncheck other elements if this is single select
+            if ($(this).parent().hasClass('singleSelect')) {
+                $(this).parent().children('.addDesign__answer').removeClass('selected');
+                $(this).parent().children('input[type="checkbox"]').removeAttr('checked');
+            }
+            $(this).addClass('selected');
+            $(this).children('input[type="checkbox"]').attr('checked', 'checked');
+        }
+    });
+    // Vertical step appearing
+<?php if (!$_product->getId()): ?>
+    //$('input', '.addDesign__question').change(showNextStep);
+    $('.addDesignNextBtn').click(showNextStep);
+    <?php else : ?>
+    $('.addDesign__question:hidden').show();
+    $('.addDesignNextBtn').html('Save');
+    $('.addDesignNextBtn').click(submitForm);
+    <?php endif;?>
+
+    $("#productForm").validationEngine('attach', {
+        onValidationComplete:function (form, status) {
+            frs = vForm();
+            fs1 = validStep();
+            if (fs1 && frs && status) {
+                $('#modal_window').modal({
+                    escClose: false,
+                    opacity:80,
+                    overlayCss: { backgroundColor:"#000" }
+                });
+                $(document).one('keyup', function(e) {
+                    if(27 == e.keyCode) {
+                        e.preventDefault();
+                        if(!confirm('Product is being saved, are you sure you want to cancel')) {
+                            $("#productForm").submit();
+                        } else {
+                            $.modal.close();
+                        }
+                    }
+                });                 
+                return true;
+            }
+            return false;
+        }
+    });
+});
+</script>

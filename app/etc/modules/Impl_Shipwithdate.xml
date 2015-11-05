@@ -1,0 +1,8 @@
+<config>
+  <modules>
+    <Impl_Shipwithdate>
+      <active>true</active>
+      <codePool>community</codePool>
+    </Impl_Shipwithdate>
+  </modules>
+</config>

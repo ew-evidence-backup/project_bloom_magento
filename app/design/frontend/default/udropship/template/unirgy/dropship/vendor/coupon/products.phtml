@@ -1,0 +1,34 @@
+<span>Please choose the products you want create coupon for ?<br></span>
+    <form name="coupon-products" action="<?php echo Mage::getUrl('florist/coupon/new')?>" method="post">
+<div class="products_container">
+    <table>
+        <tbody>
+        <tr>
+            <td style="width: 50px;text-align: center;">#</td>
+            <td>Product name</td>
+
+        </tr>
+        <?php foreach ($this->getVendorProducts() as $_p): $_p = Mage::getModel('catalog/product')->load($_p['product_id']);
+            if ($_p->getId()): ?>
+            <tr>
+                <td>
+                    <input value="<?php echo $_p->getSku();?>" name="skus[]" type="checkbox" id="skus-<?php echo
+                    $_p->getId();?>">
+                </td>
+                <td>
+                    <label for="skus-<?php echo $_p->getId();?>"><?php echo $_p->getName();?></label>
+                </td>
+            </tr>
+                <?php endif; endforeach; ?>
+        <tr><td style="text-align: center;" colspan="2"><input type="submit" value="Next"></td></tr>
+        </tbody>
+    </table>
+
+</div>
+    </form>
+
+<script>
+    jQuery(document).ready(function ($) {
+
+    });
+</script>

@@ -1,0 +1,33 @@
+<h2>Top citys by state</h2>
+<hr/>
+<br/>
+<div class="sitemapInfo">
+<?php
+    $stateCity = $this->getCities();
+
+    $c = 0;
+    $threshold = 20;
+    $colNumber = 20;
+    
+    foreach($stateCity as $state): 
+        if($c % $colNumber == 0 || $c == 0):?>
+        <div class="col-list">
+        <?php endif; ?>
+        
+        <div class="state">
+            <div class="stateName"><?= $state->name?></div>
+            <ul>
+                <?php foreach($state->cities->city as $city):
+                    if($city->rating > $threshold):
+                        $url = '/'.strtolower(str_replace(' ','-',$city->name).'-'.$state->name).'-flower-delivery.html'; ?>
+                        <li><a href="<?= $url;?>"><?=$city->name;?></a></li>
+                    <?php endif; ?>
+                <?php endforeach;?>
+            </ul>
+        </div>
+    
+        <?php $c++; if($c % $colNumber == 0):?>
+        </div>
+        <?php endif; ?>
+<?php endforeach; ?>
+</div>

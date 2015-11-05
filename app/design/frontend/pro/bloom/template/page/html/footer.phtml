@@ -1,0 +1,87 @@
+<?php
+/**
+ * Magento Commercial Edition
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Magento Commercial Edition License
+ * that is available at: http://www.magentocommerce.com/license/commercial-edition
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2011 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://www.magentocommerce.com/license/commercial-edition
+ */
+?>
+<div class="footer-container">
+    <div class="footer">
+    	<ul class="footer-links">
+        	<li class="foot-company"><span>Company</span>
+            	<ul>
+                <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('footer_company')->toHtml() ?>
+                </ul>
+            </li>
+            <li class="foot-items"><span>Shop</span>
+            	<ul>
+                <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('footer_items')->toHtml() ?>
+                </ul>
+            </li>
+            <li class="foot-occasions"><span>Ordering</span>
+            	<ul>
+                <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('footer_occasions')->toHtml() ?>
+                </ul>
+            </li>
+            <li class="foot-service"><span>Service</span>
+            	<ul>
+                <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('footer_service')->toHtml() ?>
+                </ul>
+            </li>
+        </ul>
+    	<ul class="social-share">
+        	<li><a target="_blank" href="http://twitter.com/#!/BloomNation" class="fb">Find Us on Facebook</a></li>
+            <li><a target="_blank" href="http://www.facebook.com/bloomnation" class="tw">Follow Us on Twitter</a></li>
+            <li class="last"><a target="_blank" href="http://www.youtube.com/bloomtubenation" class="yt">Watch Us on YouTube</a></li>
+        </ul>
+        <?php //echo $this->getLayout()->createBlock('newsletter/subscribe')->setTemplate('newsletter/subscribe.phtml')->toHtml();?>
+	<a href="http://www.la.bbb.org/BusinessReport.aspx?CompanyID=100118326&source=ctc"><img src="<?php echo $this->getSkinUrl().'images/'?>bbb-logo.png"/></a>
+        <address><?php echo $this->getCopyright() ?> - <a href="/terms-of-service">Terms of Use</a> - <a href="/privacy-policy">Privacy and Security</a> - <a href="/contact-us">Send us Feedback on this Site</a>.</address>
+	<img src="http://ad.retargeter.com/seg?add=332967&t=2" width="1" height="1" />
+    </div>
+</div>
+
+<script type="text/javascript">
+  var __lc = {};
+  __lc.license = 1088251;
+  __lc.skill = 2;
+
+  (function() {
+    var lc = document.createElement('script'); lc.type = 'text/javascript'; lc.async = true;
+    lc.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'cdn.livechatinc.com/tracking.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(lc, s);
+  })();
+</script>
+<script src="//static.getclicky.com/js" type="text/javascript"></script>
+<script type="text/javascript">try{ clicky.init(100530584); }catch(e){}</script>
+<noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/100530584ns.gif" /></p></noscript>
+
+<!-- Fb retarg -->
+<script type="text/javascript">
+  (function() {
+    window._pa = window._pa || {};
+    // _pa.orderId = "myUser@email.com"; // OPTIONAL: include your user's email address or order ID
+    // _pa.revenue = "19.99"; // OPTIONAL: include dynamic purchase value for the conversion
+    // _pa.onLoadEvent = "sign_up"; // OPTIONAL: name of segment/conversion to be fired on script load
+    var pa = document.createElement('script'); pa.type = 'text/javascript'; pa.async = true;
+    pa.src = ('https:' == document.location.protocol ? 'https:' : 'http:') + "//tag.perfectaudience.com/serve/506e26e20dd21000020000e1.js";
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(pa, s);
+  })();
+</script>

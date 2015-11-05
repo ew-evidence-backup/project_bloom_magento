@@ -1,0 +1,10 @@
+<?php
+$name = $this->getAttrCode();
+// Get attribute values array
+$attrValues = Mage::getSingleton('eav/config')->getAttribute('catalog_product', $name)->getSource()->getAllOptions(false);
+?>
+
+
+    <?php foreach($attrValues as $attr): ?>
+    <option value="<?php echo $attr['value']?>"><?php echo $attr['label']?></option>
+    <?php endforeach; ?>    

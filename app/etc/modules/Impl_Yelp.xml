@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Impl_Yelp>
+            <active>true</active>
+            <codePool>local</codePool>
+        </Impl_Yelp>
+    </modules>
+</config> 

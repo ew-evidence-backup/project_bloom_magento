@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<layout version="0.1.0">
+
+ <PRODUCT_TYPE_configurable translate="label" module="catalog">
+		<reference name="head">
+			<action method="addCss" ifconfig="smdesign_colorswatch/general/enabled_colorswatch"><stylesheet>css/colorswatch.css</stylesheet></action>
+			<action method="addJs" ifconfig="smdesign_colorswatch/general/enabled_colorswatch"><script>colorswatch/colorswatch.js</script></action>
+		</reference>
+ 
+	<reference name="product.info.options.wrapper">
+		<block type="colorswatchproductview/product_view_selection" name="colorswatch.selection.wrapper" as="colorswatch_selection_wrapper" template="colorswatch/product/view/selection.phtml"  />
+	</reference>
+ </PRODUCT_TYPE_configurable>
+ 
+</layout>

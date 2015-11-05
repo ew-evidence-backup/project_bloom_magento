@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<config>
+
+	<modules>
+		<SMDesign_SMDZoom>
+			<version>2.0.0</version>
+		</SMDesign_SMDZoom>
+	</modules>
+	
+	<global>
+	
+		<models>
+			<smdzoom>
+				<class>SMDesign_SMDZoom_Model</class>
+			</smdzoom>
+		</models>
+		<helpers><smdzoom><class>SMDesign_SMDZoom_Helper</class></smdzoom></helpers>
+		<blocks><smdzoom><class>SMDesign_SMDZoom_Block</class></smdzoom></blocks>
+		
+		<resources>
+			<smdzoom_setup>
+				<setup>
+				    <module>SMDesign_SMDZoom</module>
+				</setup>
+			</smdzoom_setup>
+		</resources>
+		
+	</global>
+
+<!--	START UPDATE LAYOUT -->
+	<frontend>
+		<layout>
+			<updates>
+				<smdzoom>
+					<file>smdzoom.xml</file>
+				</smdzoom>
+			</updates>
+		</layout>
+	</frontend>
+<!--	END UPDATE LAYOUT -->
+
+<!--	START DEFAULTS	-->
+	<default>
+		<smdesign_colorswatch>
+			<zoom>
+				<enabled>1</enabled>
+				<more_view_change_main_image>0</more_view_change_main_image>
+				<width>366</width>
+				<height>284</height>
+				<offset_left>35</offset_left>
+				<offset_top>0</offset_top>
+				
+				<image_size_type>1</image_size_type>
+				<container_width>256</container_width>
+				<container_height>256</container_height>
+				<zoom_ratio>5</zoom_ratio>
+				<show_info_error>1</show_info_error>
+				<zoom_type>0</zoom_type>
+			</zoom>
+		</smdesign_colorswatch>
+	</default>
+<!--	END DEFAULTS	-->
+</config>

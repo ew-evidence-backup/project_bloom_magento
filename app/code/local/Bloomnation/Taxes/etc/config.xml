@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <modules>
+        <Bloomnation_Taxes>
+            <version>0.1.0</version>
+        </Bloomnation_Taxes>
+    </modules>
+    <global>
+        <models>
+            <taxes>
+                <class>Bloomnation_Taxes_Model</class>
+            </taxes>
+            <tax>
+                <rewrite>
+                    <calculation>Bloomnation_Taxes_Model_Calculation</calculation>
+                </rewrite>
+            </tax>
+        </models>
+        <helper>
+            <taxes>
+                <class>Bloomnation_Taxes_Helper</class>
+            </taxes>
+
+        </helper>
+    </global>
+</config>

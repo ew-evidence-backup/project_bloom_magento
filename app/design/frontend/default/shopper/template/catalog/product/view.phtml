@@ -1,0 +1,353 @@
+<?php
+$_helper = $this->helper('catalog/output');
+$_product = $this->getProduct();
+$enable_upsell =  Mage::getStoreConfig('shoppersettings/labels/enable_upsell');
+$replace_upsell =  Mage::getStoreConfig('shoppersettings/labels/replace_upsell');
+
+$helper = $this->helper('shoppersettings/image');
+list($defaultImgX, $defaultImgY) = $helper->getDefaultSize();
+list($imgX, $imgY) = $helper->getMainSize();
+if ( $imgX > 800 ) {
+    $imgX = 800;
+    $imgY = $helper->calculateHeight($imgX);
+}
+
+$product_img_box_width = $defaultImgX;
+if ( $defaultImgX != $imgX ) {
+    $product_img_box_width = $imgX;
+}
+//add image border
+$product_img_box_width += 18;
+
+// Delivery date related code
+$prId = Mage::registry('current_product_id');
+$pr = $_product;
+$vendor = Mage::getModel('udropship/vendor')->load($pr->getUdropshipVendor());
+
+// Cut off day\date\time code
+preg_match('/(\d\d):(\d\d):(\d\d)/',$vendor->getCutOffTime(),$cutof);
+$days = Mage::helper('udropship')->getDays($vendor->getId());
+$daysOutput = '';
+if(count($days) > 0) {
+        foreach($days as $day){
+                $daysOutput .= '[' . $day . '],';
+        }
+        $daysOutput = rtrim($daysOutput, ",");
+}
+
+
+
+
+?>
+<?php
+if (!$_category = Mage::registry('current_category')) {
+    $_product = Mage::getSingleton( 'catalog/product' )->load( $_product->getId() );
+    $categories=$_product->getCategoryIds();
+    $_category = Mage::getModel('catalog/category')->load($categories[0]);
+}
+    $imgUrl = Mage::helper('catalog/image')->init($_product, 'small_image')->constrainOnly(TRUE)->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->backgroundColor(array(255,255,255))->resize(169, 181);
+    $url = 'http://'.$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+    $pinDesc = $_product->getShortDescription().' '.strip_tags(Mage::helper('checkout')->formatPrice($_product->getPrice()));
+
+?>
+
+<script type="text/javascript">
+    var optionsPrice = new Product.OptionsPrice(<?php echo $this->getJsonConfig() ?>);
+</script>
+<?php echo $this->getChildHtml('global_messages') ?>
+<div id="messages_product_view"><?php echo $this->getMessagesBlock()->getGroupedHtml() ?></div>
+<div class="product-view">
+    <div class="product-essential">
+    <form action="<?php echo $this->getSubmitUrl($_product) ?>" method="post" id="product_addtocart_form"<?php if($_product->getOptions()): ?> enctype="multipart/form-data"<?php endif; ?>>
+        <div class="no-display">
+            <input type="hidden" name="product" value="<?php echo $_product->getId() ?>" />
+            <input type="hidden" name="related_product" id="related-products-field" value="" />
+        </div>
+
+        <div class="product-img-box" style="width:<?php echo $product_img_box_width; ?>px">
+            <?php echo $this->helper('shoppersettings')->getLabel($_product);  ?>
+            <?php echo $this->getChildHtml('media') ?>
+            
+            <div style="display: inline-block; width: 285px; padding-bottom: 2px; vertical-align: top; height: 35px;">
+                <iframe src="//www.facebook.com/plugins/like.php?href=<?php echo $url;?>&amp;send=false&amp;layout=standard&amp;width=450&amp;show_faces=false&amp;font&amp;colorscheme=light&amp;action=like&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:35px;" allowTransparency="true"></iframe>
+            </div>
+            <div style="display: inline-block; width: 120px; padding-bottom: 0px; vertical-align: bottom; height: 35px;">
+                <a href="http://pinterest.com/pin/create/button/?url=<?php echo $url;?>&media=<?php echo $imgUrl;?>&description=<?php echo $pinDesc;?>" class="pin-it-button" count-layout="none"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a>
+            </div>            
+        </div>
+
+        <div class="product-shop">
+            <?php
+            $output = '';
+            switch ($replace_upsell) {
+                case 'always':
+                    $output = $this->getChildHtml('queldorei_product_additional');
+                    break;
+                case 'never':
+                    if ($enable_upsell) $output = $this->getChildHtml('upsell_products');
+                    break;
+                case 'only':
+                    if ($enable_upsell) $output = $this->getChildHtml('upsell_products');
+                    if ( empty($output) ) $output = $this->getChildHtml('queldorei_product_additional');
+                    break;
+            }
+            if(!empty($output)){
+                echo '<div class="product-additional">'.$output.'</div>';
+            }
+            ?>
+            <div class="product-shop-info">
+                <div class="product-name">
+                    <h1><?php echo $_helper->productAttribute($_product, $_product->getName(), 'name') ?></h1>
+                </div>
+                <?php echo $this->getReviewsSummaryHtml($_product, false, true)?>
+
+                <?php echo $this->getChildHtml('alert_urls') ?>
+                <?php echo $this->getChildHtml('product_type_data') ?>
+                <?php echo $this->getTierPriceHtml() ?>
+                <?php echo $this->getChildHtml('extrahint') ?>
+
+                <?php if ($_product->getShortDescription()):?>
+                <div class="short-description">
+                    <div class="std"><?php echo $_helper->productAttribute($_product, nl2br($_product->getShortDescription()), 'short_description') ?></div>
+                </div>
+                <?php endif;?>
+
+                <?php echo $this->getChildHtml('other');?>
+
+                <?php if(!$_product->isGrouped()): ?>
+                <div class="qty-container clearfix">
+                    <label for="f-deliveryDate"><?php echo $this->__('Delivery date') ?>:</label>
+                    <input type="text" name="delivery_date" id="f-deliveryDate" maxlength="12" value="" title="<?php echo $this->__('Delivery date') ?>" class="input-text required-entry" style="width: 100px;"/>
+                </div>
+                <?php endif; ?>
+
+                <?php if (!$this->hasOptions()):?>
+                    <div class="add-to-box">
+                        <?php if($_product->isSaleable()): ?>
+                            <?php echo $this->getChildHtml('addtocart') ?>
+                        <?php endif; ?>
+                    </div>
+                    <?php echo $this->getChildHtml('extra_buttons') ?>
+                <?php endif; ?>
+
+                <?php if ($_product->isSaleable() && $this->hasOptions()):?>
+                    <?php echo $this->getChildChildHtml('container1', '', true, true) ?>
+                <?php endif;?>
+
+                <?php if ($_product->isSaleable() && $this->hasOptions()):?>
+                    <?php echo $this->getChildChildHtml('container2', '', true, true) ?>
+                <?php endif;?>
+
+                <?php echo $this->getChildHtml('addto') ?>
+                <div class="clear"></div>
+                <?php echo $this->getChildHtml('shopper_product_addthis') ?>
+            </div>
+        </div>
+        <div class="clearer"></div>
+    </form>
+    <script type="text/javascript">
+    //<![CDATA[
+
+        var productAddToCartForm = new VarienForm('product_addtocart_form');
+        productAddToCartForm.submit = function(button, url) {
+            if (this.validator.validate()) {
+                var form = this.form;
+                var oldUrl = form.action;
+
+                if (url) {
+                    form.action = url;
+                }
+                var e = null;
+                try {
+                    this.form.submit();
+                } catch (e) {
+                }
+                this.form.action = oldUrl;
+                if (e) {
+                    throw e;
+                }
+
+                if (button && button != 'undefined') {
+                    button.disabled = true;
+                }
+            }
+        }.bind(productAddToCartForm);
+
+        productAddToCartForm.submitLight = function(button, url){
+            if(this.validator) {
+                var nv = Validation.methods;
+                delete Validation.methods['required-entry'];
+                delete Validation.methods['validate-one-required'];
+                delete Validation.methods['validate-one-required-by-name'];
+                if (this.validator.validate()) {
+                    if (url) {
+                        this.form.action = url;
+                    }
+                    this.form.submit();
+                }
+                Object.extend(Validation.methods, nv);
+            }
+        }.bind(productAddToCartForm);
+
+        <?php if (Mage::getStoreConfig('shoppersettings/ajax/cart')) : ?>
+
+        function setAjaxData(data,iframe){
+            //showMessage(data.message);
+            if (data.status != 'ERROR' && jQuery('.cart-top-container').length) {
+                jQuery('.cart-top-container').replaceWith(data.cart_top);
+            }
+        }
+
+        function showMessage(message)
+        {
+            jQuery('body').append('<div class="alert"></div>');
+            var $alert = jQuery('.alert');
+            $alert.slideDown(400);
+            $alert.html(message).append('<button></button>');
+            jQuery('button').click(function () {
+                $alert.slideUp(400);
+            });
+            $alert.slideDown('400', function () {
+                setTimeout(function () {
+                    $alert.slideUp('400', function () {
+                        jQuery(this).slideUp(400, function(){ jQuery(this).detach(); })
+                    });
+                }, 7000)
+            });
+        }
+
+        var productAddToCartForm = new VarienForm('product_addtocart_form');
+        productAddToCartForm.submit = function (button, url) {
+            if (this.validator.validate()) {
+                var form = this.form;
+                var oldUrl = form.action;
+                if (url) {
+                    form.action = url;
+                }
+                var e = null;
+                // Start of our new ajax code
+                if (!url) {
+                    url = jQuery('#product_addtocart_form').attr('action');
+                }
+                url = url.replace("checkout/cart", "ajax/index"); // New Code
+                var data = jQuery('#product_addtocart_form').serialize();
+                data += '&isAjax=1';
+                jQuery('#ajax_loading'+ jQuery('#product_addtocart_form').find("[name='product']").val() ).css('display', 'block');
+                try {
+                    jQuery.ajax({
+                        url:url,
+                        dataType:'json',
+                        type:'post',
+                        data:data,
+                        success:function (data) {
+                            jQuery('#ajax_loading'+ jQuery('#product_addtocart_form').find("[name='product']").val() ).css('display', 'none');
+                            setAjaxData(data, true);
+                            showMessage(data.message);
+                            if (data.status != 'ERROR') {
+                                location.href = '/checkout/cart';
+                            }
+                        }
+                    });
+                } catch (e) {
+                }
+                // End of our new ajax code
+                this.form.action = oldUrl;
+
+                if (e) {
+                    throw e;
+                }
+            }
+        }.bind(productAddToCartForm);
+
+        <?php endif; ?>
+    //]]>
+    </script>
+    </div>
+
+	<!-- ADDITIONAL -->
+	<?php echo $this->getChildHtml('product_additional_data') ?>
+	<!-- ADDITIONAL -->
+
+    <?php
+    $output = '';
+    switch ($replace_upsell) {
+        case 'always':
+            break;
+        case 'never':
+            if ($enable_upsell) $output = $this->getChildHtml('upsell_products2');
+            break;
+        case 'only':
+            if ($enable_upsell) $output = $this->getChildHtml('upsell_products2');
+            break;
+    }
+    if(!empty($output)){
+        echo $output;
+    }
+    ?>
+
+    <?php
+    $after_tabs_block = Mage::getModel('cms/block')->load('shopper_after_tabs');
+    if($after_tabs_block->getIsActive()){
+        echo '<div class="after-tabs-block additional-block">'.$this->getLayout()->createBlock('cms/block')->setBlockId('shopper_after_tabs')->toHtml().'</div>';
+    }
+    ?>
+
+	<!-- RELATED -->
+	<?php echo $this->getChildHtml('content_related') ?>
+	<!-- RELATED -->
+
+</div>
+
+
+<script>
+    d = new Date();
+    cutOfDay = '';
+    sameDD = '<?= $vendor->getHasSameDayDelivery();?>';    
+
+    <?php if(sizeof($cutof > 1)) :
+                    $dateTime = new DateTime();
+                    $timezone = ('' == $vendor->getVTimezone()) ? 'PST' : $vendor->getVTimezone();
+                    $dateTime->setTimezone(new DateTimeZone($timezone));
+                    $dateTime->setTime($cutof[1],$cutof[2],0);
+            ?>
+            cutOfH = new Date(<?= ($dateTime->getTimestamp() * 1000)?>);
+
+            if(cutOfH <= d) {
+                    cutOfDay = [d.getMonth()+1,d.getDate()];
+            }
+            if('false' == sameDD) {
+                    cutOfDay = [d.getMonth()+1,d.getDate()];
+            }
+    <?php endif; ?>
+    
+    function nonWorkingDates(date){
+            var day = date.getDay(), Sunday = 0, Monday = 1, Tuesday = 2, Wednesday = 3, Thursday = 4, Friday = 5, Saturday = 6;
+            var closedDates = [cutOfDay];
+            var closedDays = [<?php echo $daysOutput != '' ? '' . $daysOutput : '' ?>];
+    
+            for (var i = 0; i < closedDays.length; i++) {
+                if (day == closedDays[i][0]) {
+                    return [false];
+                }
+    
+            }
+            for (i = 0; i < closedDates.length; i++) {
+                if (date.getMonth() == closedDates[i][0] - 1 &&
+                date.getDate() == closedDates[i][1]) {
+                    return [false];
+                }
+            }
+            return [true];
+    }
+    
+    jQuery(document).ready(function($) {
+        // Date picker
+        $("#f-deliveryDate").datepicker({
+                minDate: 0,
+                buttonImage: "",
+                beforeShowDay: nonWorkingDates
+        });    
+    });
+    
+    
+</script>

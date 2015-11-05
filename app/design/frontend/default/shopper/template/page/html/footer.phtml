@@ -1,0 +1,168 @@
+<?php
+$config = Mage::getStoreConfig('shoppersettings/social');
+$route = Mage::app()->getFrontController()->getRequest()->getRouteName();
+$action = Mage::app()->getFrontController()->getRequest()->getActionName();
+$vendor = Mage::getModel('udropship/vendor')->load(Mage::registry('current_svendor'));
+preg_match('/(\d\d\d)(\d\d\d)(\d\d\d\d)/',$vendor->getTelephone(),$phone);
+$zipcode = explode("\n",$vendor->getLimitZipcode());
+$cityArr = array();
+foreach($zipcode as $i=>$el) {
+    $zipcode[$i] = trim($el);
+    $cityArr[] = Mage::helper('urls')->getCityByZip($zipcode[$i]);
+}
+$cityArr = array_unique($cityArr);
+$state = Mage::getModel('directory/region')->load($vendor->getRegionId());
+?>
+<!-- footer BOF -->
+<div class="footer-container">
+    <?php if ( !($route == 'customer' && ($action == 'login' || $action == 'forgotpassword' || $action == 'create')) ) : ?>
+    <!--<div class="footer-banners">
+        
+        <div class="row clearfix">
+            <div class="grid_6"><a title="free shipping on orders over $100" href="//queldorei.com/products/magento"><img class="retina" src="/media/queldorei/shopper/footer_banner_1.png" alt="" width="570" height="56" /></a></div>
+            <div class="grid_6"><a title="call us! toll free 8-800-123-1234" href="//queldorei.com"><img class="retina" src="/media/queldorei/shopper/footer_banner_2.png" alt="" width="570" height="56" /></a></div>
+        </div>
+       
+    </div> -->
+    <div class="footer-info">
+        <div class="row clearfix">
+
+            <div class="grid_3">
+            <?php if ( empty($config['facebook_replace']) ) : ?>
+                <h4><?php echo $this->__('Facebook');?></h4>
+                <div class="block-content">
+                <fb:fan profileid="<?php echo $vendor->getFacebookPageId(); ?>" stream="0" connections="6" logobar="0" height="260"
+                        css="<?php echo $this->getSkinUrl('css/facebook.css') ?>?110"></fb:fan>
+                <div id="fb-root"></div>
+                <script type="text/javascript">
+                    window.fbAsyncInit = function() {
+                        FB.Event.subscribe('auth.statusChange', function(response) {
+                            if(response.status == 'connected') {
+                                runFbInitCriticalCode();
+                            }
+                        });
+                        FB.init({status: false, cookie: true, xfbml: true});
+                    };
+                    (function() {
+                        var e = document.createElement('script');
+                        e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
+                        e.async = true;
+                        document.getElementById('fb-root').appendChild(e);
+                    }());
+                </script>
+                </div>
+            <?php  else:
+                    echo $this->getLayout()->createBlock('cms/block')->setBlockId($config['facebook_replace'])->toHtml();
+                endif; ?>
+            </div>
+
+            <div class="grid_3">
+            <?php if ( empty($config['twitter_replace']) ) : ?>
+                <h4><?php echo $this->__('We are local');?></h4>
+                <div class="block-content">
+                <div class="twitterWidget" data-user="<?php echo $config['twitter'] ?>">
+                    <div class="twitterContent">
+                        Let <?= $vendor->getVendorName();?> design and deliver a beautiful flower arrangement for you.<br/><br/>
+                        As the premier <?= $vendor->getCity();?> florist, we even have same day flower delivery.<br/><br/>
+                        Send Birthday flowers, Valentine's Day flowers, Mother's Day flowers,
+                        and Anniversary flowers with one of the leading flower shops in <?= $vendor->getCity();?>.
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                </div>
+            <?php else:
+                echo $this->getLayout()->createBlock('cms/block')->setBlockId($config['twitter_replace'])->toHtml();
+            endif; ?>
+            </div>
+            <div class="grid_3 information">
+                <a class="block-control" href="#"></a><h4>Delivery Information</h4>
+                <div class="block-content clearfix">
+                    <?= $vendor->getVendorName();?> in <?= $vendor->getCity();?>, <?= $state->getCode();?> provides flower delivery to the following areas and zip codes in <?= $state->getCode();?>:
+                    <?= implode(', ',$cityArr);?><br/><br/>
+                    <a href="#" id="showZips" style="color:green">Click to see zipcodes we deliver to</a>
+                    <div id="zipcodesDiv" style="display: none;">
+                        <?= implode(', ',$zipcode);?>
+                    </div>
+                </div>
+            </div>
+            <div class="grid_3">
+                <a class="block-control" href="#"></a>
+                <h4>Contacts</h4>
+                <div class="block-content clearfix">
+                    <p><?=$vendor->getVendorName();?></p>
+                    <p><?= $vendor->getStreet(-1);?></p>
+                    <p><?= $vendor->getCity().', '.$vendor->getZip();?></p>
+                    <hr>
+                    <p><?= '('.$phone[1].') '.$phone[2].'-'.$phone[3];?></p>
+                    <hr>
+                    <p><a href="mailto:<?= $vendor->getEmail();?>"><?= $vendor->getEmail();?></a></p>
+                    <ul class="social">
+                        <li><a href="mailto:<?= $vendor->getEmail();?>" class="email"><span>Email</span></a></li>
+                        <!--
+                        <li><a target="social" href="http://twitter.com/queldorei" class="twitter"><span>Twitter</span></a></li>
+                        <li><a target="social" href="http://facebook.com/queldorei" class="facebook"><span>Facebook</span></a></li>
+                        <li><a target="social" href="http://plus.google.com/u/0/111109476451145065018" class="google"><span>Google</span></a></li>
+                        -->
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <?php endif; // ( !($route == 'customer' && $action == 'login') ) : ?>
+    <footer class="row clearfix">
+        <div class="grid_6" style="width: 100%; text-align: center;">
+            <?php echo $this->getChildHtml('shopper_footer_links'); ?>
+            <a href="/cms/index/termsofservice">Terms of Service</a> |
+            <a href="/cms/index/privacypolicy">Privacy Policy</a> |
+            <a href="/cms/index/aboutus#substPolicy">Substitution Policy</a>
+        </div>
+    </footer>
+</div>
+<!-- footer EOF -->
+
+<script>
+    jQuery(document).ready(function($) {
+        $('#showZips').click(function() {
+            $('#zipcodesDiv').toggle('slow');
+            return false;
+        });
+    });
+</script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<script type="text/javascript" src="//assets.pinterest.com/js/pinit.js"></script>
+
+
+<script type="text/javascript">
+    var __lc = {};
+    __lc.license = 1088251;
+    __lc.skill = 2;
+
+    (function() {
+        var lc = document.createElement('script'); lc.type = 'text/javascript'; lc.async = true;
+        lc.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'cdn.livechatinc.com/tracking.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(lc, s);
+    })();
+</script>
+
+<script>
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+    })();
+
+    var _gaq = _gaq || [];
+
+    _gaq.push(['_setAccount', 'UA-19515524-1']);
+    _gaq.push(['_trackPageview']);
+</script>
+
+

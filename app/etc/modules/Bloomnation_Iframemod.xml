@@ -1,0 +1,8 @@
+<config>
+  <modules>
+    <Bloomnation_Iframemod>
+      <active>true</active>
+      <codePool>local</codePool>
+    </Bloomnation_Iframemod>
+  </modules>
+</config>

@@ -1,0 +1,378 @@
+<?php
+$showMsg = ('' == $this->getMessagesBlock()->getGroupedHtml() ) ? false : true;
+$_v = Mage::getSingleton('udropship/session')->getVendor();
+$designConf = json_decode($_v->getDesignConfig(), true);
+?>	
+
+	<!-- Layout (start) -->
+	<div id="layout" class="cust">		
+		<!-- Profile tizer (start) -->
+		<?php if($showMsg):?>
+		<section id="profile__tizer" class="tizer">
+			<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+		</section>
+		<?php endif; ?>
+		<!-- Profile tizer (end) -->	
+		<!-- Customization form (begin) -->
+		<form id="custForm" name="custForm" method="post" action="<?= $this->getUrl('udropship/vendor/preferencesPost')?>" enctype="multipart/form-data">
+
+			<!-- Section homepage slider (begin) -->
+			<section id="custSlider" class="custStep">
+				
+				<header class="custStep__header">
+					<h2 class="custStep__title">Homepage slider</h2>
+				</header>				
+				
+				<div class="custStep__content">
+
+					<!-- Customization step content column (start) -->
+					<div class="custStep__mainCol">
+						
+						<div class="custStep__row">
+							<label for="" class="custStep__label">Image Slider</label>							
+							<div class="switchBtn"> 
+								<label for="f-enableSlider">On/off</label>
+								<input id="f-enableSlider" type="checkbox" name="design_config[slider][enabled]" value="true"  <?= $designConf['slider']['enabled'] ? 'checked="checked"' : '';?>/>
+							</div>
+						</div>
+						
+						<div class="custSlider__suggestedImg">					
+							<div class="custStep__row">
+								<label for="" class="custStep__label">Select from these images</label>
+								<select id="f-typeFlorist" class="inputText" name="design_config[slider][slides][0][image]">
+									<option value="<?= $designConf['slider']['slides'][0]['image']; ?>"> </option>
+									<option value="/ghassets/florist_default_images/Untitled_6.png">Image 1</option>
+								</select>
+							</div>
+							Or upload your own <input type="file" name="custom_slider_image" id="custom_slider_image"/><br/><br/>
+							<div class="custSlider__suggestedImg__preview">	
+								<h3 class="custStep__label">Image preview</h3>
+								<img id="previewImg" src="<?= $designConf['slider']['slides'][0]['image']; ?>" alt="" width="340px"/>
+							</div>
+						</div>
+
+					</div>
+					<!-- Customization step content column (end) -->
+
+					<!-- Customization step content column (start) -->
+					<div class="custStep__secondaryCol">
+						
+						<div class="custStep__row">
+							<label for="" class="custStep__label">Text slider</label>
+							<div class="switchBtn"> 
+								<label for="f-enableSliderAnimation">On/off</label>
+								<input id="f-enableSliderAnimation" type="checkbox" name="design_config[slider][animation_enabled]" value="true"  <?= $designConf['slider']['animation_enabled'] ? 'checked="checked"' : '';?>/>
+							</div>
+						</div>
+<!--
+						<div class="custStep__row">
+							<label for="" class="custStep__label">Select from your images</label>							
+							<div class="fileBtn">
+								<input class="fileBtn__path inputText" type="text" value="" readonly="readonly" />
+								<input type="file" class="fileBtn__btn" value="Browse" />
+							</div>
+						</div>
+-->
+						<div class="custStep__row">
+							<label for="f-custSlider__sliderTitle" class="custStep__label">Choose your slide text</label>
+							<input style="font-family: Arial" id="f-custSlider__sliderTitle" class="inputText" type="text" name="design_config[slider][slides][1][slide_title]" value="<?= $designConf['slider']['slides']['1']['slide_title'];?>" placeholder="Name of Flower Shop"/>
+							<textarea style="font-family: Arial" id="f-custSlider__sliderDesc" class="inputText" name="design_config[slider][slides][1][slide_text]" placeholder="Write something about your flower shop here"><?= $designConf['slider']['slides']['1']['slide_text'];?></textarea>
+							<input type="hidden" name="design_config[slider][slides][1][slide_button]" value="Shop Now"/>
+							<input type="hidden" name="design_config[slider][slides][1][slide_link]" value="/occasion.html"/>
+							<input type="hidden" name="design_config[slider][slides][1][slide_align]" value="center"/>
+						</div>
+
+					</div>
+					<!-- Customization step content column (end) -->
+
+				</div>
+
+			</section>
+			<!-- Section homepage slider (end) -->
+
+			<!-- Section colors step (begin) -->
+			<section id="custColors" class="custStep">
+
+				<!-- Customization step header (start) -->
+				<header class="custStep__header">
+			 		<h2 class="custStep__title">Colors</h2>
+			 	</header>
+				 <!-- Customization step header (end) -->
+
+				 <!-- Customization step content (start) -->
+			 	<div class="custStep__content">
+
+			 		 <!-- Customization step content column (start) -->
+			  		<div class="custStep__mainCol">
+
+			  			<div class="custStep__row">
+			   				<label for="" class="custStep__label">Website elements</label>
+			    			<select id="color_picker_select" class="" name="">
+			    				<option value="appearance_color">Theme color</option>
+							<option value="header_bg_color">Header Background Color</option>
+							<option value="slider_bg_color">Slider Background Color</option>
+							<option value="content_bg_color">Content Background Color</option>
+							<option value="footer_bg_color">Footer Background Color</option>
+							<option value="footer_text_color">Footer Text Color</option>
+							<option value="price_circle_color">Price Circle Background Color</option>
+							<option value="price_color">Price Color</option>
+			    			</select>
+			    			<p class="custStep__tooltip">
+							<span style="display: block" id="appearance_color_copy">The overall color pallet of the site, including button colors and icons.</span>
+							<span id="header_bg_color_copy">Top section of the website that holds your logo and navigation</span>
+							<span id="slider_bg_color_copy">The background color of the slider image on your homepage.</span>
+							<span id="content_bg_color_copy">The color behind the body of your site, mainly where the products are.</span>
+							<span id="footer_bg_color_copy">Opposite of the header, this is the bottom of your site below the products</span>
+							<span id="footer_text_color_copy">Text color on the footer</span>
+							<span id="price_circle_color_copy">The color of the circles when user hovers over a product</span>
+							<span id="price_color_copy">The text color of the price circles when user hovers over product</span>
+						</p>
+						<br/><br/>
+						<a href="#" id="resetColors" style="color: gray; font-size: 13px;">Reset all colors to default</a>
+			   			</div>
+
+			   			<div id="custColors__change" class="custStep__row">
+				    		<a id="a-custColors__changeLink" href="#" title="">Change color</a>
+						<div id="custColors__preview">
+							<input type="color" id="appearance_color" name="design_config[appearance][color]" value="<?= $designConf['appearance']['color'];?>"/>
+							<input type="color" id="header_bg_color" name="design_config[appearance][header_bg]" value="<?= $designConf['appearance']['header_bg'];?>"/>
+							<input type="color" id="slider_bg_color" name="design_config[appearance][slider_bg]" value="<?= $designConf['appearance']['slider_bg'];?>"/>
+							<input type="color" id="content_bg_color" name="design_config[appearance][content_bg]" value="<?= $designConf['appearance']['content_bg'];?>"/>
+							<input type="color" id="footer_bg_color" name="design_config[appearance][footer_bg]" value="<?= $designConf['appearance']['footer_bg'];?>"/>
+							<input type="color" id="footer_text_color" name="design_config[appearance][footer_color]" value="<?= $designConf['appearance']['footer_color'];?>"/>
+							<input type="color" id="price_circle_color" name="design_config[appearance][price_circle_color]" value="<?= $designConf['appearance']['price_circle_color'];?>"/>
+							<input type="color" id="price_color" name="design_config[appearance][price_color]" value="<?= $designConf['appearance']['price_color'];?>"/>
+						</div>
+				    					    		
+			   			</div>
+
+			  		</div>
+			 		<!-- Customization step content column (end) -->
+
+			 		<!-- Customization step content column (start) -->
+			  		<div class="custStep__secondaryCol">			   			
+						<img style="display: block" width="414" id="appearance_color_img" src="https://f.cloud.github.com/assets/318036/54904/ed8fe870-5aa9-11e2-9adc-0ce2debe86a4.jpg"></img>
+						<img width="414" id="header_bg_color_img" src="https://f.cloud.github.com/assets/318036/54907/edb61158-5aa9-11e2-8561-9ba2ffa1d9bc.jpg"></img>
+						<img width="414" id="slider_bg_color_img" src="https://f.cloud.github.com/assets/318036/54905/eda3b0da-5aa9-11e2-801c-e453e898a7d6.jpg"></img>
+						<img width="414" id="content_bg_color_img" src="https://f.cloud.github.com/assets/318036/54909/edbf25e0-5aa9-11e2-8a00-48363ae63b99.jpg"></img>
+						<img width="414" id="footer_bg_color_img" src="https://f.cloud.github.com/assets/318036/54908/edc0e2fe-5aa9-11e2-8781-332059fecbf2.jpg"></img>
+						<img width="414" id="footer_text_color_img" src=""></img>
+						<img width="414" id="price_circle_color_img" src="https://f.cloud.github.com/assets/318036/54906/edaca37a-5aa9-11e2-839e-330bda1d235c.jpg"></img>
+						<img width="414" id="price_color_img" src=""></img>						
+			 		 </div>
+			  		<!-- Customization step content column (end) -->
+
+				</div>
+				 <!-- Customization step content (end) -->
+
+			</section>
+			<!-- Section colors step (end) -->
+
+			<!-- Section bacground step (begin) -->
+			<section id="custBackground" class="custStep">
+
+				<!-- Customization step header (start) -->
+			 	<header class="custStep__header">
+			  		<h2 class="custStep__title">Background</h2>
+			  	</header>
+			 	<!-- Customization step header (end) -->
+
+			 	<!-- Customization step content (start) -->
+			 	<div class="custStep__content">
+
+			  		<!-- Customization step content column (start) -->
+			  		<div class="custStep__mainCol">
+
+			   			<div class="custStep__row">
+			    			<label for="" class="custStep__label">Use an image for your background</label>
+						<input type="hidden" name="design_config[appearance][content_bg_img]" value="<?=$designConf['appearance']['content_bg_img'];?>" id="curBg"/>
+			    			<div class="fileBtn">
+								<input class="fileBtn__path inputText" type="text" value="" readonly="readonly" />
+								<input type="file" class="fileBtn__btn" name="custom_background" value="Browse" />
+							</div>
+			    			<p class="custStep__tooltip">Instead of a color, you can have a custom background with an image of your liking.</p>
+						<br/>
+						<a href="#" id="removeCurBkg" style="font-size: 13px;">Remove current background image</a>
+			   			</div>
+
+			 		</div>
+			  		<!-- Customization step content column (end) -->
+
+			 	 	<!-- Customization step content column (start) -->
+			  		<div class="custStep__secondaryCol">
+
+			   			<div class="custStep__row">
+				    		<label for="" class="custStep__label">Display mode</label>
+				    		<select id="" name="design_config[appearance][content_bg_img_mode]">
+				    			 <option value="tile" <?= ('tile' == $designConf['appearance']['content_bg_img_mode']) ? 'selected' : '';?>>Tile</option>
+							 <option value="stretch" <?= ('stretch' == $designConf['appearance']['content_bg_img_mode']) ? 'selected' : '';?>>Stretch</option>
+				    		</select>
+				    		<p class="custStep__tooltip">You can have your image stretched to fit the background or tiled (repeated) across the background.</p>
+			   			</div>
+
+			  		</div>
+						<!-- Customization step content column (end) -->
+
+				</div>
+				<!-- Customization step content (end) -->
+
+			</section>
+			<!-- Section bacground step (end) -->
+
+			<!-- Section Price Circles (begin) -->
+			<section id="custCircles" class="custStep">
+
+				<!-- Customization step header (start) -->
+			 	<header class="custStep__header">
+			  		<h2 class="custStep__title">Price Cirlces</h2>
+			  	</header>
+			 	<!-- Customization step header (end) -->
+
+			 	<!-- Customization step content (start) -->
+			 	<div class="custStep__content">
+
+			  		<!-- Customization step content column (start) -->
+			  		<div class="custStep__mainCol">
+
+			  			<div class="custStep__row">
+				  			<label for="" class="custStep__label">Enable price circles</label>
+							<div class="switchBtn"> 
+								<label for="f-enablePriceCircles">On/off</label>
+								<input id="f-enablePriceCircles" type="checkbox" value="true" name="design_config[design][price_circle]" <?= $designConf['design']['price_circle'] ? 'checked="checked"' : '';?>/>
+							</div>
+							<p class="custStep__tooltip">This will turn on and off the price circles that show when you hover over the product.</p>
+			   			</div>
+			   			
+			 		</div>
+			  		<!-- Customization step content column (end) -->
+
+			 	 	<!-- Customization step content column (start) -->
+			  		<div class="custStep__secondaryCol">
+			   			<img style="display: block" id="custCircles__preview" src="<?= $this->getSkinUrl()?>redesign/i/custCircles-preview.jpg" alt="" />
+			  		</div>
+					<!-- Customization step content column (end) -->
+
+				</div>
+				<!-- Customization step content (end) -->
+
+			</section>
+
+			<!-- Section Price Cirlces (end) -->
+			
+			<!-- Customization footer (begin) -->
+			<footer id="cust__footer">
+				<input id="a-custLaunchBtn" type="submit" value="Save"/>
+			</footer>
+			<!-- Customization footer (begin) -->
+			
+			<!-- Slider data hidden input -->
+			
+		</form>
+		<!-- Customization form (end) -->
+
+	</div>
+	<!-- Layout (end) -->
+	
+	<script src="/js/jquery/selectBox.min.js"></script>
+
+	<script type="text/javascript">		
+		(function($) {
+			$.fn.fileBtn = function () {
+				$(this).find(".fileBtn__btn").on("change", function () {
+					var id = $(this).attr("id"),
+						path = $(this).val(),
+						pathPlace = $(this).parent().find(".fileBtn__path");
+
+					if (pathPlace) {
+						pathPlace.val(path);
+					}
+				});
+			};
+		})(jQuery);
+
+		(function($) {
+			$.fn.switchBtn = function () {
+				$(this).find("input[type=checkbox]").on("change", function () {
+					if ($(this).attr("checked") == "checked") {
+						$(this).parent().addClass("on");
+					}
+					else {
+						$(this).parent().removeClass("on");
+					}
+				});
+				if($(this).children('input[type=checkbox]').length > 0) {
+					$(this).children('input[type=checkbox]').each(function(index,el) {
+						if('checked' == $(el).attr('checked')) {
+							$(el).parent().addClass("on");
+						}
+					});
+				}
+			};
+		})(jQuery);
+
+
+		$(document).ready(function() {
+			$("select").selectBox();			
+			$(".fileBtn").fileBtn();
+			$(".switchBtn").switchBtn();
+			
+			$('#f-typeFlorist').change(function() {
+				$('#previewImg').attr('src', $(this).val());
+			});
+			
+			$('#custom_slider_image').change(function() {
+				alert('You will see the image after clicking Save (on the bottom of the page)');
+			});
+			
+			// Color picker magic
+			var spectrumParams = {
+				preferredFormat: "hex",
+				showPalette: true,
+				palette: [
+					['black', 'white', 'blanchedalmond'],
+					['#D9CFBD', '#D0C278', '#C17D9A'],
+					['#FFBD43', '#C8CEEC', '#DEDBD0'],
+					['#612F50', '#C9D58E', '#9BB093'],
+					['#CE6054', '#FB5D35', '#CC895C'],
+					['#C55D88', '#FFE909 ', '#C5C8C4'],
+					['#6CC37D', '#931C0C ', '##66B8BF']
+				]				
+			};
+			$('#custColors__preview').children().hide();
+			$('#custColors__preview').children().first().show();
+			$('#custColors__preview').children().first().spectrum(spectrumParams);
+			
+			
+			$('#color_picker_select').change(function() {
+				// Hide generic options
+				$('#custColors__preview').children().hide();
+				$('.custStep__secondaryCol').children().hide();
+				$('.custStep__tooltip').children().hide();
+				
+				// Show solor selector
+				$('#'+$(this).val()).show();
+				$('#'+$(this).val()).spectrum(spectrumParams);
+				// Show copy
+				$('#'+$(this).val()+'_copy').show();
+				// Show image
+				$('#'+$(this).val()+'_img').show();
+			});
+			
+			// Remove background image
+			$('#removeCurBkg').click(function() {
+				if(!confirm('Are you sure you want to remove your background?')) { return false; }
+				alert('Your background will be unset if you click \'Save\'');
+				$('#curBg').val("");
+				return false;
+			});
+			
+			// Reset all colors
+			$('#resetColors').click(function() {
+				if(!confirm('Are you sure you want to reset all colors?')) { return false; }
+				alert('Your background will be reset after you click \'Save\'');
+				$('#custColors__preview').children().spectrum("set", "#000000");
+				$('#custColors__preview').children().val("");
+				return false;				
+			});
+		});
+	</script>	

@@ -1,0 +1,15 @@
+<?php
+// Get init values
+$val = $this->getCurValue();
+$name = $this->getAttrName();
+// Get attribute values array
+$attribute = Mage::getSingleton('eav/config')->getAttribute('catalog_product', $name);
+$attrValues = $attribute->getSource()->getAllOptions(false);
+?>
+
+<select name="<?php echo $name?>">
+    <?php foreach($attrValues as $oVal):?>
+    <option value="<?php echo $oVal['value'];?>" <?php echo ($oVal['value'] == $val) ? 'selected="selected"' : '';?>><?php echo $oVal['label'];?></option>
+    <?php endforeach; ?>
+</select>
+

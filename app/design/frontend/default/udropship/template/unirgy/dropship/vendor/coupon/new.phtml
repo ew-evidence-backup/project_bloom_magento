@@ -1,0 +1,106 @@
+<?php $this->checkSku();?>
+<form action="<?php echo Mage::getUrl('florist/coupon/save')?>" method="post">
+<div>
+    <table>
+        <tbody>
+        <tr><td>Number of products will be assigned to the coupon:</td>
+            <td><?php echo count($this->getSkus());?><input type="hidden" name="s" value="<?php echo base64_encode(serialize
+            ($this->getSkus()))?>"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+    <div style="" id="promo_catalog_edit_tabs_actions_section_content"><div class="entry-edit">
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-edit-form fieldset-legend">Update prices using the following information</h4>
+            <div class="form-buttons"></div>
+        </div>
+        <div id="rule_action_fieldset" class="fieldset ">
+            <div class="hor-scroll">
+                <table cellspacing="0" class="form-list">
+                    <tbody>
+                    <tr>
+                        <td class="label"><label for="rule_name">Rule Name <span class="required">*</span></label></td>
+                        <td class="value">
+                            <input type="text" class=" input-text required-entry" title="Rule Name" value="" name="name" id="rule_name">            </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><label for="rule_is_active">Status <span class="required">*</span></label></td>
+                        <td class="value">
+                            <select class=" required-entry select" title="Status" name="is_active" id="rule_is_active">
+                                <option selected="selected" value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>            </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><label for="coupon_code">Coupon Code <span
+                                class="required">*</span></label></td>
+                        <td class="value"><input type="text" class="validate-not-negative-number input-text
+                        required-entry" id="coupon_code" name="coupon_code"></td>
+                    </tr>
+                    <tr>
+                        <td class="label"><label for="uses_per_coupon">Uses per Coupon</label></td>
+                        <td class="value"><input type="text" class="validate-not-negative-number input-text
+                        required-entry" id="uses_per_coupon" name="uses_per_coupon"></td>
+                    </tr>
+                    <tr>
+                        <td class="label"><label for="uses_per_customer">Uses per Customer</label></td>
+                        <td class="value"><input type="text" class="validate-not-negative-number input-text
+                        required-entry" id="uses_per_customer" name="uses_per_customer"></td>
+                    </tr>
+                    <tr>
+                        <td class="label"><label for="rule_from_date">From Date</label></td>
+                        <td class="value"><input type="text" style="width:110px !important;" class=" input-text" title="From Date" value="" id="rule_from_date" name="from_date"></td>
+                    </tr>
+                    <tr>
+                        <td class="label"><label for="rule_to_date">To Date</label></td>
+                        <td class="value"><input type="text" style="width:110px !important;" class=" input-text" title="To Date" value="" id="rule_to_date" name="to_date"></td>
+                    </tr>
+                    <tr>
+                        <td class="label"><label for="rule_simple_action">Apply</label></td>
+                        <td class="value">
+                            <select class=" select" name="simple_action" id="rule_simple_action">
+                                <option value="by_percent">Percent of product price discount</option>
+                                <option value="by_fixed">Fixed amount discount</option>
+                                <option value="cart_fixed">Fixed amount discount for whole cart</option>
+                            </select>            </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><label for="rule_discount_amount">Discount Amount <span class="required">*</span></label></td>
+                        <td class="value">
+                            <input type="text" class="validate-not-negative-number input-text required-entry" value="0" name="discount_amount" id="rule_discount_amount">            </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><label for="rule_discount_qty">Maximum Qty Discount is Applied To</label></td>
+                        <td class="value">
+                            <input type="text" class=" input-text" value="0" name="discount_qty" id="rule_discount_qty">            </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><label for="rule_apply_to_shipping">Apply to Recipient's Delivery Amount</label></td>
+                        <td class="value">
+                            <select class=" select" title="Apply to Recipient's Delivery Amount" name="apply_to_shipping" id="rule_apply_to_shipping">
+                                <option value="1">Yes</option>
+                                <option selected="selected" value="0">No</option>
+                            </select>            </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><label for="rule_simple_free_shipping">Free Recipient's Delivery</label></td>
+                        <td class="value">
+                            <select class=" select" title="Free Recipient's Delivery" name="simple_free_shipping" id="rule_simple_free_shipping">
+                                <option selected="selected" value="0">No</option>
+                                <option value="1">For matching items only</option>
+                                <option value="2">For shipment with matching items</option>
+                            </select>            </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><input type="submit" value="submit"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    </div>
+</form>

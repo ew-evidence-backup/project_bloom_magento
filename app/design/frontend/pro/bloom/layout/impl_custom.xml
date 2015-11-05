@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+
+    <catalog_category_view>
+	<reference name="head">
+	    <action method="addJs"><script>gomage/category-navigation.js</script></action>	    
+	</reference>
+        <reference name="content">
+            <block type="custom/zippopup" after="-" name="zip.popup" template="impl_custom/zippopup.phtml" />
+        </reference>
+    </catalog_category_view>
+    
+    <custom_index_tooltip>
+	<block type="custom/tooltip" name="tooltip"/>
+    </custom_index_tooltip>
+    
+</layout>

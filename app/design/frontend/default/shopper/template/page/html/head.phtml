@@ -1,0 +1,103 @@
+<?php
+function MergeArrays($Arr1, $Arr2)
+{
+  foreach($Arr2 as $key => $Value)
+  {
+    if(array_key_exists($key, $Arr1) && is_array($Value))
+      $Arr1[$key] = MergeArrays($Arr1[$key], $Arr2[$key]);
+
+    else
+      $Arr1[$key] = $Value;
+
+  }
+
+  return $Arr1;
+
+}
+
+$vendor = Mage::getModel('udropship/vendor')->load(Mage::registry('current_svendor'));
+?>
+<?php
+$config = Mage::getStoreConfig('shoppersettings/appearance');
+$vendor_config = json_decode($vendor->getDesignConfig(), true);
+$config = MergeArrays($config, $vendor_config['appearance']);
+
+?>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<?php if (Mage::getStoreConfig('shoppersettings/design/responsive')) : ?>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+<?php endif; ?>
+<meta http-equiv="Content-Type" content="<?php echo $this->getContentType() ?>" />
+
+<?php
+    if(!$title = Mage::helper('urls')->getTitleOverride()) {
+        $title = $vendor->getVendorName();
+    }
+?>
+<title><?php echo $title; ?></title>
+<meta name="description" content="<?php echo htmlspecialchars($this->getDescription()) ?>" />
+<meta name="keywords" content="<?php echo htmlspecialchars($this->getKeywords()) ?>" />
+<meta name="robots" content="<?php echo htmlspecialchars($this->getRobots()) ?>" />
+<link rel="icon" href="<?php echo $this->getFaviconFile(); ?>" type="image/x-icon" />
+<link rel="shortcut icon" href="<?php echo $this->getFaviconFile(); ?>" type="image/x-icon" />
+<!--[if lt IE 7]>
+
+
+<script type="text/javascript">
+//<![CDATA[
+    var BLANK_URL = '<?php echo $this->helper('core/js')->getJsUrl('blank.html') ?>';
+    var BLANK_IMG = '<?php echo $this->helper('core/js')->getJsUrl('spacer.gif') ?>';
+//]]>
+</script>
+<![endif]-->
+<?php echo $this->getCssJsHtml() ?>
+<link rel="stylesheet" type="text/css" href="/js/jquery/css/ui-lightness/jquery-ui-1.8.17.custom.css" media="all" />
+<?php if ($config['enable_font']) :?>
+<link href='//fonts.googleapis.com/css?family=<?php echo str_replace(' ', '+', $config['font']); ?>:300,400,700' rel='stylesheet' type='text/css'>
+<?php if ($config['price_font'] != $config['font'] ) : ?>
+    <link href='//fonts.googleapis.com/css?family=<?php echo str_replace(' ', '+', $config['price_font']); ?>:300,400,700' rel='stylesheet' type='text/css'>
+    <?php endif; ?>
+<?php endif; ?>
+<link href='<?php echo $this->getSkinUrl('css/options.css.php'); echo '?store='.Mage::app()->getStore()->getCode();  if ($cat = Mage::registry('current_category')) { echo '&cat='.$cat->getId(); }  ?>&vendor_id=<?= Mage::registry('current_svendor');?>' rel='stylesheet' type='text/css'>
+<?php echo $this->getChildHtml() ?>
+<?php echo $this->helper('core/js')->getTranslatorScript() ?>
+<?php echo $this->getIncludes() ?>
+<script type="text/javascript">
+    //<![CDATA[
+    var Shopper = {};
+    Shopper.price_circle = <?php echo $vendor_config['design']['price_circle'] ? '1':'0'; ?>;
+    Shopper.fixed_header = <?php echo Mage::getStoreConfig('shoppersettings/design/fixed_header') ?>;
+    Shopper.totop = <?php echo Mage::getStoreConfig('shoppersettings/ajax/totop') ?>;
+    Shopper.responsive = <?php echo Mage::getStoreConfig('shoppersettings/design/responsive') ?>;
+    Shopper.quick_view = <?php echo Mage::getStoreConfig('shoppersettings/ajax/quick_view') ?>;
+    Shopper.shopby_num = '<?php echo Mage::getStoreConfig('shoppersettings/catalog/shopby_num') ?>';
+    Shopper.anystretch_bg = '';
+    <?php
+    $bg_image = '';
+    if (!empty($config['content_bg_img']) && $config['content_bg_img_mode'] == 'stretch') {
+        $bg_image = $config['content_bg_img'];
+    }
+
+    if ($current_category = Mage::registry('current_category')) {
+        $current_scheme = Mage::helper('shoppercategories')->getCategoryScheme($current_category->getId());
+        if ($current_scheme && !empty($current_scheme['content_bg_img'])) {
+            if ($current_scheme['content_bg_img_mode'] == 'stretch') {
+                $bg_image = str_replace('queldorei/shopper/', '', $current_scheme['content_bg_img']);
+            } else {
+                $bg_image = '';
+            }
+        }
+    }
+
+    $route = Mage::app()->getFrontController()->getRequest()->getRouteName();
+    $action = Mage::app()->getFrontController()->getRequest()->getActionName();
+    if ( ($route == 'customer' && ($action == 'login' || $action == 'forgotpassword' || $action == 'create')) && !empty($config['login_bg']) ) {
+        $bg_image = $config['login_bg'];
+    }
+
+    if ( !empty($bg_image) ) {
+        echo "Shopper.anystretch_bg = '".Mage::getUrl() . $bg_image ."'; ";
+    }
+    ?>
+    //]]>
+</script>

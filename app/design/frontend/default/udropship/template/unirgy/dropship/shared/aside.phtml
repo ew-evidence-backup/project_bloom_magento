@@ -1,0 +1,126 @@
+<?php
+$vendor = Mage::getSingleton('udropship/session')->getVendor();
+$cat = Mage::helper('udropship')->getCategoryByVendor($vendor->getId());
+$prefUrl = $this->getUrl('udropship/vendor/preferencesPost');
+if ($cat) {
+    $cat = Mage::getModel('catalog/category')->load($cat->getId());
+}
+
+?>
+
+<!-- Secondary content (start) -->
+<aside id="secondaryContent">
+
+    <!-- Store preview (start) -->
+    <section id="storePreview" class="secondaryContent__item">
+        <figure class="storePreview__desc">
+            <?php
+            $src = ('' != $vendor->getLogo()) ? '/media/' . $vendor->getLogo() : $this->getSkinUrl() . 'redesign/i/defaultPhoto.jpg';
+            ?>
+            <img id="upload-progress" src="<?= $this->getSkinUrl()?>redesign/i/upload-progress.gif" style="display: block; position: absolute; margin: 70px 0 0 110px; display: none; z-index: 100;"/>
+            <div id="browsePhotoBtn" style="width: 260px; ">
+                <div id="edit_tip" style="display: none; position: absolute; margin: 0px 0px 0px 40px; z-index: 100;">
+                        <img src="<?= $this->getSkinUrl()?>redesign/images/store-edit-tip.png" width="188" />
+                </div>
+                <img class="storePreview__image" src="<?= $src; ?>" width="260" alt=""/>
+            </div>
+            
+            <figcaption class="storePreview__address">
+                <h4>Address:</h4>
+
+                <p>
+                    <?= $vendor['street'] . ', ' . $vendor['city'] . ', ' .Mage::getModel('directory/region')->load($vendor->getRegionId())->getCode(). ', ' . $vendor['zip'];?>
+                    <a title="" href="<?= $this->getUrl('udropship/vendor/preferences')?>#locationForm"
+                       class="storeOwner__editLink">(Edit)</a>
+                </p>
+            </figcaption>
+        </figure>
+        <footer class="storePreview__footer">
+            <nav class="storePreview__nav">
+                <ul class="storePreview__nav__links">
+                    <li class="storePreview__nav__viewStore"><a href="<?= $cat->getUrl();?>" title="" target="_blank">View
+                        <br/>store</a></li>
+                    <li class="storePreview__nav__editStore"><a
+                            href="<?= $this->getUrl('udropship/vendor/preferences')?>#aboutOwnerForm" title="">Edit <br/>profile</a></li>
+                </ul>
+            </nav>
+        </footer>
+    </section>
+    <!-- Store preview (end) -->
+    <?php
+    $label = ('' != $vendor->getData('facebook_page') && '' != $vendor->getData('facebook_page_id')) ? 'Your Facebook Store' : 'Open Your Facebook Store';
+    ?>
+    <button id="facebookStoreBtn" class="secondaryContent__item" onclick="return false;"><?= $label; ?></button>
+
+    <!-- Store owner (start) -->
+    <section id="storeOwner" class="secondaryContent__item">
+        <?php
+        $src = ('' != $vendor->getOwnerPhoto()) ? '/media/' . $vendor->getOwnerPhoto() : $this->getSkinUrl() . 'redesign/i/ownerPhotoDefault.jpg';
+        ?>
+        <a href="<?php echo $this->getUrl('udropship/vendor/preferences')?>#aboutOwnerForm"><img class="storeOwner__image" src="<?= $src;?>" alt=""/></a>
+
+        <div class="storeOwner__desc">
+            <h2 class="storeOwner__name"><?= $vendor->getVendorAttn();?></h2>
+
+            <p class="storeOwner__post">Owner (<a class="storeOwner__editLink"
+                                                  href="<?php echo $this->getUrl('udropship/vendor/preferences')?>#aboutOwnerForm"
+                                                  title="">Edit</a>)</p>
+        </div>
+    </section>
+    <!-- Store owner (end) -->
+    <!-- Store owner (start) -->
+    <section id="ads-box" class="secondaryContent__item">
+        <a href="http://aifd.org/" target="_blank"><img src="/media/advertisement.png"></a>
+    </section>
+    <!-- Store owner (end) -->
+
+
+</aside>
+<!-- Secondary content (end) -->
+
+
+<script>
+    jQuery(document).ready(function ($) {
+        // Tooltip
+        $('#browsePhotoBtn').hover(
+                function() { $('#edit_tip').show(); },
+                function() { $('#edit_tip').hide(); }
+        ); 
+        
+        // File uploader (store logo)
+        var uploader = new qq.FileUploaderBasic({
+            button:document.getElementById('browsePhotoBtn'),
+            action:'/js/jquery/ajaxfileupload.php?vendor_id=<?=$vendor->getId()?>',
+            allowedExtensions:['jpg', 'jpeg', 'png', 'gif'],
+            onComplete:function (id, fileName, response) {
+                $('#upload-progress').hide();
+                
+                if (response.success) {
+                    var productImg = '/vendor/<?= $vendor->getId()?>/' + response.msg;
+                    $('.storePreview__image').attr('src', '/media/' + productImg);
+
+                    // Send request to update image on the back end
+                    var data = {
+                        new_image:productImg,
+                        submitNewImg:1
+                    }
+                    var url = '<?= $prefUrl; ?>';
+                    $.post(url, data, function () {
+                    }, 'json');
+                }
+            },
+            onProgress:function (id, fileName, loaded, total) {
+
+            },
+            onSubmit:function (id, fileName) {
+                $('#upload-progress').show();
+            },
+            debug:false
+        });
+
+        // Set up the facebook store
+        $('#facebookStoreBtn').click(function () {
+                window.open('http://apps.facebook.com/343690602390212', '_blank');
+        });
+    });
+</script>

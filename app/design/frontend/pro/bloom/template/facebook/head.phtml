@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html lang="en" class="no-js"><!--<![endif]-->
+<head>
+	<meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content="" />
+  	<meta name="author" content="" />
+
+  	<!-- Mobile meta (start) -->
+  	<meta name="HandheldFriendly" content="true"/>
+  	<meta name="MobileOptimized" content="320"/>
+  	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes" />
+  	<meta http-equiv="cleartype" content="on" />
+  	<meta name="apple-mobile-web-app-capable" content="yes" />
+  	<!-- Mobile meta (end) -->
+  
+  	<title>BloomNation Facebook Store app</title>
+
+  	<link rel="stylesheet" href="/js/facebook/css/reset.css" media="all" />
+  	<link rel="stylesheet" href="/js/facebook/css/screen.css" media="all" />
+  	<link rel="stylesheet" href="/js/facebook/css/selectBox.css" media="all" />
+	<link rel="stylesheet" href="/js/jquery/css/ui-lightness/jquery-ui-1.8.17.custom.css">
+	<?php if('product' == $this->getRequest()->getControllerName()):?>
+		<link rel="stylesheet" href="/js/facebook/css/product.css" media="all" />  
+	<?php endif; ?>
+	
+  	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+
+        <script src="/js/html5.js"></script>
+        <script src="/js/jquery-1.7.2.min.js"></script>
+        <script src="/js/jquery/selectBox.min.js"></script>
+        <script src="/js/bloomnation/product-filter.js"></script>
+	<script type="text/javascript" src="/js/jquery/js/jquery-ui-1.9.2.custom.min.js"></script>
+        <script src="/js/jquery/jquery.simplemodal.1.4.3.min.js"></script>
+	
+	<?php if('index' == $this->getRequest()->getControllerName()):?>
+        <script>
+
+            jQuery(document).ready(function($) {
+                // Apply filters
+                $('select.filter').change(function() {
+                        setFilters(getFilters());   
+                    }
+                );
+                // Apply name filter
+                $('#nameFilterInput').keyup(function() {
+                    applyNameFilter($(this).val());
+                });
+                // Apply price filter
+                $('#priceFilterInput').keyup(function() {
+                    applyPriceFilter($(this).val());
+                });
+                
+                // Select boxes
+                $("select").selectBox();
+		
+		// Sticky price div
+		var $window = $(window),
+		$stickyEl = $('.productsFilter__form');
+		var elTop = $stickyEl.offset().top;
+		$window.scroll(function() {
+		     var windowTop = $window.scrollTop();
+		     $stickyEl.toggleClass('sticky', windowTop > elTop);
+		});
+            });
+            
+            /* Get product filters
+             *
+             * no params
+             *
+             * @return object filters
+             */
+            function getFilters() {
+                var filters = {};
+
+                // Get additional filters
+                jQuery('select.filter').each(function(index,el) {
+                    elControls = jQuery(el);
+                    if('' != elControls.val()) {
+                        filters[elControls.attr('attr')] = [elControls.val()];
+                    }
+                });
+
+                return filters;
+            };
+        </script>
+	<?php elseif('product' == $this->getRequest()->getControllerName()) :?>
+	
+	<?php endif;?>
+</head>
+
